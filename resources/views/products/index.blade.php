@@ -8,6 +8,9 @@
             <div class="pull-right">
                 <a class="btn btn-success" href="{{ route('products.create') }}"> Create New Product</a>
             </div>
+            <div class="pull-right">
+                <a class="btn btn-success" href="{{ route('carts.index') }}"> Your cart</a>
+            </div>
         </div>
     </div>
     @if ($message = Session::get('success'))
@@ -19,6 +22,7 @@
         <tr>
             <th>No</th>
             <th>Name</th>
+            <th>Price</th>
             <th>Details</th>
             <th width="280px">Action</th>
         </tr>
@@ -26,6 +30,7 @@
         <tr>
             <td>{{ ++$i }}</td>
             <td>{{ $product->name }}</td>
+            <td>{{ $product->price }}</td>
             <td>{{ $product->detail }}</td>
             <td>
                 <form action="{{ route('products.destroy',$product->id) }}" method="POST">
