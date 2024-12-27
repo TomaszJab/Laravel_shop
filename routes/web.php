@@ -3,7 +3,8 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CartController;
-
+use App\Http\Controllers\ContactController;
+use App\Http\Controllers\AboutUsController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -16,6 +17,11 @@ use App\Http\Controllers\CartController;
 */
 Route::resource('carts', CartController::class);
 Route::post('/cart/clear', [CartController::class, 'clearCart'])->name('carts.clear');
+
+Route::resource('contacts', ContactController::class);
+
+Route::resource('AboutUs', AboutUsController::class);
+
 Route::resource('products', ProductController::class);
 Route::post('/products/{product}/comments', [ProductController::class, 'storeComment'])->name('products.comments.store');
 Route::post('/products/{product}/add_to_cart', [ProductController::class, 'addToCart'])->name('products.add_to_cart');
