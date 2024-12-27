@@ -20,7 +20,7 @@
             </ul>
         </div>
     @endif
-    <form action="{{ route('products.update',$product->id) }}" method="POST">
+    <form action="{{ route('products.update',$product->id) }}" method="POST" novalidate>
         @csrf
         @method('PUT')
          <div class="row">
@@ -30,6 +30,14 @@
                     <input type="text" name="name" value="{{ $product->name }}" class="form-control" placeholder="Name">
                 </div>
             </div>
+
+            <div class="col-xs-12 col-sm-12 col-md-12">
+                <div class="form-group">
+                    <strong>Price:</strong>
+                    <input type="number" step="0.1" name="price" value="{{ $product->price }}" class="form-control" placeholder="Price">
+                </div>
+            </div>
+
             <div class="col-xs-12 col-sm-12 col-md-12">
                 <div class="form-group">
                     <strong>Detail:</strong>
