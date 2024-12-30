@@ -1,7 +1,7 @@
 @extends('products.layout')
 @section('content')
 <div class="row">
-    <div class="mt-4 mb-4 p-4 bg-primary text-white rounded">
+    <div class="col-md-12 col-sm-12 mt-4 mb-4 p-4 bg-primary text-white rounded">
         <h1>Your cart</h1>
     </div>
 </div>
@@ -103,7 +103,27 @@
     </div>
 </div>
 @else
-    <p>Your cart is empty.</p>
+<div class="row">	 
+    <div class="col-md-12 col-sm-12"> 
+        <div class="card">
+            <div class="card-header">
+                <h5>Cart</h5>
+                <!-- <button type="button" class="btn btn-primary position-relative">
+                Mails <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-secondary">+99 <span class="visually-hidden">unread messages</span></span>
+                </button> -->
+            </div>
+            <div class="card-body cart text-center">
+            <i class="bi bi-cart3 mb-4 mr-3" style="font-size:80px;color: orange;"></i>
+                <!-- <img src="https://i.imgur.com/dCdflKN.png" width="130" height="130" class="img-fluid mb-4 mr-3"> -->
+                <h3><strong>Your Cart is Empty</strong></h3>
+                <h4>Add something to make me happy :)</h4>
+                <a href="{{ route('products.index') }}" class="btn btn-outline-primary m-3">
+                    <i class="bi bi-arrow-left me-2"></i>Continue Shopping
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
 @endif       
 
 @endsection

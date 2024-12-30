@@ -7,46 +7,52 @@
 
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.0/font/bootstrap-icons.css">
+        
 
-        <nav class="navbar navbar-expand-lg bg-light">
-
-  <div class="container">
-    <a class="navbar-brand" href="{{ route('products.index') }}">Products</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon">bb</span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarText">
-      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-        <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="{{ route('AboutUs.index') }}">O nas</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{{ route('contacts.index') }}">Kontakt</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">Promocje</a>
-        </li>
-      </ul>
-
-      <ul class="navbar-nav ms-auto">
-        <li class="nav-item">
-            <a class="nav-link" href="{{ route('carts.index') }}">Your cart</a>
-        </li>
-      </ul>
-
-      
-      <span class="navbar-text">
-        Navbar text with an inline element
-      </span>
-    </div>
-  </div>
-</nav>
 <link href="/css/layout.css" rel="stylesheet">
     </head>
 
     <body> 
+
+    <div class="p-5 bg-primary text-white text-center">
+      <h1>My First Laravel project</h1>
+      <p>Tell me about your impressions!</p> 
+    </div>
+
+    <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+      <div class="container-fluid">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link active" href="{{ route('products.index') }}">Products</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{{ route('homepage.index') }}">Home Page</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{{ route('AboutUs.index') }}">O nas</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{{ route('contacts.index') }}">Kontakt</a>
+          </li>
+        </ul>
+
+        <ul class="navbar-nav ms-auto">
+        <li class="nav-item">
+            <a class="nav-link" href="{{ route('carts.index') }}">Your cart</a>
+        </li>
+        </ul>
+        <span class="navbar-text">
+          Navbar text with an inline element
+        </span>
+      </div>
+    </nav>
+
         <div class="container">
             @yield('content')
         </div>
+
+      <div class="mt-5 p-4 bg-dark text-white text-center">
+        <p>Footer</p>
+      </div>
     </body>
 </html>
