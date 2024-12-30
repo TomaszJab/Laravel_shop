@@ -34,7 +34,7 @@
                     <input class="form-control" name="phone" placeholder="Phone..." /><br />
                     <input class="form-control" name="email" placeholder="E-mail..." /><br />
                     <textarea class="form-control" name="text" placeholder="How can we help you?" style="height:150px;"></textarea><br />
-                    <input class="btn btn-primary" type="submit" value="Send" /><br /><br />
+                    <input class="btn btn-primary" type="submit" value="Let's Talk" /><br /><br />
                 </form>
         </div>
     </div>    

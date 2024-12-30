@@ -1,58 +1,62 @@
 @extends('products.layout')
 @section('content')
-    <div class="row">
-        <div class="col-lg-12 margin-tb">
-            <div class="pull-left">
-                <h2>Laravel 10 CRUD</h2>
-            </div>
-            <div class="pull-right">
-                <a class="btn btn-success" href="{{ route('products.create') }}"> Create New Product</a>
-            </div>
-            <div class="pull-right">
-                <a class="btn btn-success" href="{{ route('carts.index') }}"> Your cart</a>
-            </div>
-        </div>
-    </div>
-
-    <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
-  <div class="carousel-indicators">
-    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
-    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
-    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
+<!-- <div class="row">
+  <div class="col-lg-12 mt-4 text-end">
+      <a class="btn btn-success" href="{{ route('products.create') }}"> Create New Product</a>
   </div>
-  <div class="carousel-inner">
-    <div class="carousel-item active">
-      <img src="https://mdbcdn.b-cdn.net/img/new/slides/041.webp" class="d-block w-100" alt="aaa">
-      <div class="carousel-caption d-none d-md-block" style="background-color: rgba(128, 128, 128, 0.7); padding: 15px; border-radius: 10px;">
-        <h5>First slide label</h5>
-        <p>Praesent commodo cursus magna, vel scelerisque nisl consectetur.</p>
-      </div>
-    </div>
-    <div class="carousel-item">
-      <img src="https://mdbcdn.b-cdn.net/img/new/slides/042.webp" class="d-block w-100" alt="aba">
-      <div class="carousel-caption d-none d-md-block">
-        <h5>Second slide label</h5>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-      </div>
-    </div>
-    <div class="carousel-item">
-      <img src="https://mdbcdn.b-cdn.net/img/new/slides/043.webp" class="d-block w-100" alt="abc">
-      <div class="carousel-caption d-none d-md-block">
-        <h5>Third slide label</h5>
-        <p>Praesent commodo cursus magna, vel scelerisque nisl consectetur.</p>
-      </div>
-    </div>
+</div> -->
+<!-- align-items-center -->
+<div class="row ">
+  <div class="col-6 col-md-6 mt-3">
+    <p class="fs-3">Categories</p>
   </div>
-  <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
-    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-    <span class="visually-hidden">Previous</span>
-  </button>
-  <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
-    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-    <span class="visually-hidden">Next</span>
-  </button>
+  <div class="col-6 col-md-6 mt-4">
+    <form method="GET" name="sortOption" action="{{ route('products.index') }}" onchange="this.form.submit()">
+      <select class="form-select w-75 ms-auto">
+      <option selected>Featured</option>
+        <option value="desc" {{ request('sortOption') == 'desc' ? 'selected' : '' }}>Malejaco</option>
+        <option value="asc" {{ request('sortOption') == 'asc' ? 'selected' : '' }}>Roznaco</option>
+      </select>
+    </form>
+  </div>
 </div>
 
+<div class="row">
+  <div class="col-md-3 mt-0">
+    <div class="list-group">
+      <a href="/products/electronics" class="list-group-item list-group-item-action {{ (request()->is('electronics')) ? 'active' : '' }}">Cras justo odio</a>
+      <a href="/products/abc" class="list-group-item list-group-item-action {{ (request()->is('abc')) ? 'active' : '' }}">Dapibus ac facilisis in</a>
+      <a href="/products/cba" class="list-group-item list-group-item-action {{ (request()->is('cba')) ? 'active' : '' }}">Morbi leo risus</a>
+      <a href="{{ route('products.index', ['category_products' => 'bbc']) }}" class="list-group-item list-group-item-action {{ (request()->is('bbc')) ? 'active' : '' }}">Porta ac consectetur ac</a>
+    </div>
+  </div>
+
+  <div class="col-md-9 mt-0">
+    <div class="row">
+      @foreach ($products as $product)
+      <div class="col-md-4 mt-0">
+        <div class="card">
+          <img src="https://themewagon.github.io/zay-shop/assets/img/shop_01.jpg" class="card-img-top" alt="...">
+          <div class="card-body">
+            <h5 class="card-title">{{ $product->name }}</h5>
+            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+            <a href="#" class="btn btn-primary">Go somewhere</a>
+          </div>
+        </div>
+      </div>
+      @endforeach
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-2 ms-auto d-flex justify-content-end fs-4 mt-4 pagination">
+    {!! $products->links() !!}
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-12 mt-4">
     @if ($message = Session::get('success'))
         <div class="alert alert-success">
             <p>{{ $message }}</p>
@@ -60,7 +64,6 @@
     @endif
     <table class="table table-bordered">
         <tr>
-            <th>No</th>
             <th>Name</th>
             <th>Price</th>
             <th>Details</th>
@@ -68,7 +71,7 @@
         </tr>
         @foreach ($products as $product)
         <tr>
-            <td>{{ ++$i }}</td>
+           
             <td>{{ $product->name }}</td>
             <td>{{ $product->price }}</td>
             <td>{{ $product->detail }}</td>
@@ -85,6 +88,7 @@
         @endforeach
     </table>
 
-    {!! $products->links() !!}
-
+    <!-- {!! $products->links() !!} -->
+    </div>
+</div>
 @endsection

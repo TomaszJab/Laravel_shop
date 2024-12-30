@@ -14,14 +14,25 @@ class ProductController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $products = Product::latest()->paginate(5);
-
-        return view('products.index',compact('products'))
-                    ->with('i', (request()->input('page', 1) - 1) * 5);
+       // $sortOption = $request->input('selectOption', 'asc');//
+       // $products = Product::orderBy('price', $sortOption)->paginate(3);
+        $products = Product::paginate(3);
+        return view('products.index',compact('products'));
     }
 
+    // public function category_products(Request $request)
+    // {
+        // Fetch products based on the category passed in the route
+        // $products = Product::where('category', $category_products)->get();
+
+        // Return the view with the products and the selected category
+        // return view('products.index', compact('products', 'category_products'));
+
+    //     $products = Product::paginate(3);
+    //     return view('products.index',compact('products'));
+    // }
     /**
      * Show the form for creating a new resource.
      */
@@ -38,7 +49,6 @@ class ProductController extends Controller
         $request->validate([
             'name' => 'required',
             'detail' => 'required',
-
         ]);
 
         Product::create($request->except('_token'));
