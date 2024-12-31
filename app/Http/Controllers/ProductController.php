@@ -18,8 +18,16 @@ class ProductController extends Controller
     {
        // $sortOption = $request->input('selectOption', 'asc');//
        // $products = Product::orderBy('price', $sortOption)->paginate(3);
-        $products = Product::paginate(3);
-        return view('products.index',compact('products'));
+       $sortOption = $request->query('sortOption', 'desc');
+        $categoryName = $request->query('category_products');
+
+        if ($categoryName) {
+            $products = Product::paginate(4);
+            return view('products.index',compact('products','sortOption'));
+        }else{
+            $products = Product::paginate(3);
+            return view('products.index',compact('products','sortOption'));
+        }
     }
 
     // public function category_products(Request $request)

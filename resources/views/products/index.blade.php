@@ -11,23 +11,29 @@
     <p class="fs-3">Categories</p>
   </div>
   <div class="col-6 col-md-6 mt-4">
-    <form method="GET" name="sortOption" action="{{ route('products.index') }}" onchange="this.form.submit()">
-      <select class="form-select w-75 ms-auto">
-      <option selected>Featured</option>
-        <option value="desc" {{ request('sortOption') == 'desc' ? 'selected' : '' }}>Malejaco</option>
-        <option value="asc" {{ request('sortOption') == 'asc' ? 'selected' : '' }}>Roznaco</option>
-      </select>
-    </form>
+    <select class="form-select w-75 ms-auto" onchange="location.href = updateURL(this.value);">
+      <option value="">Featured</option>
+      <option value="desc" {{ request('sortOption') == 'desc' ? 'selected' : '' }}>Malejąco</option>
+      <option value="asc" {{ request('sortOption') == 'asc' ? 'selected' : '' }}>Rosnąco</option>
+    </select>
   </div>
 </div>
+
+<script>
+    function updateURL(sortOption) {
+        const url = new URL(window.location.href);
+        url.searchParams.set('sortOption', sortOption);
+        return url.href;
+    }
+</script>
 
 <div class="row">
   <div class="col-md-3 mt-0">
     <div class="list-group">
-      <a href="/products/electronics" class="list-group-item list-group-item-action {{ (request()->is('electronics')) ? 'active' : '' }}">Cras justo odio</a>
-      <a href="/products/abc" class="list-group-item list-group-item-action {{ (request()->is('abc')) ? 'active' : '' }}">Dapibus ac facilisis in</a>
-      <a href="/products/cba" class="list-group-item list-group-item-action {{ (request()->is('cba')) ? 'active' : '' }}">Morbi leo risus</a>
-      <a href="{{ route('products.index', ['category_products' => 'bbc']) }}" class="list-group-item list-group-item-action {{ (request()->is('bbc')) ? 'active' : '' }}">Porta ac consectetur ac</a>
+      <a href="{{ route('products.index', ['category_products' => 'kat1']) }}" class="list-group-item list-group-item-action {{ (request()->query('category_products') == 'kat1') ? 'active' : '' }}">Cras justo odio</a>
+      <a href="{{ route('products.index', ['category_products' => 'kat2']) }}" class="list-group-item list-group-item-action {{ (request()->query('category_products') == 'kat2') ? 'active' : '' }}">Dapibus ac facilisis in</a>
+      <a href="{{ route('products.index', ['category_products' => 'kat3']) }}" class="list-group-item list-group-item-action {{ (request()->query('category_products') == 'kat3') ? 'active' : '' }}">Dapibus</a>
+      <a href="{{ route('products.index', ['category_products' => 'kat4']) }}" class="list-group-item list-group-item-action {{ (request()->query('category_products') == 'kat4') ? 'active' : '' }}">Porta ac consectetur ac</a>
     </div>
   </div>
 

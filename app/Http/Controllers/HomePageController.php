@@ -12,4 +12,9 @@ class HomePageController extends Controller
        // return view('cart.index', compact('cart'));
         return view('homepage.index');
     }
+
+    // public function show(String $user)
+    // {
+    //     return $user;
+    // }
 }
