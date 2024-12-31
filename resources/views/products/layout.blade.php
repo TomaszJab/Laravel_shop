@@ -23,7 +23,7 @@
       <div class="container-fluid">
         <ul class="navbar-nav">
           <li class="nav-item">
-            <a class="nav-link active" href="{{ route('products.index') }}">Products</a>
+            <a class="nav-link active" href="{{ route('products.index', ['category_products' => 'kat1']) }}">Products</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="{{ route('homepage.index') }}">Home Page</a>
