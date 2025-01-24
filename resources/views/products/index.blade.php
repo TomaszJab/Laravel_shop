@@ -30,10 +30,10 @@
 <div class="row">
   <div class="col-md-3 mt-0">
     <div class="list-group">
-      <a href="{{ route('products.index', ['category_products' => 'kat1']) }}" class="list-group-item list-group-item-action {{ (request()->query('category_products') == 'kat1') ? 'active' : '' }}">Cras justo odio</a>
-      <a href="{{ route('products.index', ['category_products' => 'kat2']) }}" class="list-group-item list-group-item-action {{ (request()->query('category_products') == 'kat2') ? 'active' : '' }}">Dapibus ac facilisis in</a>
-      <a href="{{ route('products.index', ['category_products' => 'kat3']) }}" class="list-group-item list-group-item-action {{ (request()->query('category_products') == 'kat3') ? 'active' : '' }}">Dapibus</a>
-      <a href="{{ route('products.index', ['category_products' => 'kat4']) }}" class="list-group-item list-group-item-action {{ (request()->query('category_products') == 'kat4') ? 'active' : '' }}">Porta ac consectetur ac</a>
+      <a href="{{ route('products.index', ['category_products' => 'a']) }}" class="list-group-item list-group-item-action {{ (request()->query('category_products') == 'a') ? 'active' : '' }}">Category a</a>
+      <a href="{{ route('products.index', ['category_products' => 'b']) }}" class="list-group-item list-group-item-action {{ (request()->query('category_products') == 'b') ? 'active' : '' }}">Category b</a>
+      <a href="{{ route('products.index', ['category_products' => 'c']) }}" class="list-group-item list-group-item-action {{ (request()->query('category_products') == 'c') ? 'active' : '' }}">Category c</a>
+      <a href="{{ route('products.index', ['category_products' => 'd']) }}" class="list-group-item list-group-item-action {{ (request()->query('category_products') == 'd') ? 'active' : '' }}">Category d</a>
     </div>
   </div>
 

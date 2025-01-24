@@ -23,7 +23,7 @@
       <div class="container-fluid">
         <ul class="navbar-nav">
           <li class="nav-item">
-            <a class="nav-link active" href="{{ route('products.index', ['category_products' => 'kat1']) }}">Products</a>
+            <a class="nav-link active" href="{{ route('products.index', ['category_products' => 'a']) }}">Products</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="{{ route('homepage.index') }}">Home Page</a>
@@ -40,10 +40,28 @@
         <li class="nav-item">
             <a class="nav-link" href="{{ route('carts.index') }}">Your cart</a>
         </li>
+
+        @if (Route::has('login'))
+          @auth
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url('/dashboard') }}">dashboard</a>
+            </li>
+          @else
+            <li class="nav-item">
+              <a class="nav-link" href="{{ route('login') }}">login</a>
+            </li>
+            @if (Route::has('register'))
+              <li class="nav-item">
+                <a class="nav-link" href="{{ route('register') }}">register</a>
+              </li>
+            @endif
+          @endauth
+        @endif
+
         </ul>
-        <span class="navbar-text">
+        <!-- <span class="navbar-text">
           Navbar text with an inline element
-        </span>
+        </span> -->
       </div>
     </nav>
 
