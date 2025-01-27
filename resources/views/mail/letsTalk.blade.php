@@ -1,0 +1,3 @@
+hello
+costam
+{{ $data ->text }}

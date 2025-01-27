@@ -1,12 +1,15 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\AboutUsController;
 use App\Http\Controllers\HomePageController;
+
+use App\Mail\AboutUsLetsTalkMail;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,8 +23,10 @@ use App\Http\Controllers\HomePageController;
 */
 Route::resource('carts', CartController::class);
 Route::post('/cart/clear', [CartController::class, 'clearCart'])->name('carts.clear');
+Route::get('/cart/delivery', [CartController::class, 'delivery'])->name('carts.delivery');
 
 Route::resource('contacts', ContactController::class);
+Route::post('/contacts/send-mail', [ContactController::class, 'sendMailLetsTalkMail'])->name('contacts.sendMailLetsTalkMail');
 
 Route::resource('AboutUs', AboutUsController::class);
 
