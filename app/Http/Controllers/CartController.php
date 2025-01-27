@@ -38,4 +38,10 @@ class CartController extends Controller
         session()->forget('cart');
         return redirect()->back();
     }
+
+    public function delivery()
+    {
+        return view('cart.delivery');
+    }
+
 }

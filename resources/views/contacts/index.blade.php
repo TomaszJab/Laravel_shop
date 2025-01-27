@@ -1,5 +1,16 @@
 @extends('products.layout')
 @section('content')
+
+<div class="row">
+    <div class="col-md-12 mt-4">
+        @if ($message = Session::get('success'))
+            <div class="alert alert-success">
+                <p>{{ $message }}</p>
+            </div>
+        @endif
+    </div>
+</div>
+
 <div class="mt-4 p-5 bg-primary text-white rounded">
   <h1>Contact us</h1>
   <p>You can write to us...</p>
@@ -29,7 +40,8 @@
         </div>
 
         <div class="col-md-8">
-                <form action="/post" method="post">
+                <form action="{{ route('contacts.sendMailLetsTalkMail') }}" method="post">
+                @csrf
                     <input class="form-control" name="name" placeholder="Name..." /><br />
                     <input class="form-control" name="phone" placeholder="Phone..." /><br />
                     <input class="form-control" name="email" placeholder="E-mail..." /><br />
