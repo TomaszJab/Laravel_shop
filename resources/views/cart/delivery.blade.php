@@ -25,7 +25,7 @@
                             <span>$25</span>
                         </div>
                         <div class="d-flex justify-content-between mb-3">
-                            <span>Odbiód własny</span>
+                            <span>Odbiór własny</span>
                             <span>$0</span>
                         </div>
                     </div>

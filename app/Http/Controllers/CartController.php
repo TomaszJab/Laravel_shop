@@ -44,4 +44,9 @@ class CartController extends Controller
         return view('cart.delivery');
     }
 
+    public function order()
+    {
+        return view('cart.order');
+    }
+
 }
