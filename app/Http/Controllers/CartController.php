@@ -49,4 +49,9 @@ class CartController extends Controller
         return view('cart.order');
     }
 
+    public function buyWithoutRegistration()
+    {
+        return view('cart.buyWithoutRegistration');
+    }
+
 }
