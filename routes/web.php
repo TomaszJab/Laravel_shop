@@ -8,6 +8,7 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\AboutUsController;
 use App\Http\Controllers\HomePageController;
+use App\Http\Controllers\StatuteController;
 
 use App\Mail\AboutUsLetsTalkMail;
 
@@ -25,6 +26,7 @@ Route::resource('carts', CartController::class);
 Route::post('/cart/clear', [CartController::class, 'clearCart'])->name('carts.clear');
 Route::get('/cart/delivery', [CartController::class, 'delivery'])->name('carts.delivery');
 Route::get('/cart/order', [CartController::class, 'order'])->name('carts.order');
+Route::get('/cart/buyWithoutRegistration', [CartController::class, 'buyWithoutRegistration'])->name('carts.buyWithoutRegistration');
 
 Route::resource('contacts', ContactController::class);
 Route::post('/contacts/send-mail', [ContactController::class, 'sendMailLetsTalkMail'])->name('contacts.sendMailLetsTalkMail');
@@ -42,6 +44,7 @@ Route::post('/products/{product}/add_to_cart', [ProductController::class, 'addTo
 //     return view('welcome');
 // });
 
+Route::resource('statutes', StatuteController::class);
 
 Route::get('/', function () {
     return view('welcome');

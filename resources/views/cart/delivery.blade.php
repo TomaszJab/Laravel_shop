@@ -102,7 +102,7 @@
                     <strong>Total</strong>
                     <strong>${{ collect(session('cart'))->sum(fn($item) => $item['price'] * $item['quantity']) }}</strong>
                 </div>
-                <a href="{{ route('carts.delivery') }}" class="btn btn-primary w-100">Proceed to Checkout</a>
+                <a href="{{ route('carts.buyWithoutRegistration') }}" class="btn btn-primary w-100">Proceed to Checkout</a>
                 <!-- <button class="btn btn-primary w-100">Proceed to Checkout</button> -->
             </div>
         </div>
