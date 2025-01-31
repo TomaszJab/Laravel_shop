@@ -115,7 +115,7 @@
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                 <div class="form-group">
                                     <label for="City" class="mb-1">City</label>
-                                    <input type="name" class="form-control mb-2" id="ciTy" placeholder="Enter City">
+                                    <input type="name" class="form-control mb-2" id="City" placeholder="Enter City">
                                 </div>
                             </div>
                         </div>
