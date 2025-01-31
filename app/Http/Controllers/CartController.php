@@ -54,4 +54,46 @@ class CartController extends Controller
         return view('cart.buyWithoutRegistration');
     }
 
+    public function storewithoutregistration(Request $request)
+    {
+        $company_or_private_person = $request->input('company_or_private_person');
+        
+        if ( $company_or_private_person == 'private_person') {
+            $request->validate([
+                'email' => 'required',
+                'firstName' => 'required',
+                'lastName' => 'required',
+                'phone' => 'required',
+    
+                'street' => 'required',
+                'house_number' => 'required',
+                'zip_code' => 'required',
+                'city' => 'required',
+    
+                'gridCheck1' => 'required'
+            ]);
+        }else{
+            $request->validate([
+                'email' => 'required',
+                'firstName' => 'required',
+                'lastName' => 'required',
+                'phone' => 'required',
+
+                'company name' => 'required',
+                'nip' => 'required',
+
+                'street' => 'required',
+                'house_number' => 'required',
+                'zip_code' => 'required',
+                'city' => 'required',
+    
+                'gridCheck1' => 'required'
+            ]);
+        }
+
+        // Product::create($request->except('_token'));
+//cart.buyWithoutRegistration
+        return $company_or_private_person; //redirect()->route('products.index');
+                        //->with('success','Product created successfully.');
+    }
 }

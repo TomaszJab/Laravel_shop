@@ -27,6 +27,8 @@ Route::post('/cart/clear', [CartController::class, 'clearCart'])->name('carts.cl
 Route::get('/cart/delivery', [CartController::class, 'delivery'])->name('carts.delivery');
 Route::get('/cart/order', [CartController::class, 'order'])->name('carts.order');
 Route::get('/cart/buyWithoutRegistration', [CartController::class, 'buyWithoutRegistration'])->name('carts.buyWithoutRegistration');
+Route::post('/cart/storewithoutregistration', [CartController::class, 'storewithoutregistration'])->name('carts.withoutregistration.store');
+
 
 Route::resource('contacts', ContactController::class);
 Route::post('/contacts/send-mail', [ContactController::class, 'sendMailLetsTalkMail'])->name('contacts.sendMailLetsTalkMail');
@@ -39,10 +41,6 @@ Route::resource('homepage', HomePageController::class);
 // Route::get('products', [ProductController::class, 'category_products'])->name('products.category_products');;
 Route::post('/products/{product}/comments', [ProductController::class, 'storeComment'])->name('products.comments.store');
 Route::post('/products/{product}/add_to_cart', [ProductController::class, 'addToCart'])->name('products.add_to_cart');
-
-// Route::get('/', function () {
-//     return view('welcome');
-// });
 
 Route::resource('statutes', StatuteController::class);
 
