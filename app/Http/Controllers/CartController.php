@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Response;
 use Illuminate\View\View;
-
+use App\Models\personalDetails;
 class CartController extends Controller
 {
     public function index()
@@ -90,10 +90,45 @@ class CartController extends Controller
                 'gridCheck1' => 'required'
             ]);
         }
-
+     
         // Product::create($request->except('_token'));
-//cart.buyWithoutRegistration
-        return $company_or_private_person; //redirect()->route('products.index');
+
+        //$summary = $request->only('firstName', 'lastName');
+        $summary = $request->except('_token');
+
+        // Przekazanie danych do sesji
+        session(['cart_summary' => $summary]);
+        return redirect()->route('carts.summary');
                         //->with('success','Product created successfully.');
+    }
+
+    public function savewithoutregistration(Request $request)
+    {
+        //UserData::create($request->only(['email', 'firstName', 'lastName', 'phone', 'street', 'house_number', 'zip_code', 'city']));
+
+        $data = session('cart_summary');
+      
+        //dd($data);
+        //dd($data['firstName']);
+        // $validated = Validator::make($data, [
+        //     'firstName' => 'required',
+        //     'lastName' => 'required',
+        // ]);
+    
+    
+        // Zapisanie danych w bazie
+        personalDetails::create([
+            'firstName' => $data['firstName']//,
+            //'lastName' => $data['lastName']
+        ]);
+        if ($data) {
+           // personalDetails::create($data);
+           //personalDetails::create([
+            //'firstName' => $data['firstName'] ?? null//,
+            //'lastName' => $data['lastName'] ?? null,
+        //]);
+
+            session()->forget('cart_summary');
+        }
     }
 }

@@ -28,7 +28,10 @@ Route::get('/cart/delivery', [CartController::class, 'delivery'])->name('carts.d
 Route::get('/cart/order', [CartController::class, 'order'])->name('carts.order');
 Route::get('/cart/buyWithoutRegistration', [CartController::class, 'buyWithoutRegistration'])->name('carts.buyWithoutRegistration');
 Route::post('/cart/storewithoutregistration', [CartController::class, 'storewithoutregistration'])->name('carts.withoutregistration.store');
-
+Route::get('/cart/summary', function () {
+    return view('cart.summary');
+})->name('carts.summary');
+Route::post('/cart/savewithoutregistration', [CartController::class, 'savewithoutregistration'])->name('carts.savewithoutregistration');
 
 Route::resource('contacts', ContactController::class);
 Route::post('/contacts/send-mail', [ContactController::class, 'sendMailLetsTalkMail'])->name('contacts.sendMailLetsTalkMail');
