@@ -13,10 +13,11 @@
 @php
     $summary = session('cart_summary', []);
 @endphp
+
 <div class="row">
     <div class="col-lg-12 mb-4 mt-4">
             <div class="card">
-                <form action="{{ route('carts.withoutregistration.store') }}" method="POST">
+                <form action="{{ route('carts.savewithoutregistration') }}" method="POST">
                 @csrf
                     <div class="card-body">
                         <div class="row">
@@ -26,25 +27,25 @@
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                 <div class="form-group">
                                     <label for="Email" class="mb-1">Email<span class="text-danger"> *</span></label>
-                                    <input type="email" value="{{ old('email') }}" class="form-control mb-2" name="email" id="email" placeholder="Enter email">
+                                    <input type="email" value="{{$summary['email']}}" class="form-control mb-2" name="email" id="email" placeholder="Enter email" disabled>
                                 </div>
                             </div>
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                 <div class="form-group">
                                     <label for="firstName" class="mb-1">First name<span class="text-danger"> *</span></label>
-                                    <input type="text" value="{{ old('firstName') }}" class="form-control mb-2" name="firstName" id="firstName" placeholder="Enter first name">
+                                    <input type="text" value="{{$summary['firstName']}}" class="form-control mb-2" name="firstName" id="firstName" placeholder="Enter first name" disabled>
                                 </div>
                             </div>
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                 <div class="form-group">
                                     <label for="lastName" class="mb-1">Last name<span class="text-danger"> *</span></label>
-                                    <input type="text" class="form-control" value="{{ old('lastName') }}" name="lastName" id="lastName" placeholder="Enter last name">
+                                    <input type="text" class="form-control" value="{{$summary['lastName']}}" name="lastName" id="lastName" placeholder="Enter last name" disabled>
                                 </div>
                             </div>
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                 <div class="form-group">
                                     <label for="phone" class="mb-1">Phone<span class="text-danger"> *</span></label>
-                                    <input type="phone" class="form-control"  value="{{ old('phone') }}" name="phone" id="phone" placeholder="Enter phone">
+                                    <input type="text" class="form-control"  value="{{$summary['phone']}}" name="phone" id="phone" placeholder="Enter phone" disabled>
                                 </div>
                             </div>
                         </div>
@@ -55,25 +56,25 @@
                         </div>
 
                         <div class="btn-group mb-1 mt-1" role="group">
-                            <input type="radio" class="btn-check" name="company_or_private_person" value="private_person" id="private_person" autocomplete="off" {{ old('company_or_private_person') == 'private_person' ? 'checked' : '' }} checked>
+                            <input type="radio" class="btn-check" name="company_or_private_person" value="private_person" id="private_person" autocomplete="off" {{ $summary['company_or_private_person'] == 'private_person' ? 'checked' : '' }} checked disabled>
                             <label class="btn btn-primary" style="width: 130px;" for="private_person" onclick="showContent('private person')">Private person</label>
 
-                            <input type="radio" class="btn-check" name="company_or_private_person" value="company" id="company" autocomplete="off" {{ old('company_or_private_person') == 'company' ? 'checked' : '' }}>
+                            <input type="radio" class="btn-check" name="company_or_private_person" value="company" id="company" autocomplete="off" {{ $summary['company_or_private_person'] == 'company' ? 'checked' : '' }} disabled>
                             <label class="btn btn-primary" style="width: 130px;" for="company" onclick="showContent('company_section')" >Company</label>
                         </div>
 
-                        <div id="company_section" class="content-section" style="display: none;">
+                        <div id="company_section" class="content-section" style={{ $summary['company_or_private_person'] == 'company' ? "display: none;" : "" }}>
                             <div class="row">
                                 <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                     <div class="form-group">
-                                        <label for="company_name" class="mb-1 mt-1">Company name<span class="text-danger"> *</span></label>
-                                        <input type="text" class="form-control mb-2" value="{{ old('company name') }}" name="company_name" id="company name" placeholder="Enter Company name">
+                                        <label for="company name" class="mb-1 mt-1">Company name<span class="text-danger"> *</span></label>
+                                        <input type="name" class="form-control mb-2" value="{{ $summary['company_name'] }}" name="company name" id="company name" placeholder="Enter Company name" disabled>
                                     </div>
                                 </div>
                                 <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                     <div class="form-group">
                                         <label for="nip" class="mb-1 mt-1">Nip<span class="text-danger"> *</span></label>
-                                        <input type="number" class="form-control mb-2" value="{{ old('nip') }}" name="nip" id="nip" placeholder="Enter Nip">
+                                        <input type="name" class="form-control mb-2" value="{{ $summary['nip'] }}" name="nip" id="nip" placeholder="Enter Nip" disabled>
                                     </div>
                                 </div>
                             </div>                           
@@ -84,25 +85,25 @@
                                 <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                     <div class="form-group">
                                         <label for="street" class="mb-1 mt-1">Street<span class="text-danger"> *</span></label>
-                                        <input type="text" value="{{ old('street') }}" name="street" class="form-control mb-2" id="street" placeholder="Enter Street">
+                                        <input type="name" value="{{$summary['street']}}" name="street" class="form-control mb-2" id="street" placeholder="Enter Street" disabled>
                                     </div>
                                 </div>
                                 <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                     <div class="form-group">
                                         <label for="house_number" class="mb-1 mt-1">House number<span class="text-danger"> *</span></label>
-                                        <input type="text" value="{{ old('house_number') }}" name='house_number' class="form-control" id="house_number" placeholder="Enter house number">
+                                        <input type="text" value="{{$summary['house_number']}}" name='house_number' class="form-control" id="house_number" placeholder="Enter house number" disabled>
                                     </div>
                                 </div>
                                 <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                     <div class="form-group">
                                         <label for="zip_code" class="mb-1">Zip Code<span class="text-danger"> *</span></label>
-                                        <input type="text" value="{{ old('zip_code') }}" name="zip_code" class="form-control" id="zip_code" placeholder="Zip Code">
+                                        <input type="text" value="{{$summary['zip_code']}}" name="zip_code" class="form-control" id="zip_code" placeholder="Zip Code" disabled>
                                     </div>
                                 </div>
                                 <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                     <div class="form-group">
                                         <label for="city" class="mb-1">City<span class="text-danger"> *</span></label>
-                                        <input type="text" value="{{ old('city') }}" name="city" class="form-control mb-2" id="city" placeholder="Enter City">
+                                        <input type="name" value="{{$summary['city']}}" name="city" class="form-control mb-2" id="city" placeholder="Enter City" disabled>
                                     </div>
                                 </div>
                             </div>
@@ -116,13 +117,13 @@
                         <div class="row">
                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                                 <!-- <label for="additional_information">Example textarea</label> -->
-                                <textarea class="form-control mb-2" name="additional_information" id="additional_information" rows="2" placeholder="You can write something of your own">{{ old('additional_information') }}</textarea>
+                                <textarea class="form-control mb-2" name="additional_information" id="additional_information" rows="2" placeholder="You can write something of your own" disabled>{{ $summary['additional_information'] }}</textarea>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                                 <div class="form-check">
-                                    <input class="form-check-input" @if(old('acceptance_of_the_regulations')) checked @endif name="acceptance_of_the_regulations" type="checkbox" id="acceptance_of_the_regulations">
+                                    <input class="form-check-input" @if($summary['acceptance_of_the_regulations']) checked @endif name="acceptance_of_the_regulations" type="checkbox" id="acceptance_of_the_regulations" disabled>
                                     <label class="form-check-label" for="acceptance_of_the_regulations">I have read the <a href="/statutes" target="_blank">regulations</a> of the online store and accept their content.<span class="text-danger"> *</span></label>
                                 </div>
                             </div>
@@ -130,14 +131,11 @@
                         <div class="row">
                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                                 <div class="form-check">
-                                    <input class="form-check-input" @if(old('acceptance_of_the_invoice')) checked @endif name="acceptance_of_the_invoice" type="checkbox" id="acceptance_of_the_invoice">
+                                    <input class="form-check-input" @if($summary['acceptance_of_the_invoice']) checked @endif name="acceptance_of_the_invoice" type="checkbox" id="acceptance_of_the_invoice" disabled>
                                     <label class="form-check-label" for="acceptance_of_the_invoice">I want to receive an invoice</label>
                                 </div>
                             </div>
                         </div>
-                        <!-- <label for="zip">Zip Code</label>
-                        <input id="zip" type="number" name="zip" placeholder="Zip Code"> -->
-                        
                         <div class="row">
                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                                 <div class="text-end">
@@ -151,20 +149,4 @@
     </div>
 </div>
 
-<script>
-    // JavaScript to handle switching views
-    function showContent(sectionId) {
-        // Hide all sections
-        document.querySelectorAll('.content-section').forEach(function (section) {
-            section.style.display = 'none';
-        });
-
-        // Show the selected section
-        document.getElementById(sectionId).style.display = 'block';
-    }
-
-    jQuery(function($){
-   $("input#zip").mask("00-000");
-});
-</script>
 @endsection

@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Response;
 use Illuminate\View\View;
-
+use App\Models\personalDetails;
 class CartController extends Controller
 {
     public function index()
@@ -70,7 +70,7 @@ class CartController extends Controller
                 'zip_code' => 'required',
                 'city' => 'required',
     
-                'gridCheck1' => 'required'
+                'acceptance_of_the_regulations' => 'required'
             ]);
         }else{
             $request->validate([
@@ -79,7 +79,7 @@ class CartController extends Controller
                 'lastName' => 'required',
                 'phone' => 'required',
 
-                'company name' => 'required',
+                'company_name' => 'required',
                 'nip' => 'required',
 
                 'street' => 'required',
@@ -87,13 +87,34 @@ class CartController extends Controller
                 'zip_code' => 'required',
                 'city' => 'required',
     
-                'gridCheck1' => 'required'
+                'acceptance_of_the_regulations' => 'required'
             ]);
         }
-
+     
         // Product::create($request->except('_token'));
-//cart.buyWithoutRegistration
-        return $company_or_private_person; //redirect()->route('products.index');
+
+        //$summary = $request->only('firstName', 'lastName');
+        $summary = $request->except('_token');
+
+        // Przekazanie danych do sesji
+        session(['cart_summary' => $summary]);
+        return redirect()->route('carts.summary');
                         //->with('success','Product created successfully.');
+    }
+
+    public function savewithoutregistration(Request $request)
+    {
+        //UserData::create($request->only(['email', 'firstName', 'lastName', 'phone', 'street', 'house_number', 'zip_code', 'city']));
+
+        $data = session('cart_summary');
+      
+        //dd($data);
+        //dd($data['firstName']);
+    
+        if ($data) {
+            personalDetails::create($data);
+            session()->forget('cart_summary');
+        }
+        return redirect()->route('products.index')->with('succes','Order created succesfully');
     }
 }
