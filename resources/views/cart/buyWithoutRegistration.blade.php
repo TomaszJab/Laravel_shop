@@ -66,14 +66,14 @@
                             <div class="row">
                                 <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                     <div class="form-group">
-                                        <label for="company name" class="mb-1 mt-1">Company name<span class="text-danger"> *</span></label>
-                                        <input type="name" class="form-control mb-2" value="{{ old('company name') }}" name="company name" id="company name" placeholder="Enter Company name">
+                                        <label for="company_name" class="mb-1 mt-1">Company name<span class="text-danger"> *</span></label>
+                                        <input type="text" class="form-control mb-2" value="{{ old('company name') }}" name="company_name" id="company name" placeholder="Enter Company name">
                                     </div>
                                 </div>
                                 <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                     <div class="form-group">
                                         <label for="nip" class="mb-1 mt-1">Nip<span class="text-danger"> *</span></label>
-                                        <input type="name" class="form-control mb-2" value="{{ old('nip') }}" name="nip" id="nip" placeholder="Enter Nip">
+                                        <input type="number" class="form-control mb-2" value="{{ old('nip') }}" name="nip" id="nip" placeholder="Enter Nip">
                                     </div>
                                 </div>
                             </div>                           
@@ -84,7 +84,7 @@
                                 <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                     <div class="form-group">
                                         <label for="street" class="mb-1 mt-1">Street<span class="text-danger"> *</span></label>
-                                        <input type="name" value="{{ old('street') }}" name="street" class="form-control mb-2" id="street" placeholder="Enter Street">
+                                        <input type="text" value="{{ old('street') }}" name="street" class="form-control mb-2" id="street" placeholder="Enter Street">
                                     </div>
                                 </div>
                                 <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
@@ -102,7 +102,7 @@
                                 <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                     <div class="form-group">
                                         <label for="city" class="mb-1">City<span class="text-danger"> *</span></label>
-                                        <input type="name" value="{{ old('city') }}" name="city" class="form-control mb-2" id="city" placeholder="Enter City">
+                                        <input type="text" value="{{ old('city') }}" name="city" class="form-control mb-2" id="city" placeholder="Enter City">
                                     </div>
                                 </div>
                             </div>
@@ -115,23 +115,23 @@
                         </div>
                         <div class="row">
                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-                                <!-- <label for="exampleFormControlTextarea1">Example textarea</label> -->
-                                <textarea class="form-control mb-2" name="exampleFormControlTextarea1" id="exampleFormControlTextarea1" rows="2" placeholder="You can write something of your own">{{ old('exampleFormControlTextarea1') }}</textarea>
+                                <!-- <label for="additional_information">Example textarea</label> -->
+                                <textarea class="form-control mb-2" name="additional_information" id="additional_information" rows="2" placeholder="You can write something of your own">{{ old('additional_information') }}</textarea>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                                 <div class="form-check">
-                                    <input class="form-check-input" @if(old('gridCheck1')) checked @endif name="gridCheck1" type="checkbox" id="gridCheck1">
-                                    <label class="form-check-label" for="gridCheck1">I have read the <a href="/statutes" target="_blank">regulations</a> of the online store and accept their content.<span class="text-danger"> *</span></label>
+                                    <input class="form-check-input" @if(old('acceptance_of_the_regulations')) checked @endif name="acceptance_of_the_regulations" type="checkbox" id="acceptance_of_the_regulations">
+                                    <label class="form-check-label" for="acceptance_of_the_regulations">I have read the <a href="/statutes" target="_blank">regulations</a> of the online store and accept their content.<span class="text-danger"> *</span></label>
                                 </div>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                                 <div class="form-check">
-                                    <input class="form-check-input" @if(old('gridCheck2')) checked @endif name="gridCheck2" type="checkbox" id="gridCheck2">
-                                    <label class="form-check-label" for="gridCheck2">I want to receive an invoice</label>
+                                    <input class="form-check-input" @if(old('acceptance_of_the_invoice')) checked @endif name="acceptance_of_the_invoice" type="checkbox" id="acceptance_of_the_invoice">
+                                    <label class="form-check-label" for="acceptance_of_the_invoice">I want to receive an invoice</label>
                                 </div>
                             </div>
                         </div>

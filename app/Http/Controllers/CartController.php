@@ -70,7 +70,7 @@ class CartController extends Controller
                 'zip_code' => 'required',
                 'city' => 'required',
     
-                'gridCheck1' => 'required'
+                'acceptance_of_the_regulations' => 'required'
             ]);
         }else{
             $request->validate([
@@ -79,7 +79,7 @@ class CartController extends Controller
                 'lastName' => 'required',
                 'phone' => 'required',
 
-                'company name' => 'required',
+                'company_name' => 'required',
                 'nip' => 'required',
 
                 'street' => 'required',
@@ -87,7 +87,7 @@ class CartController extends Controller
                 'zip_code' => 'required',
                 'city' => 'required',
     
-                'gridCheck1' => 'required'
+                'acceptance_of_the_regulations' => 'required'
             ]);
         }
      
@@ -110,25 +110,11 @@ class CartController extends Controller
       
         //dd($data);
         //dd($data['firstName']);
-        // $validated = Validator::make($data, [
-        //     'firstName' => 'required',
-        //     'lastName' => 'required',
-        // ]);
     
-    
-        // Zapisanie danych w bazie
-        personalDetails::create([
-            'firstName' => $data['firstName']//,
-            //'lastName' => $data['lastName']
-        ]);
         if ($data) {
-           // personalDetails::create($data);
-           //personalDetails::create([
-            //'firstName' => $data['firstName'] ?? null//,
-            //'lastName' => $data['lastName'] ?? null,
-        //]);
-
+            personalDetails::create($data);
             session()->forget('cart_summary');
         }
+        return redirect()->route('products.index')->with('succes','Order created succesfully');
     }
 }

@@ -56,25 +56,25 @@
                         </div>
 
                         <div class="btn-group mb-1 mt-1" role="group">
-                            <input type="radio" class="btn-check" name="company_or_private_person" value="private_person" id="private_person" autocomplete="off" {{ old('company_or_private_person') == 'private_person' ? 'checked' : '' }} checked disabled>
+                            <input type="radio" class="btn-check" name="company_or_private_person" value="private_person" id="private_person" autocomplete="off" {{ $summary['company_or_private_person'] == 'private_person' ? 'checked' : '' }} checked disabled>
                             <label class="btn btn-primary" style="width: 130px;" for="private_person" onclick="showContent('private person')">Private person</label>
 
-                            <input type="radio" class="btn-check" name="company_or_private_person" value="company" id="company" autocomplete="off" {{ old('company_or_private_person') == 'company' ? 'checked' : '' }} disabled>
+                            <input type="radio" class="btn-check" name="company_or_private_person" value="company" id="company" autocomplete="off" {{ $summary['company_or_private_person'] == 'company' ? 'checked' : '' }} disabled>
                             <label class="btn btn-primary" style="width: 130px;" for="company" onclick="showContent('company_section')" >Company</label>
                         </div>
 
-                        <div id="company_section" class="content-section" style="display: none;">
+                        <div id="company_section" class="content-section" style={{ $summary['company_or_private_person'] == 'company' ? "display: none;" : "" }}>
                             <div class="row">
                                 <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                     <div class="form-group">
                                         <label for="company name" class="mb-1 mt-1">Company name<span class="text-danger"> *</span></label>
-                                        <input type="name" class="form-control mb-2" value="{{ old('company name') }}" name="company name" id="company name" placeholder="Enter Company name" disabled>
+                                        <input type="name" class="form-control mb-2" value="{{ $summary['company_name'] }}" name="company name" id="company name" placeholder="Enter Company name" disabled>
                                     </div>
                                 </div>
                                 <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                     <div class="form-group">
                                         <label for="nip" class="mb-1 mt-1">Nip<span class="text-danger"> *</span></label>
-                                        <input type="name" class="form-control mb-2" value="{{ old('nip') }}" name="nip" id="nip" placeholder="Enter Nip" disabled>
+                                        <input type="name" class="form-control mb-2" value="{{ $summary['nip'] }}" name="nip" id="nip" placeholder="Enter Nip" disabled>
                                     </div>
                                 </div>
                             </div>                           
@@ -116,23 +116,23 @@
                         </div>
                         <div class="row">
                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-                                <!-- <label for="exampleFormControlTextarea1">Example textarea</label> -->
-                                <textarea class="form-control mb-2" name="exampleFormControlTextarea1" id="exampleFormControlTextarea1" rows="2" placeholder="You can write something of your own" disabled>{{ old('exampleFormControlTextarea1') }}</textarea>
+                                <!-- <label for="additional_information">Example textarea</label> -->
+                                <textarea class="form-control mb-2" name="additional_information" id="additional_information" rows="2" placeholder="You can write something of your own" disabled>{{ $summary['additional_information'] }}</textarea>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                                 <div class="form-check">
-                                    <input class="form-check-input" @if($summary['gridCheck1']) checked @endif name="gridCheck1" type="checkbox" id="gridCheck1" disabled>
-                                    <label class="form-check-label" for="gridCheck1">I have read the <a href="/statutes" target="_blank">regulations</a> of the online store and accept their content.<span class="text-danger"> *</span></label>
+                                    <input class="form-check-input" @if($summary['acceptance_of_the_regulations']) checked @endif name="acceptance_of_the_regulations" type="checkbox" id="acceptance_of_the_regulations" disabled>
+                                    <label class="form-check-label" for="acceptance_of_the_regulations">I have read the <a href="/statutes" target="_blank">regulations</a> of the online store and accept their content.<span class="text-danger"> *</span></label>
                                 </div>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                                 <div class="form-check">
-                                    <input class="form-check-input" @if(old('gridCheck2')) checked @endif name="gridCheck2" type="checkbox" id="gridCheck2" disabled>
-                                    <label class="form-check-label" for="gridCheck2">I want to receive an invoice</label>
+                                    <input class="form-check-input" @if($summary['acceptance_of_the_invoice']) checked @endif name="acceptance_of_the_invoice" type="checkbox" id="acceptance_of_the_invoice" disabled>
+                                    <label class="form-check-label" for="acceptance_of_the_invoice">I want to receive an invoice</label>
                                 </div>
                             </div>
                         </div>
