@@ -94,13 +94,18 @@
         <!-- Promo Code -->
         <div class="card mt-4">
             <div class="card-body">
+            <form id="promo-form">
                 <h5 class="card-title mb-3">Apply Promo Code</h5>
                 <div class="input-group mb-3">
-                    <input type="text" class="form-control" placeholder="Enter promo code">
-                    <button class="btn btn-outline-secondary" type="button">Apply</button>
+                @csrf
+                    <input type="text" id="promo_code" class="form-control" placeholder="Enter promo code">
+                    <button class="btn btn-outline-secondary apply-promo" type="submit">Apply</button>
                 </div>
             </div>
+            </form>
         </div>
+            <!-- Feedback message -->
+        <div id="response-message" class="mt-3"></div>
     </div>
 </div>
 @else
@@ -126,5 +131,45 @@
     </div>
 </div>
 @endif       
+
+<script>
+    $(document).ready(function() {
+        // Event listener for form submission
+        $("#promo-form").on('submit', function(e) {
+            e.preventDefault(); // Prevent the default form submission
+
+            // Get form data
+            let promoCode = $("#promo_code").val();
+            let validFrom = $("#valid_from").val();
+            let validUntil = $("#valid_until").val();
+
+            // Send the form data via AJAX to the route
+            $.ajax({
+                url: '/carts/add-promo', // Route for adding the promo code
+                type: 'POST',
+                data: {
+                    _token: "{{ csrf_token() }}", // CSRF token for security
+                    promo_code: promoCode,
+                    valid_from: validFrom,
+                    valid_until: validUntil
+                },
+                success: function(response) {
+                    // Show a success or failure message depending on the response
+                    if (response.success) {
+                        $("#response-message").html('<div class="alert alert-success">Promo code added successfully!</div>');
+                        $("#promo-form")[0].reset(); // Clear the form fields
+                    } else {
+                        $("#response-message").html('<div class="alert alert-danger">Failed to add promo code. Try again!</div>');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    // Handle any error that occurs during the AJAX request
+                    $("#response-message").html('<div class="alert alert-danger">An error occurred. Please try again.</div>');
+                }
+            });
+        });
+    });
+</script>
+
 
 @endsection

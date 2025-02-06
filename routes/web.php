@@ -9,7 +9,7 @@ use App\Http\Controllers\ContactController;
 use App\Http\Controllers\AboutUsController;
 use App\Http\Controllers\HomePageController;
 use App\Http\Controllers\StatuteController;
-
+use App\Models\promoCode;
 use App\Mail\AboutUsLetsTalkMail;
 
 /*
@@ -32,6 +32,40 @@ Route::get('/cart/summary', function () {
     return view('cart.summary');
 })->name('carts.summary');
 Route::post('/cart/savewithoutregistration', [CartController::class, 'savewithoutregistration'])->name('carts.savewithoutregistration');
+use Illuminate\Http\Request;
+Route::post('/carts/add-promo', function (Request $request) {
+    // $request->validate([
+    //     'promo_code' => 'required|unique:promo_codes,promo_code',
+    //     'valid_from' => 'required|date',
+    //     'valid_until' => 'nullable|date|after_or_equal:valid_from',
+    // ]);
+
+    // Dodanie kodu rabatowego do bazy danych
+    // $promo = promoCode::create([
+    //     'promo_code' => $request->input('promo_code'),
+    //     'valid_from' => $request->input('valid_from'),
+    //     'valid_until' => $request->input('valid_until') ?: null, // Ustawienie null, jeśli 'valid_until' jest pusty
+    // ]);
+ 
+    $promo_code = $request->input('promo_code');
+    $promo = promoCode::where('promo_code', $promo_code)->first();
+  //->where('votes', '=', 100)
+
+    // Odpowiedź JSON
+   // return response()->json(['success' => true]);
+    if($promo){
+        return response()->json(['success' => true]);
+    }else{
+        return response()->json(['success' => false]);
+    }
+});
+
+Route::post('/cart/add-promos', function (Request $request) {
+    $promo_code = $request->input('promo_code');
+    $promo = promoCode::where('promo_code', $promo_code)->first();
+    dd($promo);
+})->name('apply.promo.code');
+
 
 Route::resource('contacts', ContactController::class);
 Route::post('/contacts/send-mail', [ContactController::class, 'sendMailLetsTalkMail'])->name('contacts.sendMailLetsTalkMail');
