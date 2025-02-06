@@ -104,12 +104,9 @@ class CartController extends Controller
 
     public function savewithoutregistration(Request $request)
     {
-        //UserData::create($request->only(['email', 'firstName', 'lastName', 'phone', 'street', 'house_number', 'zip_code', 'city']));
-
         $data = session('cart_summary');
       
         //dd($data);
-        //dd($data['firstName']);
     
         if ($data) {
             personalDetails::create($data);
