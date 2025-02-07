@@ -30,11 +30,15 @@
                         <p class="text-muted">Category: Electronics</p>
                     </div>
                     <div class="col-md-2">
-                        <div class="input-group">
-                            <button class="btn btn-outline-secondary btn-sm" type="button">-</button>
-                            <input style="max-width:100px" type="text" class="form-control  form-control-sm text-center quantity-input" value="{{ $details['quantity'] }}">
-                            <button class="btn btn-outline-secondary btn-sm" type="button">+</button>
-                        </div>
+                        <form action="{{ route('carts.changequantity') }}" method="POST">
+                            @csrf
+                            <div class="input-group">
+                                <button class="btn btn-outline-secondary btn-sm" type="submit" name="action" value="decrease">-</button>
+                                <input type="hidden" name="product_id" value="{{ $id }}">
+                                <input style="max-width:100px" type="text" class="form-control  form-control-sm text-center quantity-input" value="{{ $details['quantity'] }}">
+                                <button class="btn btn-outline-secondary btn-sm" type="submit" name="action" value="increase">+</button>
+                            </div>
+                        </form>
                     </div>
                     <div class="col-md-2 text-end">
                         <p class="fw-bold">${{ number_format($details['price'] * $details['quantity'], 2) }}</p>
@@ -76,7 +80,7 @@
                 </div>
                 <div class="d-flex justify-content-between mb-3">
                     <span>Shipping</span>
-                    <span>$10.00</span>
+                    <span>$25.00</span>
                 </div>
                 <div class="d-flex justify-content-between mb-3">
                     <span>Tax</span>
