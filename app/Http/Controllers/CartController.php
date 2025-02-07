@@ -39,6 +39,27 @@ class CartController extends Controller
         return redirect()->back();
     }
 
+    public function changequantity(Request $request)
+    {
+        $action = $request->input("action");
+        $product_id = $request->input("product_id");
+        $cart = session()->get('cart', []);
+
+        if (!isset($cart[$product_id])) {
+            return redirect()->back()->with('error', 'Produkt nie znaleziony w koszyku.');
+        }
+
+        if($action == "decrease"){
+            $cart[$product_id]['quantity'] -= 1;
+        }elseif($action == "increase"){
+            $cart[$product_id]['quantity'] += 1;
+        }
+
+        session()->put('cart', $cart);
+
+        return redirect()->back();
+    }
+
     public function delivery()
     {
         return view('cart.delivery');

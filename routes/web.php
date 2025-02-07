@@ -24,6 +24,7 @@ use App\Mail\AboutUsLetsTalkMail;
 */
 Route::resource('carts', CartController::class);
 Route::post('/cart/clear', [CartController::class, 'clearCart'])->name('carts.clear');
+Route::post('/cart/changequantity', [CartController::class, 'changequantity'])->name('carts.changequantity');
 Route::get('/cart/delivery', [CartController::class, 'delivery'])->name('carts.delivery');
 Route::get('/cart/order', [CartController::class, 'order'])->name('carts.order');
 Route::get('/cart/buyWithoutRegistration', [CartController::class, 'buyWithoutRegistration'])->name('carts.buyWithoutRegistration');
