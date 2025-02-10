@@ -67,6 +67,9 @@ Route::post('/cart/add-promos', function (Request $request) {
     dd($promo);
 })->name('apply.promo.code');
 
+Route::get('/log',function(){
+    return view('log.index');
+})->name('log');
 
 Route::resource('contacts', ContactController::class);
 Route::post('/contacts/send-mail', [ContactController::class, 'sendMailLetsTalkMail'])->name('contacts.sendMailLetsTalkMail');

@@ -13,32 +13,38 @@
 @endif
 
 @if(session('cart'))
+
+@php
+    $cart = session('cart');
+    $products = array_filter($cart, 'is_array'); // Pobierz tylko produkty
+    $subtotal = collect($products)->sum(fn($item) => $item['price'] * $item['quantity']);
+    $shipping = $cart['delivery'] ?? '$25';
+    $payment = $cart['payment'] ?? '$0';
+@endphp
+
 <div class="row">
     <div class="col-lg-8 mb-4">
         <div class="card" style="top: 0;">
             <div class="card-body">
-                @foreach(session('cart') as $id => $details)
+                @foreach($products as $id => $details)
                 @if(!$loop->first)
                     <hr>
                 @endif
                 <div class="row cart-item mb-0">
                     <div class="col-md-3">
-                        <img src="https://via.placeholder.com/100" alt="Product 1" class="img-fluid rounded">
+                        <div class="fakeimg img-fluid rounded p-2" style="max-height: 100px; max-width: 180px">Fake Image</div>
                     </div>
                     <div class="col-md-5">
                         <h5 class="card-title">{{ $details['name'] }}</h5>
-                        <p class="text-muted">Category: Electronics</p>
+                        <p class="text-muted">Category: {{ $details['name_category_product'] }}</p>
                     </div>
                     <div class="col-md-2">
-                        <form action="{{ route('carts.changequantity') }}" method="POST">
-                            @csrf
-                            <div class="input-group">
-                                <button class="btn btn-outline-secondary btn-sm" type="submit" name="action" value="decrease">-</button>
-                                <input type="hidden" name="product_id" value="{{ $id }}">
-                                <input style="max-width:100px" type="text" class="form-control  form-control-sm text-center quantity-input" value="{{ $details['quantity'] }}">
-                                <button class="btn btn-outline-secondary btn-sm" type="submit" name="action" value="increase">+</button>
-                            </div>
-                        </form>
+                        <div class="input-group">
+                            <button class="btn btn-outline-secondary btn-sm quantity-btn decrease" data-action="decrease" data-product-id="{{ $id }}">-</button>
+                            <input type="text" class="form-control form-control-sm text-center quantity-input" style="max-width:100px" value="{{ $details['quantity'] }}" readonly>
+                            <button class="btn btn-outline-secondary btn-sm quantity-btn increase" data-action="increase" data-product-id="{{ $id }}">+</button>
+                        </div>
+                        <div id="response-message"></div>
                     </div>
                     <div class="col-md-2 text-end">
                         <p class="fw-bold">${{ number_format($details['price'] * $details['quantity'], 2) }}</p>
@@ -76,23 +82,22 @@
                 <h5 class="card-title mb-4">Order Summary</h5>
                 <div class="d-flex justify-content-between mb-3">
                     <span>Subtotal</span>
-                    <span>$199.97</span>
+                    <span>${{$subtotal}}</span>
                 </div>
                 <div class="d-flex justify-content-between mb-3">
                     <span>Shipping</span>
-                    <span>$25.00</span>
+                    <span>${{$shipping}}</span>
                 </div>
                 <div class="d-flex justify-content-between mb-3">
-                    <span>Tax</span>
-                    <span>$20.00</span>
+                    <span>Payment</span>
+                    <span>${{$payment}}</span>
                 </div>
                 <hr>
                 <div class="d-flex justify-content-between mb-4">
                     <strong>Total</strong>
-                    <strong>${{ collect(session('cart'))->sum(fn($item) => $item['price'] * $item['quantity']) }}</strong>
+                    <strong>${{$subtotal + $shipping + $payment}}</strong>
                 </div>
                 <a href="{{ route('carts.delivery') }}" class="btn btn-primary w-100">Delivery and payment</a>
-                <!-- <button class="btn btn-primary w-100">Proceed to Checkout</button> -->
             </div>
         </div>
         <!-- Promo Code -->
@@ -118,13 +123,9 @@
         <div class="card">
             <div class="card-header">
                 <h5>Cart</h5>
-                <!-- <button type="button" class="btn btn-primary position-relative">
-                Mails <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-secondary">+99 <span class="visually-hidden">unread messages</span></span>
-                </button> -->
             </div>
             <div class="card-body cart text-center">
             <i class="bi bi-cart3 mb-4 mr-3" style="font-size:80px;color: orange;"></i>
-                <!-- <img src="https://i.imgur.com/dCdflKN.png" width="130" height="130" class="img-fluid mb-4 mr-3"> -->
                 <h3><strong>Your Cart is Empty</strong></h3>
                 <h4>Add something to make me happy :)</h4>
                 <a href="{{ route('products.index') }}" class="btn btn-outline-primary m-3">
@@ -137,6 +138,34 @@
 @endif       
 
 <script>
+        $(document).ready(function() {
+        $(".quantity-btn").click(function() {
+            let action = $(this).data("action");
+            let productId = $(this).data("product-id");
+            let quantityInput = $(this).siblings(".quantity-input");
+
+            $.ajax({
+                url: "{{ route('carts.changequantity') }}",
+                type: "POST",
+                data: {
+                    _token: "{{ csrf_token() }}",
+                    action: action,
+                    product_id: productId
+                },
+                success: function(response) {
+                    if (response.success) {
+                        quantityInput.val(response.new_quantity);
+                    } else {
+                        $("#response-message").html('<div class="alert alert-danger">' + response.message + '</div>');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    $("#response-message").html('<div class="alert alert-danger">Błąd: ' + xhr.responseText + '</div>');
+                }
+            });
+        });
+    });
+
     $(document).ready(function() {
         // Event listener for form submission
         $("#promo-form").on('submit', function(e) {
@@ -144,8 +173,8 @@
 
             // Get form data
             let promoCode = $("#promo_code").val();
-            let validFrom = $("#valid_from").val();
-            let validUntil = $("#valid_until").val();
+            //let validFrom = $("#valid_from").val();
+            //let validUntil = $("#valid_until").val();
 
             // Send the form data via AJAX to the route
             $.ajax({
@@ -153,9 +182,9 @@
                 type: 'POST',
                 data: {
                     _token: "{{ csrf_token() }}", // CSRF token for security
-                    promo_code: promoCode,
-                    valid_from: validFrom,
-                    valid_until: validUntil
+                    promo_code: promoCode//,
+                    //valid_from: validFrom,
+                    //valid_until: validUntil
                 },
                 success: function(response) {
                     // Show a success or failure message depending on the response
