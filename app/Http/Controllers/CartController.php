@@ -13,8 +13,10 @@ class CartController extends Controller
 {
     public function index()
     {
-        $cart = session()->get('cart', []);
-        return view('cart.index', compact('cart'));
+        //$cart = session()->get('cart', []);
+        //session()->forget('cart');
+        //dd($cart);
+        return view('cart.index');//, compact('cart'));
     }
 
     public function destroy($id)
@@ -46,7 +48,8 @@ class CartController extends Controller
         $cart = session()->get('cart', []);
 
         if (!isset($cart[$product_id])) {
-            return redirect()->back()->with('error', 'Produkt nie znaleziony w koszyku.');
+            return response()->json(['success' => false, 'message' => 'Produkt nie znaleziony w koszyku.']);
+            //return redirect()->back()->with('error', 'Produkt nie znaleziony w koszyku.');
         }
 
         if($action == "decrease"){
@@ -56,8 +59,9 @@ class CartController extends Controller
         }
 
         session()->put('cart', $cart);
-
-        return redirect()->back();
+        
+        return response()->json(['success' => true, 'new_quantity' => $cart[$product_id]['quantity']]);
+        //return redirect()->back();
     }
 
     public function delivery()

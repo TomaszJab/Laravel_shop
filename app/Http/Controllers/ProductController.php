@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Models\CategoryProduct;
+
 use Illuminate\Http\Request;
 
 use Illuminate\Http\RedirectResponse;
@@ -29,7 +31,7 @@ class ProductController extends Controller
         //     return view('products.index',compact('products','sortOption'));
         // }
         //$products = Product::where('category_products_id', '1')->paginate(4);
-        $products = Product::join('category_products', 'products.category_products_id', '=', 'category_products.id')->where('category_products.name', $categoryName)->paginate(4);
+        $products = Product::join('category_products', 'products.category_products_id', '=', 'category_products.id')->where('category_products.name_category_product', $categoryName)->paginate(6);
         
         return view('products.index',compact('products','sortOption'));
     }
@@ -89,6 +91,7 @@ class ProductController extends Controller
     public function addToCart($id, Request $request)
     {
         $product = Product::findOrFail($id);
+        $category_products = CategoryProduct::where('id', $product->category_products_id)->first();
         $cart = session()->get('cart', []);
 
         if (isset($cart[$product->id])) {
@@ -98,7 +101,16 @@ class ProductController extends Controller
                 'name' => $product->name,
                 'quantity' => 1,
                 'price' => $product->price,
+                'name_category_product' => $category_products->name_category_product	
             ];
+        }
+
+        if (!isset($cart['delivery'])) {
+            $cart['delivery'] = '25';
+        }
+    
+        if (!isset($cart['payment'])) {
+            $cart['payment'] = '0';
         }
 
         session()->put('cart', $cart);

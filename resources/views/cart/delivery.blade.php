@@ -22,11 +22,15 @@
                         <h5 class="card-title mb-4">Delivery</h5>
                         <div class="d-flex justify-content-between mb-3">
                             <span>Kurier</span>
-                            <span>$25</span>
+                            <div class="form-group">
+                            $25 <input class="radio-inline" value="$25" name="radio-delivery" type="radio" onclick="ChangePrice(this.value)" checked>
+                            </div>
                         </div>
                         <div class="d-flex justify-content-between mb-3">
                             <span>Odbiór własny</span>
-                            <span>$0</span>
+                            <div class="form-group">
+                            $0 <input class="radio-inline" value="$0.00" name="radio-delivery" type="radio" onclick="ChangePrice(this.value)">
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -37,27 +41,39 @@
                         <h5 class="card-title mb-4">Payment</h5>
                         <div class="d-flex justify-content-between mb-3">
                             <span>AutoPay</span>
-                            <span>$0</span>
+                            <div class="form-group">
+                            $0 <input class="radio-inline" value="$0.00" name="radio-pay" type="radio" onclick="ChangePayment(this.value)" checked>
+                            </div>
                         </div>
                         <div class="d-flex justify-content-between mb-3">
                             <span>Karty płatnicze</span>
-                            <span>$0</span>
+                            <div class="form-group">
+                            $0 <input class="radio-inline" value="$0.00" name="radio-pay" type="radio" onclick="ChangePayment(this.value)">
+                            </div>
                         </div>
                         <div class="d-flex justify-content-between mb-3">
                             <span>Google Pay</span>
-                            <span>$0</span>
+                            <div class="form-group">
+                            $0 <input class="radio-inline" value="$0.00" name="radio-pay" type="radio" onclick="ChangePayment(this.value)">
+                            </div>
                         </div>
                         <div class="d-flex justify-content-between mb-3">
                             <span>Blik</span>
-                            <span>$0</span>
+                            <div class="form-group">
+                            $0 <input class="radio-inline" value="$0.00" name="radio-pay" type="radio" onclick="ChangePayment(this.value)">
+                            </div>
                         </div>
                         <div class="d-flex justify-content-between mb-3">
                             <span>Szybki przelew online</span>
-                            <span>$0</span>
+                            <div class="form-group">
+                            $0 <input class="radio-inline" value="$0.00" name="radio-pay" type="radio" onclick="ChangePayment(this.value)">
+                            </div>
                         </div>
                         <div class="d-flex justify-content-between mb-3">
                             <span>Płatność przy odbiorze</span>
-                            <span>$24</span>
+                            <div class="form-group">
+                            $24 <input class="radio-inline" value="$24.00" name="radio-pay" type="radio" onclick="ChangePayment(this.value)">
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -91,11 +107,11 @@
                 </div>
                 <div class="d-flex justify-content-between mb-3">
                     <span>Shipping</span>
-                    <span>$10.00</span>
+                    <span id="payment">$0.00</span>
                 </div>
                 <div class="d-flex justify-content-between mb-3">
                     <span>Tax</span>
-                    <span>$20.00</span>
+                    <span id="price">$25.00</span>
                 </div>
                 <hr>
                 <div class="d-flex justify-content-between mb-4">
@@ -130,6 +146,16 @@
         </div>
     </div>
 </div>
-@endif       
+@endif
+
+<script>
+function ChangePrice(price) {
+  document.getElementById("price").textContent = price;
+}
+
+function ChangePayment(price) {
+  document.getElementById("payment").textContent = price;
+}
+</script>
 
 @endsection
