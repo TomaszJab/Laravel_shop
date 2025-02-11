@@ -104,6 +104,9 @@ class ProductController extends Controller
                 'name_category_product' => $category_products->name_category_product	
             ];
         }
+        if (!isset($cart['promo_code'])) {
+        $cart['promo_code'] = '';
+        }
 
         if (!isset($cart['delivery'])) {
             $cart['delivery'] = '25';

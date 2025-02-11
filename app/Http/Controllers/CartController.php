@@ -53,7 +53,9 @@ class CartController extends Controller
         }
 
         if($action == "decrease"){
-            $cart[$product_id]['quantity'] -= 1;
+            if($cart[$product_id]['quantity']> 1){
+                $cart[$product_id]['quantity'] -= 1;
+            }
         }elseif($action == "increase"){
             $cart[$product_id]['quantity'] += 1;
         }

@@ -50,12 +50,16 @@ Route::post('/carts/add-promo', function (Request $request) {
  
     $promo_code = $request->input('promo_code');
     $promo = promoCode::where('promo_code', $promo_code)->first();
+
   //->where('votes', '=', 100)
 
     // Odpowiedź JSON
    // return response()->json(['success' => true]);
     if($promo){
-        return response()->json(['success' => true]);
+        $cart = session()->get('cart', []);
+        $cart['promo_code'] = '10';
+        session()->put('cart', $cart);
+        return response()->json(['success' => true, 'discount' => $cart['promo_code']]);
     }else{
         return response()->json(['success' => false]);
     }
