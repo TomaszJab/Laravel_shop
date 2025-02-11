@@ -18,8 +18,9 @@
     $cart = session('cart');
     $products = array_filter($cart, 'is_array'); // Pobierz tylko produkty
     $subtotal = collect($products)->sum(fn($item) => $item['price'] * $item['quantity']);
-    $shipping = $cart['delivery'] ?? '$25';
-    $payment = $cart['payment'] ?? '$0';
+    $shipping = $cart['delivery'];
+    $payment = $cart['payment'];
+    $total = $subtotal + $shipping + $payment;
 @endphp
 
 <div class="row">
@@ -44,7 +45,7 @@
                             <input type="text" class="form-control form-control-sm text-center quantity-input" style="max-width:100px" value="{{ $details['quantity'] }}" readonly>
                             <button class="btn btn-outline-secondary btn-sm quantity-btn increase" data-action="increase" data-product-id="{{ $id }}">+</button>
                         </div>
-                        <div id="response-message"></div>
+                        <!-- <div id="response-message"></div> -->
                     </div>
                     <div class="col-md-2 text-end">
                         <p class="fw-bold">${{ number_format($details['price'] * $details['quantity'], 2) }}</p>
@@ -82,20 +83,35 @@
                 <h5 class="card-title mb-4">Order Summary</h5>
                 <div class="d-flex justify-content-between mb-3">
                     <span>Subtotal</span>
-                    <span>${{$subtotal}}</span>
+                    <span id="subtotalValue">${{$subtotal}}</span>
                 </div>
                 <div class="d-flex justify-content-between mb-3">
                     <span>Shipping</span>
-                    <span>${{$shipping}}</span>
+                    <span id="shippingValue">${{$shipping}}</span>
                 </div>
                 <div class="d-flex justify-content-between mb-3">
                     <span>Payment</span>
-                    <span>${{$payment}}</span>
+                    <span id="paymentValue">${{$payment}}</span>
                 </div>
+                @if (!empty($cart['promo_code']))
+                <div class="discount" id="discount" style="display: inline;">
+                @else
+                <div class="discount" id="discount" style="display: none;">
+                @endif
+                    <div class="d-flex justify-content-between mb-3">
+                        <span>Discount</span>
+                        <span id="discountValue">{{$cart['promo_code']}}%</span>
+                    </div> 
+                </div>
+                              
                 <hr>
                 <div class="d-flex justify-content-between mb-4">
                     <strong>Total</strong>
-                    <strong>${{$subtotal + $shipping + $payment}}</strong>
+                @if ($cart['promo_code']<>'')
+                    <strong id="totalValue">${{$total - ($total * $cart['promo_code'])/100}}</strong>
+                @else
+                    <strong id="totalValue">${{$total}}</strong>
+                @endif
                 </div>
                 <a href="{{ route('carts.delivery') }}" class="btn btn-primary w-100">Delivery and payment</a>
             </div>
@@ -191,6 +207,21 @@
                     if (response.success) {
                         $("#response-message").html('<div class="alert alert-success">Promo code added successfully!</div>');
                         $("#promo-form")[0].reset(); // Clear the form fields
+                        document.getElementById("discount").style.display = "inline";
+                        $('#discountValue').text(response.discount + "%");
+                        let promoCode = $("#promo_code").val();
+
+                        let subtotalValue = document.getElementById("subtotalValue").innerHTML;
+                        let shippingValue = document.getElementById("shippingValue").innerHTML;
+                        let paymentValue = document.getElementById("paymentValue").innerHTML;
+
+                        subtotalValue = parseFloat(subtotalValue.replace("$", ""));
+                        shippingValue = parseFloat(shippingValue.replace("$", ""));
+                        paymentValue = parseFloat(paymentValue.replace("$", ""));
+                        let totalValue = subtotalValue + shippingValue + paymentValue;
+                        totalValue = totalValue - (totalValue/response.discount)
+                        $('#totalValue').text('$' + totalValue);
+                        console.log("Subtotal Value:", totalValue);
                     } else {
                         $("#response-message").html('<div class="alert alert-danger">Failed to add promo code. Try again!</div>');
                     }
