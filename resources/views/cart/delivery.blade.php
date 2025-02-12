@@ -1,5 +1,15 @@
 @extends('products.layout')
 @section('content')
+
+@php
+    $cart = session('cart');
+    $products = array_filter($cart, 'is_array'); // Pobierz tylko produkty
+    $subtotal = collect($products)->sum(fn($item) => $item['price'] * $item['quantity']);
+    $shipping = $cart['delivery'];
+    $payment = $cart['payment'];
+    $total = $subtotal + $shipping + $payment;
+@endphp
+
 <div class="row">
     <div class="col-md-12 col-sm-12 mt-4 mb-4 p-4 bg-primary text-white rounded">
         <h1>Your delivery</h1>
@@ -100,24 +110,9 @@
         <!-- Cart Summary -->
         <div class="card cart-summary" style="background-color: #f8f9fa;">
             <div class="card-body">
-                <h5 class="card-title mb-4">Order Summary</h5>
-                <div class="d-flex justify-content-between mb-3">
-                    <span>Subtotal</span>
-                    <span>$199.97</span>
-                </div>
-                <div class="d-flex justify-content-between mb-3">
-                    <span>Shipping</span>
-                    <span id="payment">$0.00</span>
-                </div>
-                <div class="d-flex justify-content-between mb-3">
-                    <span>Tax</span>
-                    <span id="price">$25.00</span>
-                </div>
-                <hr>
-                <div class="d-flex justify-content-between mb-4">
-                    <strong>Total</strong>
-                    <strong>${{ collect(session('cart'))->sum(fn($item) => $item['price'] * $item['quantity']) }}</strong>
-                </div>
+                
+                @include('cart.components.orderSummary')
+                
                 <a href="{{ route('carts.buyWithoutRegistration') }}" class="btn btn-primary w-100">Proceed to Checkout</a>
                 <!-- <button class="btn btn-primary w-100">Proceed to Checkout</button> -->
             </div>
