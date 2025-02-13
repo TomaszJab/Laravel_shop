@@ -145,11 +145,11 @@
 
 <script>
 function ChangePrice(price) {
-  document.getElementById("price").textContent = price;
+  document.getElementById("shippingValue").textContent = price;
 }
 
 function ChangePayment(price) {
-  document.getElementById("payment").textContent = price;
+  document.getElementById("paymentValue").textContent = price;
 }
 </script>
 
