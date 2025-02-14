@@ -146,11 +146,41 @@
 <script>
 function ChangePrice(price) {
   document.getElementById("shippingValue").textContent = price;
+
 }
 
 function ChangePayment(price) {
   document.getElementById("paymentValue").textContent = price;
 }
+
+
+$(document).ready(function() {
+        $(".quantity-btn").click(function() {
+            let action = $(this).data("action");
+            let productId = $(this).data("product-id");
+            let quantityInput = $(this).siblings(".quantity-input");
+
+            $.ajax({
+                url: "{{ route('carts.changequantity') }}",
+                type: "POST",
+                data: {
+                    _token: "{{ csrf_token() }}",
+                    action: action,
+                    product_id: productId
+                },
+                success: function(response) {
+                    if (response.success) {
+                        quantityInput.val(response.new_quantity);
+                    } else {
+                        $("#response-message").html('<div class="alert alert-danger">' + response.message + '</div>');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    $("#response-message").html('<div class="alert alert-danger">Błąd: ' + xhr.responseText + '</div>');
+                }
+            });
+        });
+    });
 </script>
 
 @endsection
