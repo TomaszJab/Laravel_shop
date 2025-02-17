@@ -24,9 +24,5 @@
 <hr>
 <div class="d-flex justify-content-between mb-4">
     <strong>Total</strong>
-    @if ($cart['promo_code']<>'')
-    <strong id="totalValue">${{$total - ($total * $cart['promo_code'])/100}}</strong>
-    @else
     <strong id="totalValue">${{$total}}</strong>
-    @endif
 </div>

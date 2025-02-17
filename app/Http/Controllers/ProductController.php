@@ -104,16 +104,25 @@ class ProductController extends Controller
                 'name_category_product' => $category_products->name_category_product	
             ];
         }
+
+        if (!isset($cart['method_delivery'])) {
+            $cart['method_delivery'] = 'Kurier';
+        }
+
+        if (!isset($cart['method_payment'])) {
+            $cart['method_payment'] = 'AutoPay';
+        }
+
         if (!isset($cart['promo_code'])) {
         $cart['promo_code'] = '';
         }
 
         if (!isset($cart['delivery'])) {
-            $cart['delivery'] = '25';
+            $cart['delivery'] = number_format(25,2);
         }
     
         if (!isset($cart['payment'])) {
-            $cart['payment'] = '0';
+            $cart['payment'] = number_format(0,2);
         }
 
         session()->put('cart', $cart);

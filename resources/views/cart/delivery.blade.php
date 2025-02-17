@@ -1,15 +1,6 @@
 @extends('products.layout')
 @section('content')
 
-@php
-    $cart = session('cart');
-    $products = array_filter($cart, 'is_array'); // Pobierz tylko produkty
-    $subtotal = collect($products)->sum(fn($item) => $item['price'] * $item['quantity']);
-    $shipping = $cart['delivery'];
-    $payment = $cart['payment'];
-    $total = $subtotal + $shipping + $payment;
-@endphp
-
 <div class="row">
     <div class="col-md-12 col-sm-12 mt-4 mb-4 p-4 bg-primary text-white rounded">
         <h1>Your delivery</h1>
@@ -33,13 +24,13 @@
                         <div class="d-flex justify-content-between mb-3">
                             <span>Kurier</span>
                             <div class="form-group">
-                            $25 <input class="radio-inline" value="$25" name="radio-delivery" type="radio" onclick="ChangePrice(this.value)" checked>
+                            $25.00 <input class="radio-inline" value="$25.00" name="radio-delivery" type="radio" onclick="ChangePrice(this.value,'Kurier')" @if($method_delivery == 'Kurier') checked @endif>
                             </div>
                         </div>
                         <div class="d-flex justify-content-between mb-3">
                             <span>Odbiór własny</span>
                             <div class="form-group">
-                            $0 <input class="radio-inline" value="$0.00" name="radio-delivery" type="radio" onclick="ChangePrice(this.value)">
+                            $0.00 <input class="radio-inline" value="$0.00" name="radio-delivery" type="radio" onclick="ChangePrice(this.value,'odbior wlasny')" @if($method_delivery == 'odbior wlasny') checked @endif>
                             </div>
                         </div>
                     </div>
@@ -52,37 +43,37 @@
                         <div class="d-flex justify-content-between mb-3">
                             <span>AutoPay</span>
                             <div class="form-group">
-                            $0 <input class="radio-inline" value="$0.00" name="radio-pay" type="radio" onclick="ChangePayment(this.value)" checked>
+                            $0.00 <input class="radio-inline" value="$0.00" name="radio-pay" type="radio" onclick="ChangePayment(this.value,'AutoPay')" @if($method_payment =='AutoPay') checked @endif>
                             </div>
                         </div>
                         <div class="d-flex justify-content-between mb-3">
                             <span>Karty płatnicze</span>
                             <div class="form-group">
-                            $0 <input class="radio-inline" value="$0.00" name="radio-pay" type="radio" onclick="ChangePayment(this.value)">
+                            $0.00 <input class="radio-inline" value="$0.00" name="radio-pay" type="radio" onclick="ChangePayment(this.value,'Karty płatnicze')" @if($method_payment =='Karty płatnicze') checked @endif>
                             </div>
                         </div>
                         <div class="d-flex justify-content-between mb-3">
                             <span>Google Pay</span>
                             <div class="form-group">
-                            $0 <input class="radio-inline" value="$0.00" name="radio-pay" type="radio" onclick="ChangePayment(this.value)">
+                            $0.00 <input class="radio-inline" value="$0.00" name="radio-pay" type="radio" onclick="ChangePayment(this.value,'Google Pay')" @if($method_payment =='Google Pay') checked @endif>
                             </div>
                         </div>
                         <div class="d-flex justify-content-between mb-3">
                             <span>Blik</span>
                             <div class="form-group">
-                            $0 <input class="radio-inline" value="$0.00" name="radio-pay" type="radio" onclick="ChangePayment(this.value)">
+                            $0.00 <input class="radio-inline" value="$0.00" name="radio-pay" type="radio" onclick="ChangePayment(this.value,'Blik')" @if($method_payment =='Blik') checked @endif>
                             </div>
                         </div>
                         <div class="d-flex justify-content-between mb-3">
                             <span>Szybki przelew online</span>
                             <div class="form-group">
-                            $0 <input class="radio-inline" value="$0.00" name="radio-pay" type="radio" onclick="ChangePayment(this.value)">
+                            $0.00 <input class="radio-inline" value="$0.00" name="radio-pay" type="radio" onclick="ChangePayment(this.value,'Szybki przelew online')" @if($method_payment =='Szybki przelew online') checked @endif>
                             </div>
                         </div>
                         <div class="d-flex justify-content-between mb-3">
                             <span>Płatność przy odbiorze</span>
                             <div class="form-group">
-                            $24 <input class="radio-inline" value="$24.00" name="radio-pay" type="radio" onclick="ChangePayment(this.value)">
+                            $24.00 <input class="radio-inline" value="$24.00" name="radio-pay" type="radio" onclick="ChangePayment(this.value,'Płatność przy odbiorze')" @if($method_payment =='Płatność przy odbiorze') checked @endif>
                             </div>
                         </div>
                     </div>
@@ -144,43 +135,60 @@
 @endif
 
 <script>
-function ChangePrice(price) {
+function ChangePrice(price,method) {
   document.getElementById("shippingValue").textContent = price;
-
+  Change(price,method,"Price");
 }
 
-function ChangePayment(price) {
+function ChangePayment(price,method) {
   document.getElementById("paymentValue").textContent = price;
+  Change(price,method,"Payment");
 }
 
+function Change(price,method,change) {
+    $.ajax({
+        url: "{{ route('carts.changePrice') }}",
+        type: "POST",
+        data: {
+            _token: "{{ csrf_token() }}",
+            price: price,
+            method: method,
+            change:change
+        },
+    success: function(response) {
+        changeDisplayValue();
+        console.log("Change: ok");
+    },
+    error: function(xhr, status, error) {
+        console.log("Wystąpił błąd przy aktualizacji: ");
+    }});
+}
 
-$(document).ready(function() {
-        $(".quantity-btn").click(function() {
-            let action = $(this).data("action");
-            let productId = $(this).data("product-id");
-            let quantityInput = $(this).siblings(".quantity-input");
+function changeDisplayValue(subtotalValue=null) {
 
-            $.ajax({
-                url: "{{ route('carts.changequantity') }}",
-                type: "POST",
-                data: {
-                    _token: "{{ csrf_token() }}",
-                    action: action,
-                    product_id: productId
-                },
-                success: function(response) {
-                    if (response.success) {
-                        quantityInput.val(response.new_quantity);
-                    } else {
-                        $("#response-message").html('<div class="alert alert-danger">' + response.message + '</div>');
-                    }
-                },
-                error: function(xhr, status, error) {
-                    $("#response-message").html('<div class="alert alert-danger">Błąd: ' + xhr.responseText + '</div>');
-                }
-            });
-        });
-    });
+if(subtotalValue == null){
+    subtotalValue = document.getElementById("subtotalValue").innerHTML;
+    subtotalValue = parseFloat(subtotalValue.replace("$", ""));
+}else{
+    subtotalValue = parseFloat(subtotalValue);
+}
+
+let shippingValue = document.getElementById("shippingValue").innerHTML;
+let paymentValue = document.getElementById("paymentValue").innerHTML;
+
+shippingValue = parseFloat(shippingValue.replace("$", ""));
+paymentValue = parseFloat(paymentValue.replace("$", ""));
+let totalValue = subtotalValue + shippingValue + paymentValue;
+
+let discountValue = document.getElementById("discountValue").innerHTML;
+
+if(discountValue!='%'){
+    discountValue = parseFloat(discountValue.replace("%", ""));
+    totalValue = totalValue - (totalValue/discountValue);
+}
+
+$('#totalValue').text('$' + totalValue.toFixed(2));
+}
 </script>
 
 @endsection

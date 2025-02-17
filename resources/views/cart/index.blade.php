@@ -14,15 +14,6 @@
 
 @if(session('cart'))
 
-@php
-    $cart = session('cart');
-    $products = array_filter($cart, 'is_array'); // Pobierz tylko produkty
-    $subtotal = collect($products)->sum(fn($item) => $item['price'] * $item['quantity']);
-    $shipping = $cart['delivery'];
-    $payment = $cart['payment'];
-    $total = $subtotal + $shipping + $payment;
-@endphp
-
 <div class="row">
     <div class="col-lg-8 mb-4">
         <div class="card" style="top: 0;">
@@ -48,7 +39,7 @@
                         <!-- <div id="response-message"></div> -->
                     </div>
                     <div class="col-md-2 text-end">
-                        <p class="fw-bold">${{ number_format($details['price'] * $details['quantity'], 2) }}</p>
+                        <p class="fw-bold"  data-product-id="{{ $id }}">${{ number_format($details['price'] * $details['quantity'], 2) }}</p>
                         <form action="{{ route('carts.destroy',$id) }}" method="POST">
                             @csrf
                             @method('DELETE')
@@ -124,7 +115,7 @@
 @endif       
 
 <script>
-        $(document).ready(function() {
+    $(document).ready(function() {
         $(".quantity-btn").click(function() {
             let action = $(this).data("action");
             let productId = $(this).data("product-id");
@@ -141,6 +132,12 @@
                 success: function(response) {
                     if (response.success) {
                         quantityInput.val(response.new_quantity);
+                        let subtotal = response.new_subtotal;
+                        $('#subtotalValue').text('$' + subtotal);
+                        
+                        let productPriceElement = $(".fw-bold[data-product-id='" + productId + "']");
+                        productPriceElement.text('$' + response.new_subtotalProduct);
+                        changeDisplayValue(subtotal);
                     } else {
                         $("#response-message").html('<div class="alert alert-danger">' + response.message + '</div>');
                     }
@@ -181,17 +178,8 @@
                         $('#discountValue').text(response.discount + "%");
                         let promoCode = $("#promo_code").val();
 
-                        let subtotalValue = document.getElementById("subtotalValue").innerHTML;
-                        let shippingValue = document.getElementById("shippingValue").innerHTML;
-                        let paymentValue = document.getElementById("paymentValue").innerHTML;
-
-                        subtotalValue = parseFloat(subtotalValue.replace("$", ""));
-                        shippingValue = parseFloat(shippingValue.replace("$", ""));
-                        paymentValue = parseFloat(paymentValue.replace("$", ""));
-                        let totalValue = subtotalValue + shippingValue + paymentValue;
-                        totalValue = totalValue - (totalValue/response.discount)
-                        $('#totalValue').text('$' + totalValue);
-                        console.log("Subtotal Value:", totalValue);
+                        changeDisplayValue();
+                        // console.log("Subtotal Value:", totalValue);
                     } else {
                         $("#response-message").html('<div class="alert alert-danger">Failed to add promo code. Try again!</div>');
                     }
@@ -203,6 +191,32 @@
             });
         });
     });
+
+function changeDisplayValue(subtotalValue=null) {
+
+    if(subtotalValue == null){
+        subtotalValue = document.getElementById("subtotalValue").innerHTML;
+        subtotalValue = parseFloat(subtotalValue.replace("$", ""));
+    }else{
+        subtotalValue = parseFloat(subtotalValue);
+    }
+
+    let shippingValue = document.getElementById("shippingValue").innerHTML;
+    let paymentValue = document.getElementById("paymentValue").innerHTML;
+
+    shippingValue = parseFloat(shippingValue.replace("$", ""));
+    paymentValue = parseFloat(paymentValue.replace("$", ""));
+    let totalValue = subtotalValue + shippingValue + paymentValue;
+
+    let discountValue = document.getElementById("discountValue").innerHTML;
+
+    if(discountValue!='%'){
+        discountValue = parseFloat(discountValue.replace("%", ""));
+        totalValue = totalValue - (totalValue/discountValue);
+    }
+
+    $('#totalValue').text('$' + totalValue.toFixed(2));
+}
 </script>
 
 
