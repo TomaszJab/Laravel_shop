@@ -28,6 +28,8 @@ Route::post('/cart/changequantity', [CartController::class, 'changequantity'])->
 Route::get('/cart/delivery', [CartController::class, 'delivery'])->name('carts.delivery');
 Route::get('/cart/order', [CartController::class, 'order'])->name('carts.order');
 Route::get('/cart/buyWithoutRegistration', [CartController::class, 'buyWithoutRegistration'])->name('carts.buyWithoutRegistration');
+Route::post('/cart/changePrice', [CartController::class, 'changePrice'])->name('carts.changePrice');
+
 Route::post('/cart/storewithoutregistration', [CartController::class, 'storewithoutregistration'])->name('carts.withoutregistration.store');
 Route::get('/cart/summary', function () {
     return view('cart.summary');
@@ -80,9 +82,9 @@ Route::post('/contacts/send-mail', [ContactController::class, 'sendMailLetsTalkM
 
 Route::resource('AboutUs', AboutUsController::class);
 
-Route::resource('products', ProductController::class);
 Route::resource('homepage', HomePageController::class);
 
+Route::resource('products', ProductController::class);
 // Route::get('products', [ProductController::class, 'category_products'])->name('products.category_products');;
 Route::post('/products/{product}/comments', [ProductController::class, 'storeComment'])->name('products.comments.store');
 Route::post('/products/{product}/add_to_cart', [ProductController::class, 'addToCart'])->name('products.add_to_cart');

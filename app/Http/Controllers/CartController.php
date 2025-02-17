@@ -13,10 +13,8 @@ class CartController extends Controller
 {
     public function index()
     {
-        //$cart = session()->get('cart', []);
-        //session()->forget('cart');
-        //dd($cart);
-        return view('cart.index');//, compact('cart'));
+        $cartData = $this->dataCart();
+        return view('cart.index',$cartData);
     }
 
     public function destroy($id)
@@ -59,16 +57,47 @@ class CartController extends Controller
         }elseif($action == "increase"){
             $cart[$product_id]['quantity'] += 1;
         }
+        
+        $products = array_filter($cart, 'is_array');
+        $subtotal = number_format(collect($products)->sum(fn($item) => $item['price'] * $item['quantity']), 2);
 
+        $subtotalProduct = number_format(  $cart[$product_id]['price'] * $cart[$product_id]['quantity'], 2);
         session()->put('cart', $cart);
         
-        return response()->json(['success' => true, 'new_quantity' => $cart[$product_id]['quantity']]);
+        return response()->json(['success' => true, 
+        'new_quantity' => $cart[$product_id]['quantity'],
+        'new_subtotal' => $subtotal,
+        'new_subtotalProduct' => $subtotalProduct
+        ]);
+        
         //return redirect()->back();
     }
 
+    public function changePrice(Request $request)
+    {
+        $price = str_replace('$', '', $request->input("price"));
+        $method = $request->input("method");
+        $change = $request->input("change");
+        
+        $cart = session()->get('cart', []);
+
+        if($change == "Price"){
+            $cart['delivery'] = $price;
+            $cart['method_delivery'] = $method;
+        }elseif($change == "Payment"){
+            $cart['payment'] = $price;
+            $cart['method_payment'] = $method;
+        }
+
+        session()->put('cart', $cart);
+        
+        return response()->json(['success' => true]);
+    }
+    
     public function delivery()
     {
-        return view('cart.delivery');
+        $cartData = $this->dataCart();
+        return view('cart.delivery', $cartData);
     }
 
     public function order()
@@ -140,5 +169,33 @@ class CartController extends Controller
             session()->forget('cart_summary');
         }
         return redirect()->route('products.index')->with('succes','Order created succesfully');
+    }
+    
+    private function dataCart(){
+        $cart = session('cart');
+        
+        if($cart){
+            $products = array_filter($cart, 'is_array'); // Pobierz tylko produkty
+            $subtotal = number_format(collect($products)->sum(fn($item) => $item['price'] * $item['quantity']),2);
+            $shipping = $cart['delivery'];
+            $payment = $cart['payment'];
+            
+            $total = number_format($subtotal + $shipping + $payment,2);
+            if ($cart['promo_code']<>''){
+                $total = number_format($total - ($total * $cart['promo_code'])/100,2);
+            }
+            
+            $method_delivery = $cart['method_delivery'];
+            $method_payment = $cart['method_payment'];
+    
+            return compact(
+                'cart', 'products', 'subtotal', 'shipping', 'payment', 'total', 
+                'method_delivery', 'method_payment'
+            );  
+        }
+
+        return compact(
+            'cart'
+        );
     }
 }
