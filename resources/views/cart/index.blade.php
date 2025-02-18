@@ -20,7 +20,7 @@
             <div class="card-body">
                 @foreach($products as $id => $details)
                 @if(!$loop->first)
-                    <hr>
+                    <hr class="product-divider" id="divider-{{ $id }}">divider-{{ $id }}
                 @endif
                 <div class="row cart-item mb-0">
                     <div class="col-md-3">
@@ -40,11 +40,12 @@
                     </div>
                     <div class="col-md-2 text-end">
                         <p class="fw-bold"  data-product-id="{{ $id }}">${{ number_format($details['price'] * $details['quantity'], 2) }}</p>
-                        <form action="{{ route('carts.destroy',$id) }}" method="POST">
+                        <!-- <form action="{{ route('carts.destroy',$id) }}" method="POST">
+
                             @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
-                        </form>
+                            @method('DELETE') -->
+                            <button type="submit" class="btn btn-sm btn-outline-danger delete-product" data-product-id="{{ $id }}"><i class="bi bi-trash"></i></button>
+                        <!-- </form> -->
                     </div>
                 </div>
                 @endforeach
@@ -191,6 +192,61 @@
             });
         });
     });
+
+$(document).ready(function () {
+    $(".delete-product").click(function (e) {
+        e.preventDefault();
+
+        // Pobierz ID produktu i rodzicielski wiersz HTML
+        let productId = $(this).data("product-id");
+        let rowElement = $(this).closest(".cart-item");
+        let productCount = $(".cart-item").length; // Liczba produktów w koszyku
+        let divider = $("#divider-" + productId)
+
+        // Usuwanie AJAX
+        $.ajax({
+            url: "{{ route('carts.destroy', '') }}/" + productId, // Tworzenie URL
+            type: "POST",
+            data: {
+                _token: "{{ csrf_token() }}", // Token CSRF dla bezpieczeństwa
+                _method: "DELETE" // Specyfikacja metody DELETE
+            },
+            success: function (response) {
+                if (response.success) {
+                    // Usuń wiersz produktu z DOM
+                    console.log("Trying to remove divider with ID: ", "divider-" + productId);
+                    console.log($("#divider-" + productId).length > 0 ? "Divider found!" : "Divider not found!");
+
+                    if(response.reload){
+                        window.location.reload();
+                        return;
+                    }
+
+                    rowElement.remove();
+                   
+                    if (divider.length) {
+                        divider.remove();
+                    }else{
+                        divider = $("#divider-" + response.secondProductId);
+                        divider.remove();
+                       // $(".product-divider").remove();
+                    }
+
+                    // Zaktualizuj subtotal i total w koszyku
+                    $('#subtotalValue').text('$' + response.new_subtotal.toFixed(2));
+                    changeDisplayValue(response.new_subtotal);
+                } else {
+                    // Wyświetl błąd, jeśli wystąpił problem
+                    //$("#response-message").html('<div class="alert alert-danger">' + response.message + '</div>');
+                }
+            },
+            error: function (xhr, status, error) {
+                // Obsługa błędów
+                //$("#response-message").html('<div class="alert alert-danger">Error: ' + xhr.responseText + '</div>');
+            }
+        });
+    });
+});
 
 function changeDisplayValue(subtotalValue=null) {
 
