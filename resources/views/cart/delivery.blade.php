@@ -153,7 +153,7 @@ function Change(price,method,change) {
             _token: "{{ csrf_token() }}",
             price: price,
             method: method,
-            change:change
+            change: change
         },
     success: function(response) {
         changeDisplayValue();

@@ -14,23 +14,87 @@ class CartController extends Controller
     public function index()
     {
         $cartData = $this->dataCart();
+       // dd($cartData);
         return view('cart.index',$cartData);
     }
+
+    // public function destroy($id)
+    // {
+    //     if ($id) {
+    //          $cart = session()->get('cart');
+
+    //         if (isset($cart[$id])) {
+    //             unset($cart[$id]);
+    //             $products = array_filter($cart, 'is_array');
+
+    //             if($products){
+    //                 session()->put('cart', $cart);
+    //             }else{
+    //                 session()->forget('cart');
+    //             }
+    //         }
+    //         session()->flash('success', 'Product removed successfully');
+    //     }else{
+    //         //session()->flash('success', 'Product not removed successfully');
+    //     }
+    //     return redirect()->back();
+    // }
 
     public function destroy($id)
     {
         if ($id) {
-             $cart = session()->get('cart');
+            $cart = session()->get('cart');
+            
+           if (isset($cart[$id])) {
+                $products = array_filter($cart, 'is_array');
+                $keys = array_keys($products);
+                if(count($products)>=2){
+                    $secondProductId = $keys[1];
+                }else{
+                    $secondProductId = $keys[0];
+                }
 
-            if (isset($cart[$id])) {
                 unset($cart[$id]);
-                session()->put('cart', $cart);
-            }
-            session()->flash('success', 'Product removed successfully');
-        }else{
-            //session()->flash('success', 'Product not removed successfully');
-        }
-        return redirect()->back();
+                //$products = array_filter($cart, 'is_array');
+               
+               if(count($products) >= 2){
+                   session()->put('cart', $cart);
+                   $subtotal = collect($products)->sum(fn($item) => $item['price'] * $item['quantity']);
+                   
+
+                   if (count($products) >= 2) {
+                    return response()->json([
+                        'success' => true,
+                        'reload' => false,
+                        'new_subtotal' => $subtotal,
+                        'secondProductId' => $secondProductId,
+                        'message' => 'Produkt został usunięty z koszyka.'
+                        ]);
+                   }elseif (count($products) == 1) {
+                        return response()->json([
+                            'success' => true,
+                            'reload' => true,
+                            'new_subtotal' => $subtotal,
+                            'secondProductId' => $secondProductId,
+                            'message' => 'Produkt został usunięty z koszyka.'
+                        ]);
+                    }
+               }else{
+                   session()->forget('cart');
+                   //return view('cart.index');
+               }
+           }
+           //session()->flash('success', 'Product removed successfully');
+       }else{
+           //session()->flash('success', 'Product not removed successfully');
+       }
+        return response()->json([
+            'success' => true,
+            'reload' => true,
+            'new_subtotal' => 0,
+            'secondProductId' => $secondProductId,
+            'message' => 'Produkt został usunięty z koszyka.'
+        ]);
     }
 
     public function clearCart()
