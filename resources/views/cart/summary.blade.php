@@ -15,7 +15,35 @@
 @endphp
 
 <div class="row">
-    <div class="col-lg-12 mb-4 mt-4">
+    <div class="col-md-12 col-sm-12 mt-4 mb-4 p-4 bg-primary text-white rounded">
+        <h1>Summary</h1>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-lg-8">
+        @include('cart.components.cart-item',['enableButtons' => false])
+        <br/>
+        <div class="row botton">
+            <div class="col-12 col-md-12 text-end">
+                <!-- Edit Cart Button -->
+                <a href="{{ route('carts.index') }}" class="btn btn-outline-primary">Edit Cart</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <!-- Cart Summary -->
+        <div class="card cart-summary" style="background-color: #f8f9fa;">
+            <div class="card-body">
+                @include('cart.components.orderSummary')
+                <a href="{{ route('carts.delivery') }}" class="btn btn-outline-primary w-100">Edit delivery and payment</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-12 mb-4">
             <div class="card">
                 <form action="{{ route('carts.savewithoutregistration') }}" method="POST">
                 @csrf
