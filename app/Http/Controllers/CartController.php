@@ -55,34 +55,28 @@ class CartController extends Controller
                 }
 
                 unset($cart[$id]);
-                //$products = array_filter($cart, 'is_array');
                
-               if(count($products) >= 2){
-                   session()->put('cart', $cart);
-                   $subtotal = collect($products)->sum(fn($item) => $item['price'] * $item['quantity']);
-                   
+                if(count($products) >= 2){
+                    session()->put('cart', $cart);
+                    $subtotal = collect($products)->sum(fn($item) => $item['price'] * $item['quantity']);
 
-                   if (count($products) >= 2) {
+                    if (count($products) >= 2) {
+                        $reload = false;
+                    }elseif (count($products) == 1) {
+                        $reload = true; 
+                    }
+
                     return response()->json([
                         'success' => true,
-                        'reload' => false,
+                        'reload' => $reload,
                         'new_subtotal' => $subtotal,
                         'secondProductId' => $secondProductId,
                         'message' => 'Produkt został usunięty z koszyka.'
                         ]);
-                   }elseif (count($products) == 1) {
-                        return response()->json([
-                            'success' => true,
-                            'reload' => true,
-                            'new_subtotal' => $subtotal,
-                            'secondProductId' => $secondProductId,
-                            'message' => 'Produkt został usunięty z koszyka.'
-                        ]);
-                    }
-               }else{
+                }else{
                    session()->forget('cart');
                    //return view('cart.index');
-               }
+                }
            }
            //session()->flash('success', 'Product removed successfully');
        }else{
@@ -233,6 +227,11 @@ class CartController extends Controller
             session()->forget('cart_summary');
         }
         return redirect()->route('products.index')->with('succes','Order created succesfully');
+    }
+
+    public function summary(){
+        $cartData = $this->dataCart();
+        return view('cart.summary', $cartData);
     }
     
     private function dataCart(){

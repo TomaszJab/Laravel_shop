@@ -32,9 +32,7 @@ Route::get('/cart/buyWithoutRegistration', [CartController::class, 'buyWithoutRe
 Route::post('/cart/changePrice', [CartController::class, 'changePrice'])->name('carts.changePrice');
 
 Route::post('/cart/storewithoutregistration', [CartController::class, 'storewithoutregistration'])->name('carts.withoutregistration.store');
-Route::get('/cart/summary', function () {
-    return view('cart.summary');
-})->name('carts.summary');
+Route::get('/cart/summary', [CartController::class, 'summary'])->name('carts.summary');
 Route::post('/cart/savewithoutregistration', [CartController::class, 'savewithoutregistration'])->name('carts.savewithoutregistration');
 use Illuminate\Http\Request;
 Route::post('/carts/add-promo', function (Request $request) {
