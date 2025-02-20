@@ -159,7 +159,7 @@
                         <div class="row">
                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                                 <div class="form-check">
-                                    <input class="form-check-input" @if($summary['acceptance_of_the_invoice']) checked @endif name="acceptance_of_the_invoice" type="checkbox" id="acceptance_of_the_invoice" disabled>
+                                    <input class="form-check-input" @if($summary['acceptance_of_the_invoice'] ?? false) checked @endif name="acceptance_of_the_invoice" type="checkbox" id="acceptance_of_the_invoice" disabled>
                                     <label class="form-check-label" for="acceptance_of_the_invoice">I want to receive an invoice</label>
                                 </div>
                             </div>

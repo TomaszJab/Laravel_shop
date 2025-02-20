@@ -12,11 +12,16 @@ class Product extends Model
 
     public function comments()
     {
-    return $this->hasMany(Comment::class);
+     return $this->hasMany(Comment::class);
     }
 
-    public function CategoryProducts()
+    public function categoryProducts()
     {
-    return $this->hasMany(CategoryProduct::class);
+        return $this->belongsTo(CategoryProduct::class, 'category_products_id');
+    }
+    //product_id
+    public function orders()
+    {
+        return $this->hasMany(Order::class, 'product_id');
     }
 }
