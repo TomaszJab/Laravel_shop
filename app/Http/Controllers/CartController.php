@@ -9,6 +9,9 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Response;
 use Illuminate\View\View;
 use App\Models\personalDetails;
+use App\Models\OrderProduct;
+use App\Models\Order;
+
 class CartController extends Controller
 {
     public function index()
@@ -222,10 +225,42 @@ class CartController extends Controller
       
         //dd($data);
     
-        if ($data) {
-            personalDetails::create($data);
+        //if ($data) {
+            $personalDetails = personalDetails::create($data);
             session()->forget('cart_summary');
-        }
+        //}
+
+        $cartData = $this->dataCart();
+        
+        $orderProduct = [//'user_id' => ,
+        'personal_details_id' => $personalDetails->id,
+        'method_delivery' => $cartData['method_delivery'],
+        'method_payment' => $cartData['method_payment'],
+        'promo_code' => $cartData['cart']['promo_code'],
+        'delivery' => $cartData['shipping'],
+        'payment' => $cartData['payment']];
+
+        $orderProduct = OrderProduct::create($orderProduct);
+
+
+        // $order = ['product_id',
+        // 'order_product_id' =>  $orderProduct->id,
+        // 'name',
+        // 'quantity',
+        // 'price'];
+        // $cart[$product->id] = [
+        //     'name' => $product->name,
+        //     'quantity' => 1,
+        //     'price' => $product->price,
+        //     'name_category_product' => $category_products->name_category_product	
+        // ];
+
+        $cartData['products']['order_product_id'] =  $orderProduct->id;
+
+        $order = Order::create($cartData['products']);
+
+        //session()->forget('cart');
+
         return redirect()->route('products.index')->with('succes','Order created succesfully');
     }
 
