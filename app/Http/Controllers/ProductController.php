@@ -114,7 +114,7 @@ class ProductController extends Controller
         }
 
         if (!isset($cart['promo_code'])) {
-        $cart['promo_code'] = '';
+            $cart['promo_code'] = null;
         }
 
         if (!isset($cart['delivery'])) {
