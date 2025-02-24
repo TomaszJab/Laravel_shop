@@ -231,35 +231,32 @@ class CartController extends Controller
         //}
 
         $cartData = $this->dataCart();
-        
+        //dd($cartData['promo_code']);
         $orderProduct = [//'user_id' => ,
         'personal_details_id' => $personalDetails->id,
         'method_delivery' => $cartData['method_delivery'],
         'method_payment' => $cartData['method_payment'],
-        'promo_code' => $cartData['cart']['promo_code'],
+        'promo_code' => $cartData['promo_code'],
         'delivery' => $cartData['shipping'],
         'payment' => $cartData['payment']];
 
         $orderProduct = OrderProduct::create($orderProduct);
+        $order_product_id = $orderProduct -> id;
 
+        $order = array_map(function ($product, $productId) use ($order_product_id) {
+             return [
+                    'product_id' => $productId, 
+                    'order_product_id' => $order_product_id, 
+                    'name' => $product['name'], 
+                    'quantity' => $product['quantity'], 
+                    'price' => $product['price'],
+                    'created_at' => now(),
+                    'updated_at' => now()
+                ];
+        }, $cartData['products'], array_keys($cartData['products']));
 
-        // $order = ['product_id',
-        // 'order_product_id' =>  $orderProduct->id,
-        // 'name',
-        // 'quantity',
-        // 'price'];
-        // $cart[$product->id] = [
-        //     'name' => $product->name,
-        //     'quantity' => 1,
-        //     'price' => $product->price,
-        //     'name_category_product' => $category_products->name_category_product	
-        // ];
-
-        $cartData['products']['order_product_id'] =  $orderProduct->id;
-
-        $order = Order::create($cartData['products']);
-
-        //session()->forget('cart');
+        $order = Order::insert($order);
+        session()->forget('cart');
 
         return redirect()->route('products.index')->with('succes','Order created succesfully');
     }
@@ -285,9 +282,10 @@ class CartController extends Controller
             
             $method_delivery = $cart['method_delivery'];
             $method_payment = $cart['method_payment'];
-    
+            $promo_code = $cart['promo_code'];
+
             return compact(
-                'cart', 'products', 'subtotal', 'shipping', 'payment', 'total', 
+                'cart', 'products', 'subtotal', 'shipping', 'payment', 'total', 'promo_code',
                 'method_delivery', 'method_payment'
             );  
         }
