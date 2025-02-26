@@ -22,35 +22,37 @@
         <div id="orders" class="content-section">
             <div class="card">
                 <div class="card-body">
-                <h5 class="card-title">Delivery</h5>
+                    <h5 class="card-title text-primary">Delivery </h5>
+                
                     <div class="table-responsive-xl">
                         <table class="table-responsive-xl table table-hover table-striped">
                             <thead>
                                 <tr>
-                                <th scope="col">numer zamówienia</th>
-                                <th scope="col">wartość</th>
-                                <th scope="col">status</th>
-                                <th scope="col">przesylka</th>
+                                    <th scope="col">id</th>
+                                    <th scope="col">wartość</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col">Promo code</th>
+                                    <th scope="col">Delivery</th>
+                                    <th scope="col">Payment</th>
+                                    <th scope="col">Created at</th>
+                                    <th scope="col">created at</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                <th scope="row">1</th>
-                                <td>Mark</td>
-                                <td>Otto</td>
-                                <td>@mdo</td>
-                                </tr>
-                                <tr>
-                                <th scope="row">2</th>
-                                <td>Jacob</td>
-                                <td>Thornton</td>
-                                <td>@fat</td>
-                                </tr>
-                                <th scope="row">2</th>
-                                <td>Jacob</td>
-                                <td>Thornton</td>
-                                <td>@fat</td>
-                                </tr>
+                                @foreach ($OrderProducts as $OrderProduct)
+                                    <tr>
+                                        <th scope="row">{{ $OrderProduct -> personal_details_id }}</th>
+                                        <td>{{ $OrderProduct -> method_delivery }}</td>
+                                        <td>{{ $OrderProduct -> method_payment }}</td>
+                                        <td>{{ $OrderProduct -> promo_code ?? 'brak' }}</td>
+                                        <td>{{ $OrderProduct -> delivery }}</td>
+                                        <td>{{ $OrderProduct -> payment }}</td>
+                                        <td>{{ $OrderProduct -> created_at }}</td> 
+                                        <td>
+                                            <a class="btn btn-primary" href="{{ route('carts.order.details', $OrderProduct -> id) }}">Show</a>
+                                        </td> 
+                                    </tr>
+                                @endforeach
                             </tbody>
                         </table>
                     </div>
@@ -200,8 +202,12 @@
         </div>
 
         <div id="account" class="content-section" style="display: none;">
-            <h3>Account Settings</h3>
-            <p>Here you can manage your account settings.</p>
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="text-primary">Account Settings</h5>
+                    <p>Here you can manage your account settings.</p>
+                </div>
+            </div>
         </div>
     </div>
 </div>

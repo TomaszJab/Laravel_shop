@@ -28,6 +28,7 @@ Route::post('/cart/clear', [CartController::class, 'clearCart'])->name('carts.cl
 Route::post('/cart/changequantity', [CartController::class, 'changequantity'])->name('carts.changequantity');
 Route::get('/cart/delivery', [CartController::class, 'delivery'])->name('carts.delivery');
 Route::get('/cart/order', [CartController::class, 'order'])->name('carts.order');
+Route::get('/cart/order/details/{order_product_id}', [CartController::class, 'details'])->name('carts.order.details');
 Route::get('/cart/buyWithoutRegistration', [CartController::class, 'buyWithoutRegistration'])->name('carts.buyWithoutRegistration');
 Route::post('/cart/changePrice', [CartController::class, 'changePrice'])->name('carts.changePrice');
 

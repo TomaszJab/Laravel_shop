@@ -18,7 +18,42 @@ class CartController extends Controller
     {
         $cartData = $this->dataCart();
        // dd($cartData);
-        return view('cart.index',$cartData);
+        return view('cart.index', $cartData);
+    }
+
+    public function details($order_product_id)
+    {
+       // $cartData = $this->dataCart();
+       // dd($cartData);
+        $orderData = Order::where('order_product_id', $order_product_id) -> get();
+
+        $orderProductData = OrderProduct::where('id', $order_product_id) -> first();
+
+        $subtotal = $orderProductData -> subtotal;
+        $shipping = $orderProductData -> delivery; 
+        $payment = $orderProductData -> payment;
+        $promo_code = $orderProductData -> promo_code;
+        $total = $orderProductData -> total;
+
+        $personal_details_id = $orderProductData -> personal_details_id;
+        $personalDetails = personalDetails::where('id', $orderProductData -> personal_details_id) -> first();
+           // session()->forget('cart_summary');
+
+          // $summary = session('cart_summary', []);
+        
+           //return view('cart.summary', array_merge($cartData, ['summary' => $summary]));
+
+           //$OrderProducts = OrderProduct::get();
+           //return view('cart.order', ['OrderProducts' => $orderProductData]);
+        return view('cart.summary', ['products' => $orderData,
+            'subtotal' => $subtotal,
+            'shipping' => $shipping,
+            'payment' => $payment,
+            'promo_code' => $promo_code,
+            'total' => $total,
+            'enableButtons' => false,
+            'summary' => $personalDetails
+        ]);
     }
 
     // public function destroy($id)
@@ -126,9 +161,9 @@ class CartController extends Controller
         session()->put('cart', $cart);
         
         return response()->json(['success' => true, 
-        'new_quantity' => $cart[$product_id]['quantity'],
-        'new_subtotal' => $subtotal,
-        'new_subtotalProduct' => $subtotalProduct
+            'new_quantity' => $cart[$product_id]['quantity'],
+            'new_subtotal' => $subtotal,
+            'new_subtotalProduct' => $subtotalProduct
         ]);
         
         //return redirect()->back();
@@ -163,7 +198,8 @@ class CartController extends Controller
 
     public function order()
     {
-        return view('cart.order');
+        $OrderProducts = OrderProduct::get();
+        return view('cart.order', ['OrderProducts' => $OrderProducts]);
     }
 
     public function buyWithoutRegistration()
@@ -232,12 +268,15 @@ class CartController extends Controller
 
         $cartData = $this->dataCart();
         //dd($cartData['promo_code']);
-        $orderProduct = [//'user_id' => ,
+        $orderProduct = [
+            //'user_id' => ,
         'personal_details_id' => $personalDetails->id,
         'method_delivery' => $cartData['method_delivery'],
         'method_payment' => $cartData['method_payment'],
         'promo_code' => $cartData['promo_code'],
         'delivery' => $cartData['shipping'],
+        'subtotal' => $cartData['subtotal'],
+        'total' => $cartData['total'],
         'payment' => $cartData['payment']];
 
         $orderProduct = OrderProduct::create($orderProduct);
@@ -250,6 +289,7 @@ class CartController extends Controller
                     'name' => $product['name'], 
                     'quantity' => $product['quantity'], 
                     'price' => $product['price'],
+                    'category_products_id' => $product['category_products_id'],
                     'created_at' => now(),
                     'updated_at' => now()
                 ];
@@ -263,7 +303,9 @@ class CartController extends Controller
 
     public function summary(){
         $cartData = $this->dataCart();
-        return view('cart.summary', $cartData);
+        $summary = session('cart_summary', []);
+
+        return view('cart.summary', array_merge($cartData, ['summary' => $summary]));
     }
     
     private function dataCart(){

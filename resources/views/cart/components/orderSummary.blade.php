@@ -18,7 +18,7 @@
 @endif
     <div class="d-flex justify-content-between mb-3">
         <span>Discount</span>
-        <span id="discountValue">{{$cart['promo_code']}}%</span>
+        <span id="discountValue">{{$promo_code}}%</span>
     </div> 
 </div>    
 <hr>

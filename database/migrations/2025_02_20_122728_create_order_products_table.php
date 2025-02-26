@@ -20,6 +20,8 @@ return new class extends Migration
             $table->string('promo_code') -> nullable();
             $table->decimal('delivery', 10, 2);
             $table->decimal('payment', 10, 2);
+            $table->decimal('subtotal', 10, 2);
+            $table->decimal('total', 10, 2);
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');

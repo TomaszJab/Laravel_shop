@@ -1,9 +1,9 @@
 <div class="card" style="top: 0;">
             <div class="card-body">
                 @foreach($products as $id => $details)
-                @if(!$loop->first)
-                    <hr class="product-divider" id="divider-{{ $id }}">
-                @endif
+                    @if(!$loop->first)
+                        <hr class="product-divider" id="divider-{{ $id }}">
+                    @endif
                 <div class="row cart-item mb-0">
                     <div class="col-md-3">
                         <div class="fakeimg img-fluid rounded p-2" style="max-height: 100px; max-width: 180px">Fake Image</div>

@@ -17,7 +17,7 @@
 <div class="row">
     <div class="col-lg-8 mb-4">
  
-        @include('cart.components.cart-item',['enableButtons' => true])
+        @include('cart.components.cart-item', ['enableButtons' => true])
         <br/>
         <div class="row botton">
             <div class="col-6 col-md-6 text-start">

@@ -10,9 +10,6 @@
         </ul>
     </div>
 @endif
-@php
-    $summary = session('cart_summary', []);
-@endphp
 
 <div class="row">
     <div class="col-md-12 col-sm-12 mt-4 mb-4 p-4 bg-primary text-white rounded">
@@ -27,7 +24,9 @@
         <div class="row botton">
             <div class="col-12 col-md-12 text-end">
                 <!-- Edit Cart Button -->
-                <a href="{{ route('carts.index') }}" class="btn btn-outline-primary">Edit Cart</a>
+                @if($enableButtons ?? true)
+                    <a href="{{ route('carts.index') }}" class="btn btn-outline-primary">Edit Cart</a>
+                @endif
             </div>
         </div>
     </div>
@@ -36,7 +35,9 @@
         <div class="card cart-summary" style="background-color: #f8f9fa;">
             <div class="card-body">
                 @include('cart.components.orderSummary')
-                <a href="{{ route('carts.delivery') }}" class="btn btn-outline-primary w-100">Edit delivery and payment</a>
+                @if($enableButtons ?? true)
+                    <a href="{{ route('carts.delivery') }}" class="btn btn-outline-primary w-100">Edit delivery and payment</a>
+                @endif
             </div>
         </div>
     </div>
@@ -148,6 +149,7 @@
                                 <textarea class="form-control mb-2" name="additional_information" id="additional_information" rows="2" placeholder="You can write something of your own" disabled>{{ $summary['additional_information'] }}</textarea>
                             </div>
                         </div>
+                        @if($enableButtons ?? true)
                         <div class="row">
                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                                 <div class="form-check">
@@ -171,6 +173,7 @@
                                 </div>
                             </div>
                         </div>
+                        @endif
                     </div>
                 </form>
             </div>
