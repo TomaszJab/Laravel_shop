@@ -18,11 +18,13 @@ return new class extends Migration
             $table->string('name');
             $table->string('quantity');
             $table->decimal('price', 10, 2);
+            $table->unsignedBigInteger('category_products_id');
 
             $table->timestamps();
             
             $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
             $table->foreign('order_product_id')->references('id')->on('order_products')->onDelete('cascade');
+            $table->foreign('category_products_id')->references('id')->on('category_products')->onDelete('cascade');
         });
     }
 

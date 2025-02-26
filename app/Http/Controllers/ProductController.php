@@ -101,7 +101,8 @@ class ProductController extends Controller
                 'name' => $product->name,
                 'quantity' => 1,
                 'price' => $product->price,
-                'name_category_product' => $category_products->name_category_product	
+                'name_category_product' => $category_products->name_category_product,
+                'category_products_id' => $product->category_products_id
             ];
         }
 
