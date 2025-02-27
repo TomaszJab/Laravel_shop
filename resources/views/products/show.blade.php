@@ -86,32 +86,43 @@
                         <strong>Details:</strong>
                         {{ $product->detail }}
                     </div>
-                    <div class="row pt-3">
-                        <div class="col-12">
-                        <strong>Size:</strong>
-                            <input type="radio" class="btn-check" name="options-outlined" id="success-outlined_a" autocomplete="off">
-                            <label class="btn btn-sm btn-success" for="success-outlined_a">S</label>
-
-                            <input type="radio" class="btn-check" name="options-outlined" id="success-outlined_b" autocomplete="off">
-                            <label class="btn btn-sm btn-success" for="success-outlined_b">M</label>
-
-                            <input type="radio" class="btn-check" name="options-outlined" id="success-outlined_c" autocomplete="off" checked>
-                            <label class="btn btn-sm btn-success" for="success-outlined_c">L</label>
-
-                            <input type="radio" class="btn-check" name="options-outlined" id="success-outlined_d" autocomplete="off">
-                            <label type="button" class="btn btn-sm btn-success" for="success-outlined_d">XL</label>
+                    <div class="row">
+                        <div class="col-xl-4 col-lg-6 col-md-12 d-flex gap-2 pt-3">
+                            <strong>Size:</strong>
+                            &nbsp
+                            <input type="radio" class="btn-check" name="size" value="S" id="size_S" autocomplete="off">
+                            <label class="btn btn-sm btn-success" for="size_S">S</label>
+                            
+                            <input type="radio" class="btn-check" name="size" value="M" id="size_M" autocomplete="off">
+                            <label class="btn btn-sm btn-success" for="size_M">M</label>
+                            
+                            <input type="radio" class="btn-check" name="size" value="L" id="size_L" autocomplete="off" checked>
+                            <label class="btn btn-sm btn-success" for="size_L">L</label>
+                            
+                            <input type="radio" class="btn-check" name="size" value="XL" id="size_XL" autocomplete="off">
+                            <label type="button" class="btn btn-sm btn-success" for="size_XL">XL</label>&nbsp
+                        </div></br>
+                        <div class="col-xl-8 col-lg-6 col-md-12 d-flex gap-2 pt-3">
                             <strong>Quantity:</strong>
-                            <input class="btn btn-sm btn-success" type="button" value="-">
-                            <input class="btn btn-sm btn-success" type="button" value="+">
+                            <div class="input-group">
+                                <input class="btn btn-sm btn-success" type="button" value="-" onclick="changeQuantity('-')">
+                                <input type="text" class="text-center" id="quantity-input" value="1" style="max-width:50px" readonly>
+                                <input class="btn btn-sm btn-success" type="button" value="+" onclick="changeQuantity('+')">
+                            </div>
                         </div>
                     </div>
-                    <div class="row pt-3">
-                        <form class="w-50" action="{{ route('products.add_to_cart', $product->id) }}" method="POST">
+                    <div class="row pt-5">
+                        <form class="w-50" action="{{ route('products.add_to_cart', $product->id) }}" method="POST" onsubmit="updateHiddenSize('1')">
                             @csrf
+                            <input type="hidden" name="size" id="selectedSize1" value="L">
+                            <input type="hidden" name="quantity" id="quantity-input1">
+
                             <button type="submit" class="btn btn-lg btn-primary w-100">Buy</button>
                         </form>
-                        <form class="w-50" action="{{ route('products.add_to_cart', $product->id) }}" method="POST">
+                        <form class="w-50" action="{{ route('products.add_to_cart', $product->id) }}" method="POST" onsubmit="updateHiddenSize('2')">
                             @csrf
+                            <input type="hidden" name="size" id="selectedSize2" value="L">
+                            <input type="hidden" name="quantity" id="quantity-input2">
                             <button type="submit" class="btn btn-lg btn-primary w-100">Add to cart</button>
                         </form>
                     </div>
@@ -152,3 +163,27 @@
 </ul>
 
 @endsection
+
+<script>
+    function updateHiddenSize(hiddenInputId) {
+        const selectedSize = document.querySelector('input[name="size"]:checked');
+        if (selectedSize) {
+            document.getElementById('selectedSize' + hiddenInputId).value = selectedSize.value;
+        }
+        let quantity_input_value = document.getElementById('quantity-input').value;
+        document.getElementById('quantity-input' + hiddenInputId).value = quantity_input_value;
+    }
+
+    function changeQuantity(increaseDecrease){
+        let quantity_input_value = parseInt(document.getElementById('quantity-input').value);
+
+        if(increaseDecrease == '+'){
+            document.getElementById('quantity-input').value = quantity_input_value + 1;
+
+        }else if(increaseDecrease == '-'){
+            if(quantity_input_value > 1){
+                document.getElementById('quantity-input').value = quantity_input_value - 1;
+            }
+        }
+    }
+</script>

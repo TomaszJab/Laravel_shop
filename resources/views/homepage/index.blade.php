@@ -3,13 +3,11 @@
 
 <div class="row">
 
-<div class="col-md-3 mt-4">
-<ul class="list-group">
-    <li class="list-group-item active">Active item</li>
-    <li class="list-group-item">Second item</li>
-    <li class="list-group-item">Third item</li>
-  </ul>
-</div>
+  <div class="col-md-3 mt-4">
+
+
+  </div>
+  
   <div class="col-md-4 mt-4">
     <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
       <div class="carousel-indicators">
