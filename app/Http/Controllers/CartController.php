@@ -23,8 +23,6 @@ class CartController extends Controller
 
     public function details($order_product_id)
     {
-       // $cartData = $this->dataCart();
-       // dd($cartData);
         $orderData = Order::where('order_product_id', $order_product_id) -> get();
 
         $orderProductData = OrderProduct::where('id', $order_product_id) -> first();
@@ -37,14 +35,7 @@ class CartController extends Controller
 
         $personal_details_id = $orderProductData -> personal_details_id;
         $personalDetails = personalDetails::where('id', $orderProductData -> personal_details_id) -> first();
-           // session()->forget('cart_summary');
-
-          // $summary = session('cart_summary', []);
-        
-           //return view('cart.summary', array_merge($cartData, ['summary' => $summary]));
-
-           //$OrderProducts = OrderProduct::get();
-           //return view('cart.order', ['OrderProducts' => $orderProductData]);
+       
         return view('cart.summary', ['products' => $orderData,
             'subtotal' => $subtotal,
             'shipping' => $shipping,
@@ -283,12 +274,15 @@ class CartController extends Controller
         $order_product_id = $orderProduct -> id;
 
         $order = array_map(function ($product, $productId) use ($order_product_id) {
-             return [
+            list($productId, $size) = explode('_', $productId);
+
+            return [
                     'product_id' => $productId, 
                     'order_product_id' => $order_product_id, 
                     'name' => $product['name'], 
                     'quantity' => $product['quantity'], 
                     'price' => $product['price'],
+                    'size' => $size,
                     'category_products_id' => $product['category_products_id'],
                     'created_at' => now(),
                     'updated_at' => now()
@@ -298,11 +292,13 @@ class CartController extends Controller
         $order = Order::insert($order);
         session()->forget('cart');
 
-        return redirect()->route('products.index')->with('succes','Order created succesfully');
+        return redirect()->route('products.index', ['category_products' => 'a'])->with('success', 'Order created successfully');
+
+       // return redirect() -> route('products.index') -> with('succes','Order created succesfully');
     }
 
     public function summary(){
-        $cartData = $this->dataCart();
+        $cartData = $this -> dataCart();
         $summary = session('cart_summary', []);
 
         return view('cart.summary', array_merge($cartData, ['summary' => $summary]));

@@ -62,7 +62,7 @@ class ProductController extends Controller
     {
         $request->validate([
             'name' => 'required',
-            'detail' => 'required',
+            'detail' => 'required'
         ]);
 
         Product::create($request->except('_token'));
@@ -74,7 +74,7 @@ class ProductController extends Controller
     public function storeComment(Request $request, $productId)
     {
         $request->validate([
-            'content' => 'required|string|max:255',
+            'content' => 'required|string|max:255'
         ]);
 
         $product = Product::findOrFail($productId);
@@ -82,7 +82,7 @@ class ProductController extends Controller
         $product->comments()->create([
             'content' => $request->input('content'),
             'author' => $request->input('author'),
-            'product_id' => $productId,
+            'product_id' => $productId
         ]);
 
         return redirect()->back()->with('success', 'Comment added successfully!');
@@ -94,15 +94,19 @@ class ProductController extends Controller
         $category_products = CategoryProduct::where('id', $product->category_products_id)->first();
         $cart = session()->get('cart', []);
 
-        if (isset($cart[$product->id])) {
-            $cart[$product->id]['quantity']++;
+        $size = $request->input('size');
+        $quantity = $request->input('quantity');
+        $key = $product->id.'_'.$size;
+        //dd($key);
+        if (isset($cart[$key])) {
+            $cart[$key]['quantity'] = $cart[$key]['quantity'] + $quantity;
         } else {
-            $cart[$product->id] = [
-                'name' => $product->name,
+            $cart[$key] = [
+                'name' => $product -> name,
                 'quantity' => 1,
-                'price' => $product->price,
-                'name_category_product' => $category_products->name_category_product,
-                'category_products_id' => $product->category_products_id
+                'price' => $product -> price,
+                'name_category_product' => $category_products -> name_category_product,
+                'category_products_id' => $product -> category_products_id
             ];
         }
 
