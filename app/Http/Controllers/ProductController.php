@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use App\Models\CategoryProduct;
+use App\Models\Subscriber;
 
 use Illuminate\Http\Request;
 
@@ -161,7 +162,14 @@ class ProductController extends Controller
 
     public function subscribe(Request $request){
         $email_address = $request->input('email_address');
-        $data= $request->validate(['email_address' => 'required|email']);
+        $data = $request->validate(['email_address' => 'required|email']);
+
+        $email_subscriber = [
+            'email_subscriber' => $email_address
+        ];
+
+        Subscriber::create($email_subscriber);
+
         return redirect()->route('products.index', ['category_products' => 'a'])->with('success', 'You are a subscriber!');
     }
 }
