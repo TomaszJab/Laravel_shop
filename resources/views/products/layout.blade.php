@@ -25,51 +25,75 @@
       <p>Tell me about your impressions!</p> 
     </div>
 
-    <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
-      <div class="container-fluid">
-        <ul class="navbar-nav">
-          <li class="nav-item">
-            <a class="nav-link active" href="{{ route('products.index', ['category_products' => 'a']) }}">Products</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{{ route('homepage.index') }}">Home Page</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{{ route('AboutUs.index') }}">About Us</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{{ route('contacts.index') }}">Contact</a>
-          </li>
-        </ul>
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark pt-3 pb-3">
+    <div class="container">
+        <a class="navbar-brand" href="{{ route('products.index', ['category_products' => 'a']) }}">My First Shop</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
-        <ul class="navbar-nav ms-auto">
-        <li class="nav-item">
-            <a class="nav-link" href="{{ route('carts.index') }}">Your cart</a>
-        </li>
+        <div class="collapse navbar-collapse justify-content-end" id="navbarsExampleDefault">
+            <ul class="navbar-nav m-auto">
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('products.index') ? 'active' : '' }}" href="{{ route('products.index', ['category_products' => 'a']) }}">Products</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('homepage.index') ? 'active' : '' }}"  href="{{ route('homepage.index') }}">Home Page <span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('AboutUs.index') ? 'active' : '' }}" href="{{ route('AboutUs.index') }}">About Us</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('contacts.index') ? 'active' : '' }}" href="{{ route('contacts.index') }}">Contact</a>
+                </li>
+                @if (Route::has('login'))
+                  @auth
+                    <li class="nav-item">
+                      <a class="nav-link" href="{{ url('/dashboard') }}">dashboard</a>
+                    </li>
+                  @else
+                    <li class="nav-item">
+                      <a class="nav-link" href="{{ route('login') }}">Login</a>
+                    </li>
+                    @if (Route::has('register'))
+                      <li class="nav-item">
+                        <a class="nav-link" href="{{ route('register') }}">Register</a>
+                      </li>
+                    @endif
+                  @endauth
+                @endif
+            </ul>
 
-        @if (Route::has('login'))
-          @auth
-            <li class="nav-item">
-              <a class="nav-link" href="{{ url('/dashboard') }}">dashboard</a>
-            </li>
-          @else
-            <li class="nav-item">
-              <a class="nav-link" href="{{ route('login') }}">Login</a>
-            </li>
-            @if (Route::has('register'))
-              <li class="nav-item">
-                <a class="nav-link" href="{{ route('register') }}">Register</a>
-              </li>
-            @endif
-          @endauth
-        @endif
+            <form class="">
+                <div class="input-group input-group-sm">
+                    <input type="text" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" placeholder="Search product...">
+                    <div class="input-group-append">
+                        <button type="button" class="btn btn-primary btn-number">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+                <!-- <form class="d-flex">
+        <input class="form-control me-2" type="text" placeholder="Search">
+        <button class="btn btn-primary" type="button"><i class="fa fa-search"></i></button>
+      </form> -->
+            </form>
+            <a class="btn btn-success btn-sm ml-3" href="{{ route('carts.index') }}">
+              <i class="fa fa-shopping-cart"></i> Cart
+              <span class="badge badge-light">3</span>
+            </a>
+        </div>
+    </div>
+</nav>
 
-        </ul>
-        <!-- <span class="navbar-text">
-          Navbar text with an inline element
-        </span> -->
-      </div>
-    </nav>
+@if(request()->routeIs('products.index'))
+<section class="text-center py-5" style="background-color: rgb(233, 236, 239)">
+    <div class="container">
+        <h1 class="jumbotron-heading">Lorem ipsum</h1>
+        <p class="lead text-muted mb-0">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec risus erat, placerat in purus vel, tincidunt pulvinar felis. Integer venenatis, magna sed maximus dapibus, quam eros iaculis ligula, vitae tincidunt turpis sapien vehicula libero. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras dignissim id tortor sit amet molestie....</p>
+    </div>
+</section>
+@endif
 
     <div class="container">
         @yield('content')
@@ -79,59 +103,54 @@
       <div class="container">
         <div class="row">
           <div class="col-md-4 pt-4">
-            <h2 class="h2 text-success border-bottom pb-3 border-light logo">Zay Shop</h2>
-                    <ul class="list-unstyled text-light footer-link-list">
-                        <li>
-                            <i class="fas fa-map-marker-alt fa-fw"></i>
-                            123 Consectetur at ligula 10660
-                        </li>
-                        <li>
-                            <i class="fa fa-phone fa-fw"></i>
-                            <a class="text-decoration-none" href="tel:010-020-0340">010-020-0340</a>
-                        </li>
-                        <li>
-                            <i class="fa fa-envelope fa-fw"></i>
-                            <a class="text-decoration-none" href="mailto:info@company.com">info@company.com</a>
-                        </li>
-                    </ul>
-                </div>
-
-                <div class="col-md-4 pt-4">
-                    <h2 class="h2 text-light border-bottom pb-3 border-light">Products</h2>
-                    <ul class="list-unstyled text-light footer-link-list">
-                        <li><a class="text-decoration-none" href="#">Luxury</a></li>
-                        <li><a class="text-decoration-none" href="#">Sport Wear</a></li>
-                        <li><a class="text-decoration-none" href="#">Men's Shoes</a></li>
-                        <li><a class="text-decoration-none" href="#">Women's Shoes</a></li>
-                        <li><a class="text-decoration-none" href="#">Popular Dress</a></li>
-                        <li><a class="text-decoration-none" href="#">Gym Accessories</a></li>
-                        <li><a class="text-decoration-none" href="#">Sport Shoes</a></li>
+            <h2 class="h2 text-success border-bottom pb-3 border-light logo">Shop</h2>
+                    <ul class="list-unstyled text-light footer-link-list pt-3">
+                      <li class="mb-2"><i class="fa fa-home mr-2"></i>&nbsp;My company</li>
+                      <li class="mb-2">
+                        <i class="fa fa-envelope mr-2"></i>&nbsp;
+                        <a class="text-decoration-none" href="mailto:email@example.com">email@example.com</a>
+                      </li>
+                      <li class="mb-2">
+                        <i class="fa fa-phone mr-2"></i>&nbsp;
+                        <a class="text-decoration-none" href="tel:123-456-789">123-456-789</a>
+                      </li>
+                      <li><i class="fa fa-print mr-2"></i>&nbsp;
+                      <a class="text-decoration-none" href="tel:123-456-789">123-456-789</a>
+                      </li>
                     </ul>
                 </div>
 
                 <div class="col-md-4 pt-4">
                     <h2 class="h2 text-light border-bottom pb-3 border-light">Further Info</h2>
-                    <ul class="list-unstyled text-light footer-link-list">
-                        <li><a class="text-decoration-none" href="#">Products</a></li>
-                        <li><a class="text-decoration-none" href="#">Home Page</a></li>
-                        <li><a class="text-decoration-none" href="#">About Us</a></li>
-                        <li><a class="text-decoration-none" href="#">Shop Locations</a></li>
+                    <ul class="list-unstyled text-light footer-link-list pt-3">
+                        <li class="mb-1"><a class="text-decoration-none" href="#">Products</a></li>
+                        <li class="mb-1"><a class="text-decoration-none" href="#">Home Page</a></li>
+                        <li class="mb-1"><a class="text-decoration-none" href="#">About Us</a></li>
+                        <li class="mb-1"><a class="text-decoration-none" href="#">Shop Locations</a></li>
                         <li><a class="text-decoration-none" href="#">Contact</a></li>
                     </ul>
                 </div>
 
-            </div>
+                <div class="col-md-4 pt-4">
+                    <h2 class="h2 text-light border-bottom pb-3 border-light">About</h2>
+                    <p class="pt-3">Le Lorem Ipsum est simplement du faux texte employé dans la composition et la mise en page avant impression.
+                    Le Lorem Ipsum est simplement du faux texte employé dans la composition et la mise en page avant impression.
+                    </p>
+                </div>
 
+            </div>
+            
             <div class="row text-light mb-4">
                 <div class="col-12 mb-3">
                     <div class="w-100 my-3 border-top border-light"></div>
                 </div>
-                <div class="col-auto ms-auto">
+                <form action="{{ route('products.subscribe') }}" method="POST" class="col-auto ms-auto">
                     <div class="input-group mb-3">
-                      <input type="text" class="form-control" placeholder="Email address" aria-label="Recipient's username" aria-describedby="button-addon2">
-                      <button class="btn btn-success" type="button" id="button-addon2">Subscribe</button>
+                        @csrf
+                        <input type="text" class="form-control" name="email_address" placeholder="Email address">
+                        <button type="submit" class="btn btn-success">Subscribe</button>
                     </div>
-                </div>
+                </form>
             </div>
         </div>
       </div>

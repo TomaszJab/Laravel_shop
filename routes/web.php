@@ -88,6 +88,7 @@ Route::resource('products', ProductController::class);
 // Route::get('products', [ProductController::class, 'category_products'])->name('products.category_products');;
 Route::post('/products/{product}/comments', [ProductController::class, 'storeComment'])->name('products.comments.store');
 Route::post('/products/{product}/add_to_cart', [ProductController::class, 'addToCart'])->name('products.add_to_cart');
+Route::post('/products/subscribe', [ProductController::class, 'subscribe'])->name('products.subscribe');
 
 Route::resource('statutes', StatuteController::class);
 

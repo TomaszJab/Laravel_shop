@@ -20,17 +20,9 @@ class ProductController extends Controller
     {
        // $sortOption = $request->input('selectOption', 'asc');//
        // $products = Product::orderBy('price', $sortOption)->paginate(3);
-       $sortOption = $request->query('sortOption', 'desc');
+        $sortOption = $request->query('sortOption', 'desc');
         $categoryName = $request->query('category_products','a');
 
-        // if ($categoryName) {
-        //     $products = Product::paginate(4);
-        //     return view('products.index',compact('products','sortOption'));
-        // }else{
-        //     $products = Product::paginate(3);
-        //     return view('products.index',compact('products','sortOption'));
-        // }
-        //$products = Product::where('category_products_id', '1')->paginate(4);
         $products = Product::join('category_products', 'products.category_products_id', '=', 'category_products.id')->where('category_products.name_category_product', $categoryName)->paginate(6);
         
         return view('products.index',compact('products','sortOption'));
@@ -165,5 +157,11 @@ class ProductController extends Controller
 
         return redirect()->route('products.index')
                         ->with('success','Product deleted successfully');
+    }
+
+    public function subscribe(Request $request){
+        $email_address = $request->input('email_address');
+        $data= $request->validate(['email_address' => 'required|email']);
+        return redirect()->route('products.index', ['category_products' => 'a'])->with('success', 'You are a subscriber!');
     }
 }

@@ -11,6 +11,7 @@ use Illuminate\View\View;
 use App\Models\personalDetails;
 use App\Models\OrderProduct;
 use App\Models\Order;
+use App\Models\Product;
 
 class CartController extends Controller
 {
@@ -190,7 +191,9 @@ class CartController extends Controller
     public function order()
     {
         $OrderProducts = OrderProduct::get();
-        return view('cart.order', ['OrderProducts' => $OrderProducts]);
+        $products = Product::paginate(8);
+        
+        return view('cart.order', ['OrderProducts' => $OrderProducts, 'products' => $products]);
     }
 
     public function buyWithoutRegistration()
