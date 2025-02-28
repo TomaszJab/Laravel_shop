@@ -16,7 +16,7 @@
           <div class="carousel-caption text-start">
             <h1>Donec risus sus.</h1>
             <p>Donec risus erat, placerat in purus vel, tincidunt pulvinar felis. ar felis.</p>
-            <p><a class="btn btn-lg btn-primary" href="#">Sign up today</a></p>
+            <p><a class="btn btn-lg btn-primary" href="{{ route('register') }}">Sign up today</a></p>
           </div>
         </div>
       </div>
@@ -27,7 +27,7 @@
           <div class="carousel-caption">
             <h1>Donec risus er, placerat.</h1>
             <p>Donec risus erat, placerat in purus vel, tincidunt pulvinar felis. ar felis.</p>
-            <p><a class="btn btn-lg btn-primary" href="#">Learn more</a></p>
+            <p><a class="btn btn-lg btn-primary" href="{{ route('AboutUs.index') }}">Learn more</a></p>
           </div>
         </div>
       </div>
@@ -38,7 +38,7 @@
           <div class="carousel-caption text-end">
             <h1>Donec risus erat, placerat.</h1>
             <p>Donec risus erat, placerat in purus vel, tincidunt pulvinar felis. ar felis.</p>
-            <p><a class="btn btn-lg btn-primary" href="#">Browse gallery</a></p>
+            <p><a class="btn btn-lg btn-primary" href="{{ route('contacts.index') }}">Let's Talk</a></p>
           </div>
         </div>
       </div>
@@ -103,7 +103,7 @@
       <div class="card-body">
         <h2>Category 1</h2>
         <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-        <p><a class="btn btn-primary" href="#">View details &raquo;</a></p>
+        <p><a class="btn btn-primary" href="{{ route('products.index', ['category_products' => 'a']) }}">View details &raquo;</a></p>
       </div>
     </div>
   </div><!-- /.col-lg-4 -->
@@ -114,7 +114,7 @@
       <div class="card-body">
     <h2>Category 2</h2>
     <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-    <p><a class="btn btn-primary" href="#">View details &raquo;</a></p>
+    <p><a class="btn btn-primary" href="{{ route('products.index', ['category_products' => 'b']) }}">View details &raquo;</a></p>
     </div>
     </div>
   </div><!-- /.col-lg-4 -->
@@ -125,7 +125,7 @@
       <div class="card-body">
     <h2>Category 3</h2>
     <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-    <p><a class="btn btn-primary" href="#">View details &raquo;</a></p>
+    <p><a class="btn btn-primary" href="{{ route('products.index', ['category_products' => 'c']) }}">View details &raquo;</a></p>
     </div>
     </div>
   </div><!-- /.col-lg-4 -->
@@ -136,7 +136,7 @@
       <div class="card-body">
     <h2>Category 4</h2>
     <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. </p>
-    <p><a class="btn btn-primary" href="#">View details &raquo;</a></p>
+    <p><a class="btn btn-primary" href="{{ route('products.index', ['category_products' => 'd']) }}">View details &raquo;</a></p>
     </div>
     </div>
   </div><!-- /.col-lg-4 -->
