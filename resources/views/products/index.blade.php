@@ -1,25 +1,27 @@
 @extends('products.layout')
 @section('content')
-<!-- <div class="row">
-  <div class="col-lg-12 mt-4 text-end">
-      <a class="btn btn-success" href="{{ route('products.create') }}"> Create New Product</a>
-  </div>
-</div> -->
-<!-- align-items-center -->
-<div class="row ">
+<section class="text-center py-5" style="background-color: rgb(233, 236, 239)">
+    <div class="container">
+        <h1 class="jumbotron-heading">Lorem ipsum</h1>
+        <p class="lead text-muted mb-0">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec risus erat, placerat in purus vel, tincidunt pulvinar felis. Integer venenatis, magna sed maximus dapibus, quam eros iaculis ligula, vitae tincidunt turpis sapien vehicula libero. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras dignissim id tortor sit amet molestie....</p>
+    </div>
+</section>
 
+<div class="container">
 @if ($errors->any())
-        <div class="alert alert-danger">
-            @foreach ($errors->all() as $error)
-              {{ $error }}
-            @endforeach
-        </div>
-      @endif
-      @if ($message = Session::get('success'))
-          <div class="alert alert-success">
-              {{ $message }}
-          </div>
-      @endif
+  <div class="alert alert-danger pt-2 pb-2">
+    @foreach ($errors->all() as $error)
+      {{ $error }}
+    @endforeach
+ </div>
+@endif
+@if ($message = Session::get('success'))
+  <div class="alert alert-success pt-2 pb-2">
+    {{ $message }}
+  </div>
+@endif
+
+<div class="row pt-2">
   <div class="col-6 col-md-6 mt-3">
     <p class="fs-3">Categories</p>
   </div>
@@ -57,7 +59,7 @@
             <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
             <div class="d-flex justify-content-between">
               <input class="btn btn-danger btn-sm" type="button" value="{{ $product->price }} $">
-              <a href="{{ route('products.show', $product -> id) }}" class="btn btn-success btn-sm">Show</a>
+              <a href="{{ route('products.show', $product -> id) }}" class="btn btn-success btn-sm">Show &raquo</a>
             </div>
           </div>
         </div>
@@ -72,7 +74,7 @@
     {!! $products->links() !!}
   </div>
 </div>
-
+</div>
 @endsection
 
 <script>

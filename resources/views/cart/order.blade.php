@@ -1,6 +1,6 @@
 @extends('products.layout')
 @section('content')
-
+<div class="container">
 <div class="row">
     <div class="col-lg-3 mb-4 mt-4">
         <div class="card" >
@@ -62,8 +62,10 @@
         <div id="products" class="content-section" style="display: none;">
         <div class="card">
                 <div class="card-body">
-                    <h5 class="card-title text-primary">Products</h5>
-                
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="card-title text-primary">Products</h5>
+                        <a class="btn btn-success btn-sm" href="{{ route('products.create') }}"> Create New Product</a>
+                    </div>
                     <div class="table-responsive-xl">
                     <table class="table-responsive-xl table table-hover table-striped">
                             <thead>
@@ -84,11 +86,11 @@
                                         <td>{{ $product->detail }}</td>
                                         <td>
                                             <form action="{{ route('products.destroy', $product -> id) }}" method="POST">
-                                                <a class="btn btn-info" href="{{ route('products.show', $product -> id) }}">Show</a>
-                                                <a class="btn btn-primary" href="{{ route('products.edit', $product -> id) }}">Edit</a>
+                                                <a class="btn btn-info btn-sm" href="{{ route('products.show', $product -> id) }}">Show</a>
+                                                <a class="btn btn-primary btn-sm" href="{{ route('products.edit', $product -> id) }}">Edit</a>
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="btn btn-danger">Delete</button>
+                                                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
                                             </form>
                                         </td>
                                     </tr>
@@ -253,7 +255,7 @@
         </div>
     </div>
 </div>
-
+</div>
 
 <script>
     // JavaScript to handle switching views

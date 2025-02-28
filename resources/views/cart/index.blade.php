@@ -1,5 +1,6 @@
 @extends('products.layout')
 @section('content')
+<div class="container">
 <div class="row">
     <div class="col-md-12 col-sm-12 mt-4 mb-4 p-4 bg-primary text-white rounded">
         <h1>Your cart</h1>
@@ -81,7 +82,7 @@
     </div>
 </div>
 @endif       
-
+</div>
 <script>
     $(document).ready(function() {
         $(".quantity-btn").click(function() {

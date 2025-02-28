@@ -1,5 +1,6 @@
 @extends('products.layout')
 @section('content')
+<div class="container">
 @if ($errors->any())
     <div class="alert alert-danger">
         @foreach ($errors->all() as $error)
@@ -176,5 +177,5 @@
             </div>
     </div>
 </div>
-
+</div>
 @endsection

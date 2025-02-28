@@ -1,6 +1,6 @@
 @extends('products.layout')
 @section('content')
-
+<div class="container">
 <div class="row">
     <div class="col-md-12 mt-4">
         @if ($message = Session::get('success'))
@@ -69,5 +69,5 @@
         </div>
     </div>
 </div>
-
+</div>
 @endsection

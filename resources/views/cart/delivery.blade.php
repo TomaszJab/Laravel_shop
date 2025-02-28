@@ -1,6 +1,6 @@
 @extends('products.layout')
 @section('content')
-
+<div class="container">
 <div class="row">
     <div class="col-md-12 col-sm-12 mt-4 mb-4 p-4 bg-primary text-white rounded">
         <h1>Your delivery</h1>
@@ -133,7 +133,7 @@
     </div>
 </div>
 @endif
-
+</div>
 <script>
 function ChangePrice(price,method) {
   document.getElementById("shippingValue").textContent = price;

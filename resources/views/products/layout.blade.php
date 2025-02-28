@@ -8,7 +8,6 @@
         <!-- Bootstrap 5.3.3 JS -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.0/font/bootstrap-icons.css">
 
@@ -86,18 +85,7 @@
     </div>
 </nav>
 
-@if(request()->routeIs('products.index'))
-<section class="text-center py-5" style="background-color: rgb(233, 236, 239)">
-    <div class="container">
-        <h1 class="jumbotron-heading">Lorem ipsum</h1>
-        <p class="lead text-muted mb-0">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec risus erat, placerat in purus vel, tincidunt pulvinar felis. Integer venenatis, magna sed maximus dapibus, quam eros iaculis ligula, vitae tincidunt turpis sapien vehicula libero. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras dignissim id tortor sit amet molestie....</p>
-    </div>
-</section>
-@endif
-
-    <div class="container">
-        @yield('content')
-    </div>
+    @yield('content')
 
     <div class="mt-5 p-4 bg-dark text-white text-center">
       <div class="container">
