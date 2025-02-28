@@ -7,11 +7,11 @@
         <div class="fakeimg">Fake Image</div>
             <div class="card-body">
                 <h5 class="card-title">Card title</h5>
-                <!-- <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p> -->
                 <p class="card-text">View completed orders and keep track of new ones. Change your details, addresses and notification preferences.</p>
             </div>
             <ul class="list-group list-group-flush">
                 <li class="list-group-item active" onclick="showContent('orders', this)">Orders</li>
+                <li class="list-group-item" onclick="showContent('products', this)">Products</li>
                 <li class="list-group-item" onclick="showContent('delivery', this)">Delivery</li>
                 <li class="list-group-item" onclick="showContent('account', this)">Account settings</li>
             </ul>
@@ -22,7 +22,7 @@
         <div id="orders" class="content-section">
             <div class="card">
                 <div class="card-body">
-                    <h5 class="card-title text-primary">Delivery </h5>
+                    <h5 class="card-title text-primary">Orders</h5>
                 
                     <div class="table-responsive-xl">
                         <table class="table-responsive-xl table table-hover table-striped">
@@ -45,8 +45,8 @@
                                         <td>{{ $OrderProduct -> method_delivery }}</td>
                                         <td>{{ $OrderProduct -> method_payment }}</td>
                                         <td>{{ $OrderProduct -> promo_code ?? 'brak' }}</td>
-                                        <td>{{ $OrderProduct -> delivery }}</td>
-                                        <td>{{ $OrderProduct -> payment }}</td>
+                                        <td>{{ $OrderProduct -> delivery }}$</td>
+                                        <td>{{ $OrderProduct -> payment }}$</td>
                                         <td>{{ $OrderProduct -> created_at }}</td> 
                                         <td>
                                             <a class="btn btn-primary" href="{{ route('carts.order.details', $OrderProduct -> id) }}">Show</a>
@@ -59,7 +59,49 @@
                 </div>
             </div>
         </div>
-
+        <div id="products" class="content-section" style="display: none;">
+        <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title text-primary">Products</h5>
+                
+                    <div class="table-responsive-xl">
+                    <table class="table-responsive-xl table table-hover table-striped">
+                            <thead>
+                                <tr>
+                                    <th scope="col">id</th>
+                                    <th scope="col">wartość</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col">Promo code</th>
+                                    <th scope="col">Delivery</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($products as $product)
+                                    <tr>
+                                        <th scope="row"></th>
+                                        <td>{{ $product->name }}</td>
+                                        <td>{{ $product->price }}</td>
+                                        <td>{{ $product->detail }}</td>
+                                        <td>
+                                            <form action="{{ route('products.destroy', $product -> id) }}" method="POST">
+                                                <a class="btn btn-info" href="{{ route('products.show', $product -> id) }}">Show</a>
+                                                <a class="btn btn-primary" href="{{ route('products.edit', $product -> id) }}">Edit</a>
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-danger">Delete</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                        <div class="col-md-2 ms-auto d-flex justify-content-end fs-4 mt-4 pagination">
+                            {!! $products->links() !!}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div id="delivery" class="content-section" style="display: none;">
                 <div class="card">
                     <div class="card-body">

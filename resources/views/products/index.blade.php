@@ -7,6 +7,19 @@
 </div> -->
 <!-- align-items-center -->
 <div class="row ">
+
+@if ($errors->any())
+        <div class="alert alert-danger">
+            @foreach ($errors->all() as $error)
+              {{ $error }}
+            @endforeach
+        </div>
+      @endif
+      @if ($message = Session::get('success'))
+          <div class="alert alert-success">
+              {{ $message }}
+          </div>
+      @endif
   <div class="col-6 col-md-6 mt-3">
     <p class="fs-3">Categories</p>
   </div>
@@ -19,17 +32,13 @@
   </div>
 </div>
 
-<script>
-    function updateURL(sortOption) {
-        const url = new URL(window.location.href);
-        url.searchParams.set('sortOption', sortOption);
-        return url.href;
-    }
-</script>
-
 <div class="row">
   <div class="col-md-3 mt-0">
     <div class="list-group">
+    
+    <a href="#" class="d-flex list-group-item list-group-item-action bg-success text-white" aria-current="true" style="pointer-events: none;">
+      <h6 class="m-0"><i class="fa fa-list"></i>&nbsp;CATEGORIES</h6> 
+    </a>
       <a href="{{ route('products.index', ['category_products' => 'a']) }}" class="list-group-item list-group-item-action {{ (request()->query('category_products') == 'a') ? 'active' : '' }}">Category a</a>
       <a href="{{ route('products.index', ['category_products' => 'b']) }}" class="list-group-item list-group-item-action {{ (request()->query('category_products') == 'b') ? 'active' : '' }}">Category b</a>
       <a href="{{ route('products.index', ['category_products' => 'c']) }}" class="list-group-item list-group-item-action {{ (request()->query('category_products') == 'c') ? 'active' : '' }}">Category c</a>
@@ -46,7 +55,10 @@
           <div class="card-body">
             <h5 class="card-title">{{ $product->name }}</h5>
             <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-            <a href="#" class="btn btn-primary">Go somewhere</a>
+            <div class="d-flex justify-content-between">
+              <input class="btn btn-danger btn-sm" type="button" value="{{ $product->price }} $">
+              <a href="{{ route('products.show', $product -> id) }}" class="btn btn-success btn-sm">Show</a>
+            </div>
           </div>
         </div>
       </div>
@@ -61,40 +73,12 @@
   </div>
 </div>
 
-<div class="row">
-  <div class="col-md-12 mt-4">
-    @if ($message = Session::get('success'))
-        <div class="alert alert-success">
-            <p>{{ $message }}</p>
-        </div>
-    @endif
-    <table class="table table-bordered">
-        <tr>
-            <th>Name</th>
-            <th>Price</th>
-            <th>Details</th>
-            <th width="280px">Action</th>
-        </tr>
-        @foreach ($products as $product)
-        <tr>
-           
-            <td>{{ $product->name }}</td>
-            <td>{{ $product->price }}</td>
-            <td>{{ $product->detail }}</td>
-            <td>
-                <form action="{{ route('products.destroy', $product -> id) }}" method="POST">
-                    <a class="btn btn-info" href="{{ route('products.show', $product -> id) }}">Show</a>
-                    <a class="btn btn-primary" href="{{ route('products.edit', $product -> id) }}">Edit</a>
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="btn btn-danger">Delete</button>
-                </form>
-            </td>
-        </tr>
-        @endforeach
-    </table>
-
-    <!-- {!! $products->links() !!} -->
-    </div>
-</div>
 @endsection
+
+<script>
+    function updateURL(sortOption) {
+        const url = new URL(window.location.href);
+        url.searchParams.set('sortOption', sortOption);
+        return url.href;
+    }
+</script>
