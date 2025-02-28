@@ -1,11 +1,13 @@
 @extends('products.layout')
 @section('content')
-<!-- <div class="row">
-  <div class="col-lg-12 mt-4 text-end">
-      <a class="btn btn-success" href="{{ route('products.create') }}"> Create New Product</a>
-  </div>
-</div> -->
-<!-- align-items-center -->
+<section class="text-center py-5" style="background-color: rgb(233, 236, 239)">
+    <div class="container">
+        <h1 class="jumbotron-heading">Lorem ipsum</h1>
+        <p class="lead text-muted mb-0">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec risus erat, placerat in purus vel, tincidunt pulvinar felis. Integer venenatis, magna sed maximus dapibus, quam eros iaculis ligula, vitae tincidunt turpis sapien vehicula libero. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras dignissim id tortor sit amet molestie....</p>
+    </div>
+</section>
+<div class="container">
+
 <div class="row ">
 
 @if ($errors->any())
@@ -72,7 +74,7 @@
     {!! $products->links() !!}
   </div>
 </div>
-
+</div>
 @endsection
 
 <script>

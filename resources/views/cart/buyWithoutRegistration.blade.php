@@ -1,5 +1,6 @@
 @extends('products.layout')
 @section('content')
+<div class="container">
 @if ($errors->any())
     <div class="alert alert-danger">
         <strong>Whoops!</strong> There were some problems with your input.<br><br>
@@ -150,7 +151,7 @@
             </div>
     </div>
 </div>
-
+</div>
 <script>
     // JavaScript to handle switching views
     function showContent(sectionId) {

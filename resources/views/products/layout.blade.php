@@ -86,18 +86,9 @@
     </div>
 </nav>
 
-@if(request()->routeIs('products.index'))
-<section class="text-center py-5" style="background-color: rgb(233, 236, 239)">
-    <div class="container">
-        <h1 class="jumbotron-heading">Lorem ipsum</h1>
-        <p class="lead text-muted mb-0">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec risus erat, placerat in purus vel, tincidunt pulvinar felis. Integer venenatis, magna sed maximus dapibus, quam eros iaculis ligula, vitae tincidunt turpis sapien vehicula libero. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras dignissim id tortor sit amet molestie....</p>
-    </div>
-</section>
-@endif
-
-    <div class="container">
+    <!-- <div class="container"> -->
         @yield('content')
-    </div>
+    <!-- </div> -->
 
     <div class="mt-5 p-4 bg-dark text-white text-center">
       <div class="container">

@@ -1,5 +1,6 @@
 @extends('products.layout')
 @section('content')
+<div class="container">
     <!-- <div class="row">
         <div class="col-lg-12 mb-3">
             <a class="btn btn-warning" href="{{ route('products.index') }}"> Back</a>
@@ -161,7 +162,7 @@
         </li>
     @endforeach
 </ul>
-
+</div>
 @endsection
 
 <script>
