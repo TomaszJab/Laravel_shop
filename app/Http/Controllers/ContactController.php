@@ -14,6 +14,12 @@ class ContactController extends Controller
 
     public function sendMailLetsTalkMail(Request $request)
     {
+        $request->validate([
+            'name' => 'required',
+            'email' => 'required|email',
+            'message' => 'required',
+        ]);
+
         Mail::to('zbiorentomologiczny@gmail.com')->send(new AboutUsLetsTalkMail($request));
         return redirect()->route('contacts.index')->with('success','Email send successfully.');
     }
