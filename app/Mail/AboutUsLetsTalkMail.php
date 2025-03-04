@@ -25,7 +25,7 @@ class AboutUsLetsTalkMail extends Mailable
     {
         return $this->view('mail.letsTalk')
             ->subject('About Us Lets Talk Mail')
-            ->with('data', $this->data); // Przekaż dane do widoku
+            ->with('data', ['data', $this->data]); // Przekaż dane do widoku
     }
 
     /**
