@@ -26,7 +26,7 @@
                             </div>
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                 <div class="form-group">
-                                    <label for="Email" class="mb-1">Email<span class="text-danger"> *</span></label>
+                                    <label for="email" class="mb-1">Email<span class="text-danger"> *</span></label>
                                     <input type="email" value="{{ old('email') }}" class="form-control mb-2" name="email" id="email" placeholder="Enter email">
                                 </div>
                             </div>
