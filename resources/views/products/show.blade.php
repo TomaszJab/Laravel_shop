@@ -131,38 +131,65 @@
             </div>
         </div>
     </div>
+</div>
 
-    <h3>Add comment</h3>
-
+<section style="background-color: #eee;">
+  <div class="container py-5">
     <form action="{{ route('products.comments.store', ['product' => $product->id]) }}" method="POST">
     @csrf
-     <div class="row">
-        <div class="col-xs-12 col-sm-12 col-md-12">
-            <div class="form-group">
-                <strong>Author:</strong>
-                <input type="text" name="author" class="form-control" placeholder="Author">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-footer p-3 border-0" style="background-color: #f8f9fa;">
+                        <div class="d-flex flex-start w-100 p-3">
+                            <img class="rounded-circle shadow-1-strong me-3"
+                                src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/img%20(19).webp" alt="avatar" width="40"
+                                height="40" />
+                            <div data-mdb-input-init class="form-outline w-100">
+                                <input type="text" name="author" class="form-control" placeholder="Author">
+                                <textarea class="form-control" id="textMessage" rows="4" name="content" placeholder="Message"></textarea>
+                            </div>
+                        </div>
+                        <div class="float-end mt-1 pb-4 pe-3">
+                            <button type="submit" class="btn btn-primary">Add Comment</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="col-xs-12 col-sm-12 col-md-12">
-            <div class="form-group">
-                <strong>Content:</strong>
-                <textarea class="form-control" style="height:150px" name="content" placeholder="Content"></textarea>
+    </form>
+  </div>
+</section>
+
+@foreach ($product->comments as $comment)
+<section style="background-color: #eee;">
+    <div class="container pb-5">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card p-3">
+                    <div class="card-body">
+                        <div class="d-flex flex-start align-items-center">
+                            <img class="rounded-circle shadow-1-strong me-3"
+                                src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/img%20(19).webp" alt="avatar" width="60"
+                                height="60" />
+                        <div>
+                            <h6 class="fw-bold text-primary mb-1">{{ $comment->author }}</h6>
+                            <p class="text-muted small mb-0">
+                            Shared publicly - Jan 2020
+                            </p>
+                        </div>
+                    </div>
+
+                    <p class="mt-3 mb-4 pb-2">
+                        {{ $comment->content }}
+                    </p>
+                </div>
             </div>
-        </div>
-        <div class="col-xs-12 col-sm-12 col-md-12 text-center">
-                <button type="submit" class="btn btn-primary">Add Comment</button>
         </div>
     </div>
-</form>
-<h3>Comments</h3>
-<ul>
-    @foreach ($product->comments as $comment)
-        <li>
-            <strong>{{ $comment->author }}</strong>: {{ $comment->content }}
-        </li>
-    @endforeach
-</ul>
-</div>
+</section>
+@endforeach
+
 @endsection
 
 <script>
