@@ -48,7 +48,16 @@
                 @if (Route::has('login'))
                   @auth
                     <li class="nav-item">
-                      <a class="nav-link" href="{{ url('/dashboard') }}">dashboard</a>
+                      <a class="nav-link" href="{{ url('/dashboard') }}">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" href="{{ route('carts.order') }}">Order</a>
+                    </li>
+                    <li class="nav-item">
+                      <form method="POST" action="{{ route('logout') }}">
+                          @csrf
+                          <button type="submit" class="btn btn-danger">Logout</button>
+                      </form>
                     </li>
                   @else
                     <li class="nav-item">
