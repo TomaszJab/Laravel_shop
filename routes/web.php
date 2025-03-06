@@ -27,8 +27,12 @@ Route::resource('carts', CartController::class);
 Route::post('/cart/clear', [CartController::class, 'clearCart'])->name('carts.clear');
 Route::post('/cart/changequantity', [CartController::class, 'changequantity'])->name('carts.changequantity');
 Route::get('/cart/delivery', [CartController::class, 'delivery'])->name('carts.delivery');
-Route::get('/cart/order', [CartController::class, 'order'])->name('carts.order');
-Route::get('/cart/order/details/{order_product_id}', [CartController::class, 'details'])->name('carts.order.details');
+
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/cart/order', [CartController::class, 'order'])->name('carts.order');
+    Route::get('/cart/order/details/{order_product_id}', [CartController::class, 'details'])->name('carts.order.details');
+});
+
 Route::get('/cart/buyWithoutRegistration', [CartController::class, 'buyWithoutRegistration'])->name('carts.buyWithoutRegistration');
 Route::post('/cart/changePrice', [CartController::class, 'changePrice'])->name('carts.changePrice');
 
@@ -98,7 +102,11 @@ Route::get('/', function () {
 
 Route::get('/dashboard', function () {
     return view('dashboard');
+    //return view('products.index');
 })->middleware(['auth', 'verified'])->name('dashboard');
+// Route::middleware(['auth', 'verified'])->group(function () {
+//     Route::resource('products', ProductController::class);
+// });
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
