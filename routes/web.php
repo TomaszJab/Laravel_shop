@@ -88,7 +88,12 @@ Route::resource('AboutUs', AboutUsController::class);
 
 Route::resource('homepage', HomePageController::class);
 
-Route::resource('products', ProductController::class);
+Route::resource('products', ProductController::class)->except(['create', 'edit','store','destroy','update']);
+
+Route::middleware(['auth', 'admin'])->group(function () {
+    Route::resource('products', ProductController::class)->only(['create', 'edit','store','destroy','update']);
+});
+
 // Route::get('products', [ProductController::class, 'category_products'])->name('products.category_products');;
 Route::post('/products/{product}/comments', [ProductController::class, 'storeComment'])->name('products.comments.store');
 Route::post('/products/{product}/add_to_cart', [ProductController::class, 'addToCart'])->name('products.add_to_cart');

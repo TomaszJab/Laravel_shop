@@ -72,10 +72,11 @@ class ProductController extends Controller
         ]);
 
         $product = Product::findOrFail($productId);
+        $nameUser = auth()->user()->name;
 
         $product->comments()->create([
             'content' => $request->input('content'),
-            'author' => $request->input('author'),
+            'author' => $nameUser,
             'product_id' => $productId
         ]);
 
@@ -131,7 +132,8 @@ class ProductController extends Controller
 
     public function show(Product $product)
     {
-        return view('products.show',compact('product'));
+        $comments = $product->comments()->orderBy('created_at', 'desc')->get();
+        return view('products.show',compact('product', 'comments'));
     }
 
     public function edit(Product $product)

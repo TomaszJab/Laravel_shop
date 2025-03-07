@@ -190,10 +190,17 @@ class CartController extends Controller
 
     public function order()
     {
-        $OrderProducts = OrderProduct::get();
-        $products = Product::paginate(8);
-        
-        return view('cart.order', ['OrderProducts' => $OrderProducts, 'products' => $products]);
+        $userIsAdmin = auth()->user()->isAdmin();
+
+        if($userIsAdmin){
+            $products = Product::paginate(8);
+            $OrderProducts = OrderProduct::paginate(8);
+            return view('cart.order', ['OrderProducts' => $OrderProducts, 'products' => $products]);
+        }else{
+            $idUser = auth()->user()->id;
+            $OrderProducts = OrderProduct::where('id', $idUser)->paginate(8);
+            return view('cart.order', ['OrderProducts' => $OrderProducts]);
+        }
     }
 
     public function buyWithoutRegistration()

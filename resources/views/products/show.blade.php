@@ -1,11 +1,6 @@
 @extends('products.layout')
 @section('content')
 <div class="container">
-    <!-- <div class="row">
-        <div class="col-lg-12 mb-3">
-            <a class="btn btn-warning" href="{{ route('products.index') }}"> Back</a>
-        </div>
-    </div> -->
     <div class="row mt-5">
         <div class="col-sm-5 col-12">
             <div class="card">
@@ -133,6 +128,7 @@
     </div>
 </div>
 
+@if(auth()->user())
 <section style="background-color: #eee;">
   <div class="container py-5">
     <form action="{{ route('products.comments.store', ['product' => $product->id]) }}" method="POST">
@@ -146,7 +142,7 @@
                                 src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/img%20(19).webp" alt="avatar" width="40"
                                 height="40" />
                             <div data-mdb-input-init class="form-outline w-100">
-                                <input type="text" name="author" class="form-control" placeholder="Author">
+                                <!-- <input type="text" name="author" class="form-control" placeholder="Author"> -->
                                 <textarea class="form-control" id="textMessage" rows="4" name="content" placeholder="Message"></textarea>
                             </div>
                         </div>
@@ -160,8 +156,9 @@
     </form>
   </div>
 </section>
+@endif
 
-@foreach ($product->comments as $comment)
+@foreach ($comments as $comment)
 <section style="background-color: #eee;">
     <div class="container pb-5">
         <div class="row">

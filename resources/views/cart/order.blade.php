@@ -2,7 +2,7 @@
 @section('content')
 <div class="container">
 <div class="row">
-    <div class="col-lg-3 mb-4 mt-4">
+    <div class="col-lg-3 my-5">
         <div class="card" >
         <div class="fakeimg">Fake Image</div>
             <div class="card-body">
@@ -11,14 +11,16 @@
             </div>
             <ul class="list-group list-group-flush">
                 <li class="list-group-item active" onclick="showContent('orders', this)">Orders</li>
+                @if(auth()->user()->isAdmin())
                 <li class="list-group-item" onclick="showContent('products', this)">Products</li>
+                @endif
                 <li class="list-group-item" onclick="showContent('delivery', this)">Delivery</li>
                 <li class="list-group-item" onclick="showContent('account', this)">Account settings</li>
             </ul>
         </div>
     </div>
 
-    <div class="col-lg-9 mb-4 mt-4">
+    <div class="col-lg-9 my-5">
         <div id="orders" class="content-section">
             <div class="card">
                 <div class="card-body">
@@ -55,12 +57,16 @@
                                 @endforeach
                             </tbody>
                         </table>
+                        <div class="col-md-2 ms-auto d-flex justify-content-end fs-4 mt-4 pagination">
+                            {!! $OrderProducts->links() !!}
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
+        @if(auth()->user()->isAdmin())
         <div id="products" class="content-section" style="display: none;">
-        <div class="card">
+            <div class="card">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center">
                         <h5 class="card-title text-primary">Products</h5>
@@ -104,6 +110,7 @@
                 </div>
             </div>
         </div>
+        @endif
         <div id="delivery" class="content-section" style="display: none;">
                 <div class="card">
                     <div class="card-body">
