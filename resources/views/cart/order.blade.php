@@ -2,7 +2,7 @@
 @section('content')
 <div class="container">
 <div class="row">
-    <div class="col-lg-3 mb-4 mt-4">
+    <div class="col-lg-3 my-5">
         <div class="card" >
         <div class="fakeimg">Fake Image</div>
             <div class="card-body">
@@ -11,14 +11,17 @@
             </div>
             <ul class="list-group list-group-flush">
                 <li class="list-group-item active" onclick="showContent('orders', this)">Orders</li>
+                @if(auth()->user()->isAdmin())
                 <li class="list-group-item" onclick="showContent('products', this)">Products</li>
+                @endif
                 <li class="list-group-item" onclick="showContent('delivery', this)">Delivery</li>
                 <li class="list-group-item" onclick="showContent('account', this)">Account settings</li>
             </ul>
         </div>
     </div>
 
-    <div class="col-lg-9 mb-4 mt-4">
+    <div class="col-lg-9 my-5">
+        @if($OrderProducts->isNotEmpty())
         <div id="orders" class="content-section">
             <div class="card">
                 <div class="card-body">
@@ -55,12 +58,33 @@
                                 @endforeach
                             </tbody>
                         </table>
+                        <div class="col-md-2 ms-auto d-flex justify-content-end fs-4 mt-4 pagination">
+                            {!! $OrderProducts->links() !!}
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
+        @else
+        <div id="orders" class="content-section">
+            <div class="card">
+                <div class="card-header mt-2">
+                    <h5>Orders</h5>
+                </div>
+                <div class="card-body cart text-center">
+                <i class="bi bi-box mb-4 mr-3" style="font-size:80px;color: orange;"></i>
+                    <h3 class="my-2"><strong>You don't have any orders</strong></h3>
+                    <h4 class="my-2">Order something to make your day better</h4>
+                    <a href="{{ route('products.index') }}" class="btn btn-outline-primary m-3">
+                        <i class="bi bi-arrow-left me-2"></i>Continue Shopping
+                    </a>
+                </div>
+            </div>
+        </div>
+        @endif
+        @if(auth()->user()->isAdmin())
         <div id="products" class="content-section" style="display: none;">
-        <div class="card">
+            <div class="card">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center">
                         <h5 class="card-title text-primary">Products</h5>
@@ -104,6 +128,7 @@
                 </div>
             </div>
         </div>
+        @endif
         <div id="delivery" class="content-section" style="display: none;">
                 <div class="card">
                     <div class="card-body">
@@ -140,6 +165,34 @@
                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                                 <h6 class="mt-3 mb-1 text-primary">Default Address</h6>
                             </div>
+
+                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                <div class="btn-group mb-1 mt-1" role="group">
+                                    <input type="radio" class="btn-check" name="company_or_private_person" value="private_person" id="private_person" autocomplete="off" {{ old('company_or_private_person') == 'private_person' ? 'checked' : '' }} checked>
+                                    <label class="btn btn-primary" for="private_person" onclick="showContent1('private person')">Private person</label>
+
+                                    <input type="radio" class="btn-check" name="company_or_private_person" value="company" id="company" autocomplete="off" {{ old('company_or_private_person') == 'company' ? 'checked' : '' }}>
+                                    <label class="btn btn-primary" for="company" onclick="showContent1('company_section')" >Company</label>
+                                </div>
+                            </div>
+
+                            <div id="company_section" class="content-section_2" style="display: none;">
+                                <div class="row">
+                                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                                        <div class="form-group">
+                                            <label for="company_name" class="mb-1 mt-1">Company name<span class="text-danger"> *</span></label>
+                                            <input type="text" class="form-control mb-2" value="{{ old('company name') }}" name="company_name" id="company name" placeholder="Enter Company name">
+                                        </div>
+                                    </div>
+                                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                                        <div class="form-group">
+                                            <label for="nip" class="mb-1 mt-1">Nip<span class="text-danger"> *</span></label>
+                                            <input type="number" class="form-control mb-2" value="{{ old('nip') }}" name="nip" id="nip" placeholder="Enter Nip">
+                                        </div>
+                                    </div>
+                                </div>                           
+                            </div>
+                            
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                 <div class="form-group">
                                     <label for="Street" class="mb-1 mt-1">Street</label>
@@ -258,6 +311,20 @@
 </div>
 
 <script>
+        // JavaScript to handle switching views
+    function showContent1(sectionId) {
+        // Hide all sections
+        document.querySelectorAll('.content-section_2').forEach(function (section) {
+            section.style.display = 'none';
+        });
+
+        // Show the selected section
+        document.getElementById(sectionId).style.display = 'block';
+    }
+
+    jQuery(function($){
+    $("input#zip").mask("00-000");
+    });
     // JavaScript to handle switching views
     function showContent(sectionId,element) {
         // Hide all sections

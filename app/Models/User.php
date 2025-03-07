@@ -43,8 +43,13 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
-    public function setPasswordAttribute($value)
+    // public function setPasswordAttribute($value)
+    // {
+    //     $this->attributes['password'] = bcrypt($value);
+    // }
+
+    public function isAdmin()
     {
-        $this->attributes['password'] = bcrypt($value);
+        return $this->role === 'admin';
     }
 }

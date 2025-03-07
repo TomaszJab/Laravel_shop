@@ -15,6 +15,7 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
 
         <link href="/css/layout.css" rel="stylesheet">
+        <script src="/js/custom.js"></script>
     </head>
 
     <body> 
@@ -51,41 +52,41 @@
                       <a class="nav-link" href="{{ url('/dashboard') }}">Dashboard</a>
                     </li>
                     <li class="nav-item">
-                      <a class="nav-link" href="{{ route('carts.order') }}">Order</a>
+                      <a class="nav-link {{ request()->routeIs('carts.order') ? 'active' : '' }}" href="{{ route('carts.order') }}">Order</a>
                     </li>
                     <li class="nav-item">
                       <form method="POST" action="{{ route('logout') }}">
                           @csrf
-                          <button type="submit" class="btn btn-danger">Logout</button>
+                          <button type="submit" class="nav-link {{ request()->routeIs('logout') ? 'active' : '' }}">Logout</button>
                       </form>
                     </li>
                   @else
                     <li class="nav-item">
-                      <a class="nav-link" href="{{ route('login') }}">Login</a>
+                      <a class="nav-link {{ request()->routeIs('login') ? 'active' : '' }}" href="{{ route('login') }}">Login</a>
                     </li>
                     @if (Route::has('register'))
                       <li class="nav-item">
-                        <a class="nav-link" href="{{ route('register') }}">Register</a>
+                        <a class="nav-link {{ request()->routeIs('register') ? 'active' : '' }}" href="{{ route('register') }}">Register</a>
                       </li>
                     @endif
                   @endauth
                 @endif
             </ul>
 
-            <form class="">
-                <div class="input-group input-group-sm">
+            <!-- <form class=""> -->
+                <!-- <div class="input-group input-group-sm">
                     <input type="text" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" placeholder="Search product...">
                     <div class="input-group-append">
                         <button type="button" class="btn btn-primary btn-number">
                             <i class="fa fa-search"></i>
                         </button>
                     </div>
-                </div>
+                </div> -->
                 <!-- <form class="d-flex">
         <input class="form-control me-2" type="text" placeholder="Search">
         <button class="btn btn-primary" type="button"><i class="fa fa-search"></i></button>
       </form> -->
-            </form>
+            <!-- </form> -->
             <a class="btn btn-success btn-sm ml-3" href="{{ route('carts.index') }}">
               <i class="fa fa-shopping-cart"></i> Cart
               <span class="badge badge-light">3</span>
