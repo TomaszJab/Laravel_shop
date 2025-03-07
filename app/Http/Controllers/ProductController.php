@@ -19,12 +19,16 @@ class ProductController extends Controller
      */
     public function index(Request $request)
     {
-       // $sortOption = $request->input('selectOption', 'asc');//
-       // $products = Product::orderBy('price', $sortOption)->paginate(3);
-        $sortOption = $request->query('sortOption', 'desc');
+        //$sortOption = $request->query('sortOption', 'asc');
+        $sortOption = $request->query('sortOption');
         $categoryName = $request->query('category_products','a');
 
-        $products = Product::join('category_products', 'products.category_products_id', '=', 'category_products.id')->where('category_products.name_category_product', $categoryName)->paginate(6);
+        $category_products = CategoryProduct::where('name_category_product', $categoryName)->firstOrFail();
+        if($sortOption){
+            $products = $category_products->products()->orderBy('name', $sortOption)->paginate(6);
+        }else{
+            $products = $category_products->products()->paginate(6);
+        }
         
         return view('products.index',compact('products','sortOption'));
     }
@@ -83,6 +87,11 @@ class ProductController extends Controller
         return redirect()->back()->with('success', 'Comment added successfully!');
     }
 
+    public function addToCart_2($id, Request $request){
+        $this -> addToCart($id, $request);
+        return redirect()->route('carts.index');
+    }
+
     public function addToCart($id, Request $request)
     {
         $product = Product::findOrFail($id);
@@ -92,7 +101,7 @@ class ProductController extends Controller
         $size = $request->input('size');
         $quantity = $request->input('quantity');
         $key = $product->id.'_'.$size;
-        //dd($key);
+        
         if (isset($cart[$key])) {
             $cart[$key]['quantity'] = $cart[$key]['quantity'] + $quantity;
         } else {

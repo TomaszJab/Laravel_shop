@@ -1,5 +1,6 @@
 @extends('products.layout')
 @section('content')
+<div class="container py-5">
 <div class="row">
     <div class="col-sm-12 col-md-12 col-lg-4 col-12 mt-4">
         <div class="card">
@@ -63,5 +64,6 @@
             </div>
         </div>
     </div>
+</div>
 </div>
 @endsection

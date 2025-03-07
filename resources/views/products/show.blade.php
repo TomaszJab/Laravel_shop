@@ -108,7 +108,7 @@
                         </div>
                     </div>
                     <div class="row pt-5">
-                        <form class="w-50" action="{{ route('products.add_to_cart', $product->id) }}" method="POST" onsubmit="updateHiddenSize('1')">
+                        <form class="w-50" action="{{ route('products.add_to_cart_2', $product->id) }}" method="POST" onsubmit="updateHiddenSize('1')">
                             @csrf
                             <input type="hidden" name="size" id="selectedSize1" value="L">
                             <input type="hidden" name="quantity" id="quantity-input1">
@@ -138,11 +138,8 @@
                 <div class="card">
                     <div class="card-footer p-3 border-0" style="background-color: #f8f9fa;">
                         <div class="d-flex flex-start w-100 p-3">
-                            <img class="rounded-circle shadow-1-strong me-3"
-                                src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/img%20(19).webp" alt="avatar" width="40"
-                                height="40" />
+                        <i class="bi bi-person-circle mb-4 me-2" style="font-size:40px;color: grey;"></i>
                             <div data-mdb-input-init class="form-outline w-100">
-                                <!-- <input type="text" name="author" class="form-control" placeholder="Author"> -->
                                 <textarea class="form-control" id="textMessage" rows="4" name="content" placeholder="Message"></textarea>
                             </div>
                         </div>
@@ -166,9 +163,8 @@
                 <div class="card p-3">
                     <div class="card-body">
                         <div class="d-flex flex-start align-items-center">
-                            <img class="rounded-circle shadow-1-strong me-3"
-                                src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/img%20(19).webp" alt="avatar" width="60"
-                                height="60" />
+                        <i class="bi bi-person-circle me-3" style="font-size:60px;color: grey;"></i>
+                          
                         <div>
                             <h6 class="fw-bold text-primary mb-1">{{ $comment->author }}</h6>
                             <p class="text-muted small mb-0">

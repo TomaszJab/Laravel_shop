@@ -80,7 +80,7 @@
                 </div>
             </div>
         </div>
-        <!-- <br/> -->
+
         <div class="row botton">
             <div class="col-6 col-md-6 text-start">
                 <!-- Continue Shopping Button -->
@@ -105,7 +105,6 @@
                 @include('cart.components.orderSummary')
                 
                 <a href="{{ route('carts.buyWithoutRegistration') }}" class="btn btn-primary w-100">Proceed to Checkout</a>
-                <!-- <button class="btn btn-primary w-100">Proceed to Checkout</button> -->
             </div>
         </div>
     </div>
@@ -116,13 +115,9 @@
         <div class="card">
             <div class="card-header">
                 <h5>Cart</h5>
-                <!-- <button type="button" class="btn btn-primary position-relative">
-                Mails <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-secondary">+99 <span class="visually-hidden">unread messages</span></span>
-                </button> -->
             </div>
             <div class="card-body cart text-center">
             <i class="bi bi-cart3 mb-4 mr-3" style="font-size:80px;color: orange;"></i>
-                <!-- <img src="https://i.imgur.com/dCdflKN.png" width="130" height="130" class="img-fluid mb-4 mr-3"> -->
                 <h3><strong>Your Cart is Empty</strong></h3>
                 <h4>Add something to make me happy :)</h4>
                 <a href="{{ route('products.index') }}" class="btn btn-outline-primary m-3">
