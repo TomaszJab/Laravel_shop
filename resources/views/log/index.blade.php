@@ -25,11 +25,10 @@
     <div class="col-sm-12 col-md-12 col-lg-4 col-12 mt-4">
         <div class="card">
             <div class="card-body m-3" >
-            <h3 class="mb-5">Zakupy bez rejestracji</h3>
-            <strong>Aby złożyć zamówienie nie musisz zakładać konta w naszym sklepie.</strong>
-            <p class="text-start mt-3 mb-3">Wybierz przycisk "Złóż zamówienie".</p>
-            <button class="btn btn-md btn-lg btn-primary w-100" type="submit">Złóż zamówienie</button>
-
+                <h3 class="mb-5">Zakupy bez rejestracji</h3>
+                <strong>Aby złożyć zamówienie nie musisz zakładać konta w naszym sklepie.</strong>
+                <p class="text-start mt-3 mb-3">Wybierz przycisk "Złóż zamówienie".</p>
+                <a href="/cart/buyWithoutRegistration" class="btn btn-md btn-lg btn-primary w-100">Złóż zamówienie</a>
             </div>
         </div>
     </div>

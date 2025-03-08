@@ -27,20 +27,20 @@
   display: none; /* Ukrywa nieaktywne linki */
 }
 
-.card-header {
+/* .card-header {
   position: relative;
   background-color: #ffffff;
   color: #4CAF50;
   border-bottom: none;
   font-size: 32px;
   font-weight: 500;
-}
+} */
 .card{
   transition: width 0.35s;
 }
 
 /* Dodanie dolnej zaokrąglonej linii */
-.card-header::after {
+/* .card-header::after {
   content: '';
   position: absolute;
   bottom: -1px;
@@ -50,16 +50,16 @@
   height: 2px;
   background-color: #4CAF50;
   border-radius: 100px 100px 100px 100px;
-}
+} */
 
 .custom-hover {
   transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
-.custom-hover:hover {
+/* .custom-hover:hover {
   background-color: rgb(25, 135, 84);
   transform: scale(1.02); /* Delikatne powiększenie */
-}
+/* } */ 
 
 .custom-hover:hover .card-header {
   background-color: rgb(25, 135, 84); 

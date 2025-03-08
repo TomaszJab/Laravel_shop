@@ -22,15 +22,16 @@ class ProductController extends Controller
         //$sortOption = $request->query('sortOption', 'asc');
         $sortOption = $request->query('sortOption');
         $categoryName = $request->query('category_products','a');
+        $favoriteProduct = Product::orderBy('favorite', 'desc')->firstOrFail();
 
         $category_products = CategoryProduct::where('name_category_product', $categoryName)->firstOrFail();
         if($sortOption){
             $products = $category_products->products()->orderBy('name', $sortOption)->paginate(6);
         }else{
-            $products = $category_products->products()->paginate(6);
+            $products = $category_products->products()->orderBy('favorite', 'desc')->paginate(6);
         }
         
-        return view('products.index',compact('products','sortOption'));
+        return view('products.index',compact('products', 'sortOption', 'favoriteProduct'));
     }
 
     // public function category_products(Request $request)

@@ -1,3 +1,14 @@
+@php
+$cart = session('cart');
+
+if($cart){
+  $products = array_filter($cart, 'is_array');
+  $countCartProducts = count($products);
+}else{
+  $countCartProducts = 0;
+}
+@endphp
+
 <!DOCTYPE html>
 <html>
     <head>
@@ -89,7 +100,7 @@
             <!-- </form> -->
             <a class="btn btn-success btn-sm ml-3" href="{{ route('carts.index') }}">
               <i class="fa fa-shopping-cart"></i> Cart
-              <span class="badge badge-light">3</span>
+              <span class="badge badge-light">@if($countCartProducts>0) {{ $countCartProducts }} @else &nbsp @endif</span>
             </a>
         </div>
     </div>
