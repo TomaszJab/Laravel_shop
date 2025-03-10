@@ -212,7 +212,7 @@ class CartController extends Controller
     {
         $company_or_private_person = $request->input('company_or_private_person');
         
-        if ( $company_or_private_person == 'private_person') {
+        if ($company_or_private_person == 'private_person') {
             $request->validate([
                 'email' => 'required',
                 'firstName' => 'required',
@@ -245,9 +245,6 @@ class CartController extends Controller
             ]);
         }
      
-        // Product::create($request->except('_token'));
-
-        //$summary = $request->only('firstName', 'lastName');
         $summary = $request->except('_token');
 
         // Przekazanie danych do sesji
@@ -259,8 +256,6 @@ class CartController extends Controller
     public function savewithoutregistration(Request $request)
     {
         $data = session('cart_summary');
-      
-        //dd($data);
     
         //if ($data) {
             $personalDetails = personalDetails::create($data);
@@ -268,7 +263,7 @@ class CartController extends Controller
         //}
 
         $cartData = $this->dataCart();
-        //dd($cartData['promo_code']);
+
         $orderProduct = [
             //'user_id' => ,
         'personal_details_id' => $personalDetails->id,
@@ -298,6 +293,10 @@ class CartController extends Controller
                     'updated_at' => now()
                 ];
         }, $cartData['products'], array_keys($cartData['products']));
+
+        $productIds = array_keys($cartData['products']);
+        $productIds = array_map(fn($id) => (int) explode('_', $id)[0], $productIds);
+        Product::whereIn('id', $productIds)->increment('favorite');
 
         $order = Order::insert($order);
         session()->forget('cart');

@@ -23,13 +23,13 @@
 
   <div class="row pt-2">
     <div class="col-6 col-md-6 mt-3">
-      <p class="fs-3">Categories</p>
+      <p class="fs-3 text-primary">ABC Shop</p>
     </div>
     <div class="col-6 col-md-6 mt-4">
       <select class="form-select w-75 ms-auto" onchange="location.href = updateURL(this.value);">
-        <option value="">Featured</option>
-        <option value="desc" {{ request('sortOption') == 'desc' ? 'selected' : '' }}>Malejąco</option>
-        <option value="asc" {{ request('sortOption') == 'asc' ? 'selected' : '' }}>Rosnąco</option>
+        <option value="">Favorite</option>
+        <option value="desc" {{ request('sortOption') == 'desc' ? 'selected' : '' }}>Descending</option>
+        <option value="asc" {{ request('sortOption') == 'asc' ? 'selected' : '' }}>Ascending</option>
       </select>
     </div>
   </div>
@@ -37,19 +37,31 @@
   <div class="row">
     <div class="col-md-3 mt-0">
       <div class="list-group">
-      
-      <a href="#" class="d-flex list-group-item list-group-item-action bg-success text-white" aria-current="true" style="pointer-events: none;">
-        <h6 class="m-0"><i class="fa fa-list"></i>&nbsp;CATEGORIES</h6> 
-      </a>
-        <a href="{{ route('products.index', ['category_products' => 'a']) }}" class="list-group-item list-group-item-action {{ (request()->query('category_products') == 'a') ? 'active' : '' }}">Category a</a>
-        <a href="{{ route('products.index', ['category_products' => 'b']) }}" class="list-group-item list-group-item-action {{ (request()->query('category_products') == 'b') ? 'active' : '' }}">Category b</a>
-        <a href="{{ route('products.index', ['category_products' => 'c']) }}" class="list-group-item list-group-item-action {{ (request()->query('category_products') == 'c') ? 'active' : '' }}">Category c</a>
-        <a href="{{ route('products.index', ['category_products' => 'd']) }}" class="list-group-item list-group-item-action {{ (request()->query('category_products') == 'd') ? 'active' : '' }}">Category d</a>
+        <a href="#" class="d-flex list-group-item list-group-item-action bg-success text-white" aria-current="true" style="pointer-events: none;">
+          <div class="bg-success text-white text-uppercase"><i class="fa fa-list"></i>&nbsp;CATEGORIES</div>
+        </a>
+          <a href="{{ route('products.index', ['category_products' => 'a']) }}" class="list-group-item list-group-item-action {{ (request()->query('category_products') == 'a') ? 'active' : '' }}">Category a</a>
+          <a href="{{ route('products.index', ['category_products' => 'b']) }}" class="list-group-item list-group-item-action {{ (request()->query('category_products') == 'b') ? 'active' : '' }}">Category b</a>
+          <a href="{{ route('products.index', ['category_products' => 'c']) }}" class="list-group-item list-group-item-action {{ (request()->query('category_products') == 'c') ? 'active' : '' }}">Category c</a>
+          <a href="{{ route('products.index', ['category_products' => 'd']) }}" class="list-group-item list-group-item-action {{ (request()->query('category_products') == 'd') ? 'active' : '' }}">Category d</a>
       </div>
-    </div>
 
-    <div class="col-md-9 mt-0">
-    <div class="row gy-3">
+      <div class="card mt-5">
+        <div class="card-header bg-success text-white text-uppercase">Favorite product</div>
+          <img src="https://themewagon.github.io/zay-shop/assets/img/shop_01.jpg" class="img-fluid">
+          <div class="card-body">
+            <h5 class="card-title">{{$favoriteProduct->name}}</h5>
+            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+            <div class="d-flex justify-content-between">
+              <input class="btn btn-danger btn-sm" type="button" value="{{$favoriteProduct->price}}  $">
+              <a href="{{ route('products.show', $favoriteProduct -> id) }}" class="btn btn-success btn-sm">Show &raquo</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-9 mt-0">
+        <div class="row gy-3">
         @foreach ($products as $product)
           <div class="col-md-4">
             <div class="card">
@@ -65,9 +77,9 @@
             </div>
           </div>
         @endforeach
+        </div>
       </div>
     </div>
-  </div>
 
   <div class="row mb-5">
     <div class="col-md-2 ms-auto d-flex justify-content-end fs-4 mt-4 pagination">
