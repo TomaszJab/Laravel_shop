@@ -104,7 +104,7 @@
                 
                 @include('cart.components.orderSummary')
                 
-                <a href="{{ route('carts.buyWithoutRegistration') }}" class="btn btn-primary w-100">Proceed to Checkout</a>
+                <a href="/cart/order" class="btn btn-primary w-100">Proceed to Checkout</a>
             </div>
         </div>
     </div>

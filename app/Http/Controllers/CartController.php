@@ -302,8 +302,6 @@ class CartController extends Controller
         session()->forget('cart');
 
         return redirect()->route('products.index', ['category_products' => 'a'])->with('success', 'Order created successfully');
-
-       // return redirect() -> route('products.index') -> with('succes','Order created succesfully');
     }
 
     public function summary(){
