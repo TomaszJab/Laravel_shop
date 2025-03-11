@@ -139,25 +139,25 @@
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                 <div class="form-group">
                                     <label for="Email" class="mb-1">Email</label>
-                                    <input type="email" class="form-control mb-2" id="email" placeholder="Enter email">
+                                    <input type="email" value="{{ $personalDetails->email ?? '' }}"  class="form-control mb-2" id="email" placeholder="Enter email">
                                 </div>
                             </div>
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                 <div class="form-group">
                                     <label for="firstName" class="mb-1">First name</label>
-                                    <input type="text" class="form-control mb-2" id="firstName" placeholder="Enter first name">
+                                    <input type="text" value="{{ $personalDetails->firstName ?? '' }}" class="form-control mb-2" id="firstName" placeholder="Enter first name">
                                 </div>
                             </div>
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                 <div class="form-group">
                                     <label for="lastName" class="mb-1">Last name</label>
-                                    <input type="text" class="form-control" id="lastName" placeholder="Enter last name">
+                                    <input type="text" value="{{ $personalDetails->lastName ?? '' }}" class="form-control" id="lastName" placeholder="Enter last name">
                                 </div>
                             </div>
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                 <div class="form-group">
                                     <label for="phone" class="mb-1">Phone</label>
-                                    <input type="text" class="form-control" id="phone" placeholder="Enter phone">
+                                    <input type="text" value="{{ $personalDetails->phone ?? '' }}" class="form-control" id="phone" placeholder="Enter phone">
                                 </div>
                             </div>
                         </div>
@@ -181,13 +181,13 @@
                                     <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                         <div class="form-group">
                                             <label for="company_name" class="mb-1 mt-1">Company name<span class="text-danger"> *</span></label>
-                                            <input type="text" class="form-control mb-2" value="{{ old('company name') }}" name="company_name" id="company name" placeholder="Enter Company name">
+                                            <input type="text" class="form-control mb-2" value="{{ $personalDetails->company_name ?? '' }}" name="company_name" id="company name" placeholder="Enter Company name">
                                         </div>
                                     </div>
                                     <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                         <div class="form-group">
                                             <label for="nip" class="mb-1 mt-1">Nip<span class="text-danger"> *</span></label>
-                                            <input type="number" class="form-control mb-2" value="{{ old('nip') }}" name="nip" id="nip" placeholder="Enter Nip">
+                                            <input type="number" class="form-control mb-2" value="{{ $personalDetails->nip ?? '' }}" name="nip" id="nip" placeholder="Enter Nip">
                                         </div>
                                     </div>
                                 </div>                           
@@ -196,25 +196,25 @@
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                 <div class="form-group">
                                     <label for="Street" class="mb-1 mt-1">Street</label>
-                                    <input type="name" class="form-control mb-2" id="Street" placeholder="Enter Street">
+                                    <input type="name" class="form-control mb-2" value="{{ $personalDetails->street ?? '' }}" id="Street" placeholder="Enter Street">
                                 </div>
                             </div>
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                 <div class="form-group">
                                     <label for="house number" class="mb-1 mt-1">House number</label>
-                                    <input type="text" class="form-control" id="house number" placeholder="Enter house number">
+                                    <input type="text" class="form-control" value="{{ $personalDetails->house_number ?? '' }}" id="house number" placeholder="Enter house number">
                                 </div>
                             </div>
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                 <div class="form-group">
                                     <label for="zip code" class="mb-1">Zip Code</label>
-                                    <input type="text" class="form-control" id="zip code" placeholder="Zip Code">
+                                    <input type="text" class="form-control" value="{{ $personalDetails->zip_code ?? '' }}" id="zip code" placeholder="Zip Code">
                                 </div>
                             </div>
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                 <div class="form-group">
                                     <label for="City" class="mb-1">City</label>
-                                    <input type="name" class="form-control mb-2" id="City" placeholder="Enter City">
+                                    <input type="name" class="form-control mb-2" value="{{ $personalDetails->city ?? '' }}" id="City" placeholder="Enter City">
                                 </div>
                             </div>
                         </div>

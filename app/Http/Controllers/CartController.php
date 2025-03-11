@@ -198,8 +198,9 @@ class CartController extends Controller
             return view('cart.order', ['OrderProducts' => $OrderProducts, 'products' => $products]);
         }else{
             $idUser = auth()->user()->id;
-            $OrderProducts = OrderProduct::where('id', $idUser)->paginate(8);
-            return view('cart.order', ['OrderProducts' => $OrderProducts]);
+            $OrderProducts = OrderProduct::where('user_id', $idUser)->paginate(8);
+            $personalDetails = personalDetails::where('user_id', $idUser)->latest()->first();
+            return view('cart.order', ['OrderProducts' => $OrderProducts,'personalDetails'=>$personalDetails]);
         }
     }
 
@@ -263,9 +264,10 @@ class CartController extends Controller
         //}
 
         $cartData = $this->dataCart();
+        $idUser = auth()->user()->id ?? null;
 
         $orderProduct = [
-            //'user_id' => ,
+        'user_id' => $idUser,
         'personal_details_id' => $personalDetails->id,
         'method_delivery' => $cartData['method_delivery'],
         'method_payment' => $cartData['method_payment'],
