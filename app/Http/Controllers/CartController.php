@@ -199,8 +199,9 @@ class CartController extends Controller
         }else{
             $idUser = auth()->user()->id;
             $OrderProducts = OrderProduct::where('user_id', $idUser)->paginate(8);
-            $personalDetails = personalDetails::where('user_id', $idUser)->latest()->first();
-            return view('cart.order', ['OrderProducts' => $OrderProducts,'personalDetails'=>$personalDetails]);
+            $defaultPersonalDetails = personalDetails::where('user_id', $idUser)->where('default_personal_details', '1')->latest()->first();
+            $additionalPersonalDetails = personalDetails::where('user_id', $idUser)->where('default_personal_details', '0')->latest()->first();
+            return view('cart.order', ['OrderProducts' => $OrderProducts,'personalDetails'=>$defaultPersonalDetails,'additionalPersonalDetails'=>$additionalPersonalDetails]);
         }
     }
 
@@ -311,6 +312,23 @@ class CartController extends Controller
         $summary = session('cart_summary', []);
 
         return view('cart.summary', array_merge($cartData, ['summary' => $summary]));
+    }
+
+    public function updateDefaultPersonalDetails(Request $request){
+        $userId = auth()->user()->id;
+
+        $data = $request->except('_token');
+        $data['user_id'] = $userId;
+        $data['acceptance_of_the_regulations'] = 'on';
+
+        $default_personal_details = $request->input('default_personal_details');
+        if($default_personal_details){
+            $data['company_or_private_person'] = 'private_person';
+        }
+
+        PersonalDetails::create($data);
+
+        return redirect()->back()->with('success', 'Personal details saved successfully.');
     }
     
     private function dataCart(){

@@ -76,6 +76,7 @@ Route::post('/cart/add-promos', function (Request $request) {
     $promo = promoCode::where('promo_code', $promo_code)->first();
     dd($promo);
 })->name('apply.promo.code');
+Route::post('/cart/updateDefaultPersonalDetails', [CartController::class, 'updateDefaultPersonalDetails'])->name('carts.updateDefaultPersonalDetails');
 
 Route::get('/log',function(){
     return view('log.index');
