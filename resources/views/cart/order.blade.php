@@ -170,15 +170,15 @@
 
                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                                 <div class="btn-group mb-1 mt-1" role="group">
-                                    <input type="radio" class="btn-check" name="company_or_private_person" value="private_person" id="private_person" autocomplete="off" {{ old('company_or_private_person') == 'private_person' ? 'checked' : '' }} checked>
+                                    <input type="radio" class="btn-check" name="company_or_private_person" value="private_person" id="private_person" autocomplete="off" {{ $personalDetails->company_or_private_person == 'private_person' ? 'checked' : '' }} checked>
                                     <label class="btn btn-primary" for="private_person" onclick="showContent1('private person')">Private person</label>
 
-                                    <input type="radio" class="btn-check" name="company_or_private_person" value="company" id="company" autocomplete="off" {{ old('company_or_private_person') == 'company' ? 'checked' : '' }}>
+                                    <input type="radio" class="btn-check" name="company_or_private_person" value="company" id="company" autocomplete="off" {{ $personalDetails->company_or_private_person == 'company' ? 'checked' : '' }}>
                                     <label class="btn btn-primary" for="company" onclick="showContent1('company_section')" >Company</label>
                                 </div>
                             </div>
 
-                            <div id="company_section" class="content-section_2" style="display: none;">
+                            <div id="company_section" class="content-section_2" @if($personalDetails->company_or_private_person == 'company') style="display: block;" @else style="display: none;" @endif>
                                 <div class="row">
                                     <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                         <div class="form-group">
@@ -219,6 +219,22 @@
                                     <input type="text" name="city"  class="form-control mb-2" value="{{ $personalDetails->city ?? '' }}" id="City" placeholder="Enter City">
                                 </div>
                             </div>
+                            <div class="row pt-2">
+                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                    <div class="form-check">
+                                        <input class="form-check-input" @if($personalDetails->acceptance_of_the_regulations=='on') checked @endif name="acceptance_of_the_regulations" type="checkbox" id="acceptance_of_the_regulations">
+                                        <label class="form-check-label" for="acceptance_of_the_regulations">I have read the <a href="/statutes" target="_blank">regulations</a> of the online store and accept their content.<span class="text-danger"> *</span></label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row pt-2">
+                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                    <div class="form-check">
+                                        <input class="form-check-input" @if($personalDetails->acceptance_of_the_invoice ?? false) checked @endif name="acceptance_of_the_invoice" type="checkbox" id="acceptance_of_the_invoice">
+                                        <label class="form-check-label" for="acceptance_of_the_invoice">I want to receive an invoice</label>
+                                    </div>
+                                </div>
+                            </div>
 
                             <input type="hidden" name="default_personal_details" value="1">
 
@@ -250,19 +266,19 @@
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                 <div class="form-group">
                                     <label for="firstName" class="mb-1">First name</label>
-                                    <input type="text" name="firstName" class="form-control mb-2" id="firstName" placeholder="Enter first name">
+                                    <input type="text" name="firstName" value="{{ $additionalPersonalDetails->firstName ?? '' }}" class="form-control mb-2" id="firstName" placeholder="Enter first name">
                                 </div>
                             </div>
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                 <div class="form-group">
                                     <label for="lastName" class="mb-1">Last name</label>
-                                    <input type="text" name="lastName" class="form-control" id="lastName" placeholder="Enter last name">
+                                    <input type="text" name="lastName" value="{{ $additionalPersonalDetails->lastName ?? '' }}" class="form-control" id="lastName" placeholder="Enter last name">
                                 </div>
                             </div>
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                 <div class="form-group">
                                     <label for="phone" class="mb-1">Phone</label>
-                                    <input type="text" name="phone" class="form-control" id="phone" placeholder="Enter phone">
+                                    <input type="text" name="phone" value="{{ $additionalPersonalDetails->phone ?? '' }}" class="form-control" id="phone" placeholder="Enter phone">
                                 </div>
                             </div>
                         </div>
@@ -273,28 +289,28 @@
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                 <div class="form-group">
                                     <label for="street" class="mb-1 mt-1">Street</label>
-                                    <input type="text" name="street" class="form-control mb-2" id="Street" placeholder="Enter Street">
+                                    <input type="text" name="street" value="{{ $additionalPersonalDetails->street ?? '' }}" class="form-control mb-2" id="Street" placeholder="Enter Street">
                                 </div>
                             </div>
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                 <div class="form-group">
                                     <label for="house_number" class="mb-1 mt-1">House number</label>
-                                    <input type="text" name="house_number" class="form-control" id="house_number" placeholder="Enter house number">
+                                    <input type="text" name="house_number" value="{{ $additionalPersonalDetails->house_number ?? '' }}" class="form-control" id="house_number" placeholder="Enter house number">
                                 </div>
                             </div>
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                 <div class="form-group">
                                     <label for="zip_code" class="mb-1">Zip Code</label>
-                                    <input type="text" name="zip_code" class="form-control" id="zip code" placeholder="Zip Code">
+                                    <input type="text" name="zip_code" value="{{ $additionalPersonalDetails->zip_code ?? '' }}" class="form-control" id="zip code" placeholder="Zip Code">
                                 </div>
                             </div>
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                 <div class="form-group">
                                     <label for="city" class="mb-1">City</label>
-                                    <input type="text" name="city" class="form-control mb-2" id="ciTy" placeholder="Enter City">
+                                    <input type="text" name="city" value="{{ $additionalPersonalDetails->city ?? '' }}" class="form-control mb-2" id="ciTy" placeholder="Enter City">
                                 </div>
                             </div>
-
+                            
                             <input type="hidden" name="default_personal_details" value="0">
 
                         </div>

@@ -319,13 +319,13 @@ class CartController extends Controller
 
         $data = $request->except('_token');
         $data['user_id'] = $userId;
-        $data['acceptance_of_the_regulations'] = 'on';
+        //$data['acceptance_of_the_regulations'] = 'on';
 
         $default_personal_details = $request->input('default_personal_details');
-        if($default_personal_details){
+        if($default_personal_details=="0"){
             $data['company_or_private_person'] = 'private_person';
         }
-
+       
         PersonalDetails::create($data);
 
         return redirect()->back()->with('success', 'Personal details saved successfully.');
