@@ -132,32 +132,34 @@
         <div id="delivery" class="content-section" style="display: none;">
                 <div class="card">
                     <div class="card-body">
+                    <form action="{{ route('carts.updateDefaultPersonalDetails') }}" method="POST">
+                    @csrf
                         <div class="row">
                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                                 <h6 class="mb-2 mt-1 text-primary">Default Personal Details</h6>
                             </div>
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                 <div class="form-group">
-                                    <label for="Email" class="mb-1">Email</label>
-                                    <input type="email" class="form-control mb-2" id="email" placeholder="Enter email">
+                                    <label for="email" class="mb-1">Email</label>
+                                    <input type="email" name="email" value="{{ $personalDetails->email ?? '' }}"  class="form-control mb-2" id="email" placeholder="Enter email">
                                 </div>
                             </div>
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                 <div class="form-group">
                                     <label for="firstName" class="mb-1">First name</label>
-                                    <input type="text" class="form-control mb-2" id="firstName" placeholder="Enter first name">
+                                    <input type="text" name="firstName" value="{{ $personalDetails->firstName ?? '' }}" class="form-control mb-2" id="firstName" placeholder="Enter first name">
                                 </div>
                             </div>
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                 <div class="form-group">
                                     <label for="lastName" class="mb-1">Last name</label>
-                                    <input type="text" class="form-control" id="lastName" placeholder="Enter last name">
+                                    <input type="text" name="lastName" value="{{ $personalDetails->lastName ?? '' }}" class="form-control" id="lastName" placeholder="Enter last name">
                                 </div>
                             </div>
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                 <div class="form-group">
                                     <label for="phone" class="mb-1">Phone</label>
-                                    <input type="text" class="form-control" id="phone" placeholder="Enter phone">
+                                    <input type="text" name="phone" value="{{ $personalDetails->phone ?? '' }}" class="form-control" id="phone" placeholder="Enter phone">
                                 </div>
                             </div>
                         </div>
@@ -168,26 +170,26 @@
 
                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                                 <div class="btn-group mb-1 mt-1" role="group">
-                                    <input type="radio" class="btn-check" name="company_or_private_person" value="private_person" id="private_person" autocomplete="off" {{ old('company_or_private_person') == 'private_person' ? 'checked' : '' }} checked>
+                                    <input type="radio" class="btn-check" name="company_or_private_person" value="private_person" id="private_person" autocomplete="off" {{ $personalDetails->company_or_private_person == 'private_person' ? 'checked' : '' }} checked>
                                     <label class="btn btn-primary" for="private_person" onclick="showContent1('private person')">Private person</label>
 
-                                    <input type="radio" class="btn-check" name="company_or_private_person" value="company" id="company" autocomplete="off" {{ old('company_or_private_person') == 'company' ? 'checked' : '' }}>
+                                    <input type="radio" class="btn-check" name="company_or_private_person" value="company" id="company" autocomplete="off" {{ $personalDetails->company_or_private_person == 'company' ? 'checked' : '' }}>
                                     <label class="btn btn-primary" for="company" onclick="showContent1('company_section')" >Company</label>
                                 </div>
                             </div>
 
-                            <div id="company_section" class="content-section_2" style="display: none;">
+                            <div id="company_section" class="content-section_2" @if($personalDetails->company_or_private_person == 'company') style="display: block;" @else style="display: none;" @endif>
                                 <div class="row">
                                     <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                         <div class="form-group">
                                             <label for="company_name" class="mb-1 mt-1">Company name<span class="text-danger"> *</span></label>
-                                            <input type="text" class="form-control mb-2" value="{{ old('company name') }}" name="company_name" id="company name" placeholder="Enter Company name">
+                                            <input type="text" class="form-control mb-2" value="{{ $personalDetails->company_name ?? '' }}" name="company_name" id="company name" placeholder="Enter Company name">
                                         </div>
                                     </div>
                                     <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                         <div class="form-group">
                                             <label for="nip" class="mb-1 mt-1">Nip<span class="text-danger"> *</span></label>
-                                            <input type="number" class="form-control mb-2" value="{{ old('nip') }}" name="nip" id="nip" placeholder="Enter Nip">
+                                            <input type="number" class="form-control mb-2" value="{{ $personalDetails->nip ?? '' }}" name="nip" id="nip" placeholder="Enter Nip">
                                         </div>
                                     </div>
                                 </div>                           
@@ -195,66 +197,88 @@
                             
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                 <div class="form-group">
-                                    <label for="Street" class="mb-1 mt-1">Street</label>
-                                    <input type="name" class="form-control mb-2" id="Street" placeholder="Enter Street">
+                                    <label for="street" class="mb-1 mt-1">Street</label>
+                                    <input type="text" name="street" class="form-control mb-2" value="{{ $personalDetails->street ?? '' }}" id="Street" placeholder="Enter Street">
                                 </div>
                             </div>
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                 <div class="form-group">
-                                    <label for="house number" class="mb-1 mt-1">House number</label>
-                                    <input type="text" class="form-control" id="house number" placeholder="Enter house number">
+                                    <label for="house_number" class="mb-1 mt-1">House number</label>
+                                    <input type="text" name="house_number" class="form-control" value="{{ $personalDetails->house_number ?? '' }}" id="house number" placeholder="Enter house number">
                                 </div>
                             </div>
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                 <div class="form-group">
-                                    <label for="zip code" class="mb-1">Zip Code</label>
-                                    <input type="text" class="form-control" id="zip code" placeholder="Zip Code">
+                                    <label for="zip_code" class="mb-1">Zip Code</label>
+                                    <input type="text" name="zip_code"  class="form-control" value="{{ $personalDetails->zip_code ?? '' }}" id="zip_code" placeholder="Zip Code">
                                 </div>
                             </div>
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                 <div class="form-group">
-                                    <label for="City" class="mb-1">City</label>
-                                    <input type="name" class="form-control mb-2" id="City" placeholder="Enter City">
+                                    <label for="city" class="mb-1">City</label>
+                                    <input type="text" name="city"  class="form-control mb-2" value="{{ $personalDetails->city ?? '' }}" id="City" placeholder="Enter City">
                                 </div>
                             </div>
+                            <div class="row pt-2">
+                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                    <div class="form-check">
+                                        <input class="form-check-input" @if($personalDetails->acceptance_of_the_regulations=='on') checked @endif name="acceptance_of_the_regulations" type="checkbox" id="acceptance_of_the_regulations">
+                                        <label class="form-check-label" for="acceptance_of_the_regulations">I have read the <a href="/statutes" target="_blank">regulations</a> of the online store and accept their content.<span class="text-danger"> *</span></label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row pt-2">
+                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                    <div class="form-check">
+                                        <input class="form-check-input" @if($personalDetails->acceptance_of_the_invoice ?? false) checked @endif name="acceptance_of_the_invoice" type="checkbox" id="acceptance_of_the_invoice">
+                                        <label class="form-check-label" for="acceptance_of_the_invoice">I want to receive an invoice</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <input type="hidden" name="default_personal_details" value="1">
+
                         </div>
                         <div class="row">
                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                                 <div class="text-end">
-                                    <button type="button" id="submit" name="submit" class="btn btn-primary mt-3">Update</button>
+                                    <button type="submit" id="submit" name="submit" class="btn btn-primary mt-3">Update</button>
                                 </div>
                             </div>
                         </div>
                     </div>
+                    </form>
                 </div>
                 <div class="card mt-4">
                     <div class="card-body">
+                    <form action="{{ route('carts.updateDefaultPersonalDetails') }}" method="POST">
+                    @csrf
                         <div class="row">
                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                                 <h6 class="mb-2 mt-1 text-primary">Additional Personal Details</h6>
                             </div>
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                 <div class="form-group">
-                                    <label for="Email" class="mb-1">Email</label>
-                                    <input type="email" class="form-control mb-2" id="email" placeholder="Enter email">
+                                    <label for="email" class="mb-1">Email</label>
+                                    <input type="email" name="email" value="{{ $additionalPersonalDetails->email ?? '' }}" class="form-control mb-2" id="email" placeholder="Enter email">
                                 </div>
                             </div>
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                 <div class="form-group">
                                     <label for="firstName" class="mb-1">First name</label>
-                                    <input type="text" class="form-control mb-2" id="firstName" placeholder="Enter first name">
+                                    <input type="text" name="firstName" value="{{ $additionalPersonalDetails->firstName ?? '' }}" class="form-control mb-2" id="firstName" placeholder="Enter first name">
                                 </div>
                             </div>
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                 <div class="form-group">
                                     <label for="lastName" class="mb-1">Last name</label>
-                                    <input type="text" class="form-control" id="lastName" placeholder="Enter last name">
+                                    <input type="text" name="lastName" value="{{ $additionalPersonalDetails->lastName ?? '' }}" class="form-control" id="lastName" placeholder="Enter last name">
                                 </div>
                             </div>
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                 <div class="form-group">
                                     <label for="phone" class="mb-1">Phone</label>
-                                    <input type="text" class="form-control" id="phone" placeholder="Enter phone">
+                                    <input type="text" name="phone" value="{{ $additionalPersonalDetails->phone ?? '' }}" class="form-control" id="phone" placeholder="Enter phone">
                                 </div>
                             </div>
                         </div>
@@ -264,36 +288,40 @@
                             </div>
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                 <div class="form-group">
-                                    <label for="Street" class="mb-1 mt-1">Street</label>
-                                    <input type="name" class="form-control mb-2" id="Street" placeholder="Enter Street">
+                                    <label for="street" class="mb-1 mt-1">Street</label>
+                                    <input type="text" name="street" value="{{ $additionalPersonalDetails->street ?? '' }}" class="form-control mb-2" id="Street" placeholder="Enter Street">
                                 </div>
                             </div>
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                 <div class="form-group">
-                                    <label for="house number" class="mb-1 mt-1">House number</label>
-                                    <input type="text" class="form-control" id="house number" placeholder="Enter house number">
+                                    <label for="house_number" class="mb-1 mt-1">House number</label>
+                                    <input type="text" name="house_number" value="{{ $additionalPersonalDetails->house_number ?? '' }}" class="form-control" id="house_number" placeholder="Enter house number">
                                 </div>
                             </div>
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                 <div class="form-group">
-                                    <label for="zip code" class="mb-1">Zip Code</label>
-                                    <input type="text" class="form-control" id="zip code" placeholder="Zip Code">
+                                    <label for="zip_code" class="mb-1">Zip Code</label>
+                                    <input type="text" name="zip_code" value="{{ $additionalPersonalDetails->zip_code ?? '' }}" class="form-control" id="zip code" placeholder="Zip Code">
                                 </div>
                             </div>
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                 <div class="form-group">
-                                    <label for="City" class="mb-1">City</label>
-                                    <input type="name" class="form-control mb-2" id="ciTy" placeholder="Enter City">
+                                    <label for="city" class="mb-1">City</label>
+                                    <input type="text" name="city" value="{{ $additionalPersonalDetails->city ?? '' }}" class="form-control mb-2" id="ciTy" placeholder="Enter City">
                                 </div>
                             </div>
+                            
+                            <input type="hidden" name="default_personal_details" value="0">
+
                         </div>
                         <div class="row">
                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                                 <div class="text-end">
-                                    <button type="button" id="submit" name="submit" class="btn btn-primary mt-3">Update</button>
+                                    <button type="submit" id="submit" name="submit" class="btn btn-primary mt-3">Update</button>
                                 </div>
                             </div>
                         </div>
+                        </form>
                     </div>
                 </div>
         </div>

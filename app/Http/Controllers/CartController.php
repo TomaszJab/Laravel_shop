@@ -198,8 +198,10 @@ class CartController extends Controller
             return view('cart.order', ['OrderProducts' => $OrderProducts, 'products' => $products]);
         }else{
             $idUser = auth()->user()->id;
-            $OrderProducts = OrderProduct::where('id', $idUser)->paginate(8);
-            return view('cart.order', ['OrderProducts' => $OrderProducts]);
+            $OrderProducts = OrderProduct::where('user_id', $idUser)->paginate(8);
+            $defaultPersonalDetails = personalDetails::where('user_id', $idUser)->where('default_personal_details', '1')->latest()->first();
+            $additionalPersonalDetails = personalDetails::where('user_id', $idUser)->where('default_personal_details', '0')->latest()->first();
+            return view('cart.order', ['OrderProducts' => $OrderProducts,'personalDetails'=>$defaultPersonalDetails,'additionalPersonalDetails'=>$additionalPersonalDetails]);
         }
     }
 
@@ -263,9 +265,10 @@ class CartController extends Controller
         //}
 
         $cartData = $this->dataCart();
+        $idUser = auth()->user()->id ?? null;
 
         $orderProduct = [
-            //'user_id' => ,
+        'user_id' => $idUser,
         'personal_details_id' => $personalDetails->id,
         'method_delivery' => $cartData['method_delivery'],
         'method_payment' => $cartData['method_payment'],
@@ -302,8 +305,6 @@ class CartController extends Controller
         session()->forget('cart');
 
         return redirect()->route('products.index', ['category_products' => 'a'])->with('success', 'Order created successfully');
-
-       // return redirect() -> route('products.index') -> with('succes','Order created succesfully');
     }
 
     public function summary(){
@@ -311,6 +312,23 @@ class CartController extends Controller
         $summary = session('cart_summary', []);
 
         return view('cart.summary', array_merge($cartData, ['summary' => $summary]));
+    }
+
+    public function updateDefaultPersonalDetails(Request $request){
+        $userId = auth()->user()->id;
+
+        $data = $request->except('_token');
+        $data['user_id'] = $userId;
+        //$data['acceptance_of_the_regulations'] = 'on';
+
+        $default_personal_details = $request->input('default_personal_details');
+        if($default_personal_details=="0"){
+            $data['company_or_private_person'] = 'private_person';
+        }
+       
+        PersonalDetails::create($data);
+
+        return redirect()->back()->with('success', 'Personal details saved successfully.');
     }
     
     private function dataCart(){

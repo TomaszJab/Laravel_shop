@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class personalDetails extends Model
 {
     use HasFactory;
-    protected $fillable = ['email','firstName','lastName','phone','company_name','company_or_private_person','nip','street','house_number','zip_code','city','additional_information','acceptance_of_the_regulations','acceptance_of_the_invoice'];
+    protected $fillable = ['user_id','email','firstName','lastName','phone','company_name','company_or_private_person','nip','street','house_number','zip_code','city','additional_information','acceptance_of_the_regulations','acceptance_of_the_invoice','default_personal_details'];
 
     public function OrderProducts()
     {

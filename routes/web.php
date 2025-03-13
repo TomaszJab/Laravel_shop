@@ -76,6 +76,7 @@ Route::post('/cart/add-promos', function (Request $request) {
     $promo = promoCode::where('promo_code', $promo_code)->first();
     dd($promo);
 })->name('apply.promo.code');
+Route::post('/cart/updateDefaultPersonalDetails', [CartController::class, 'updateDefaultPersonalDetails'])->name('carts.updateDefaultPersonalDetails');
 
 Route::get('/log',function(){
     return view('log.index');
@@ -88,10 +89,12 @@ Route::resource('AboutUs', AboutUsController::class);
 
 Route::resource('homepage', HomePageController::class);
 
-Route::resource('products', ProductController::class)->except(['create', 'edit','store','destroy','update']);
-
+Route::resource('products', ProductController::class)->only(['index','show','create']);
+// Route::resource('products', ProductController::class)->except(['create', 'edit','store','destroy','update']);
+//Route::resource('products', ProductController::class);
 Route::middleware(['auth', 'admin'])->group(function () {
-    Route::resource('products', ProductController::class)->only(['create', 'edit','store','destroy','update']);
+    //Route::resource('products', ProductController::class)->only(['create', 'edit','store','destroy','update']);
+    Route::resource('products', ProductController::class)->only(['create','edit','store','destroy','update']);
 });
 
 // Route::get('products', [ProductController::class, 'category_products'])->name('products.category_products');;
