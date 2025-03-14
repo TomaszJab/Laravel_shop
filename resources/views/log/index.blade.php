@@ -5,7 +5,7 @@
     <div class="col-sm-12 col-md-12 col-lg-4 col-12 mt-4">
         <div class="card">
             <div class="card-body m-3" >
-            <h3 class="mb-5">Zarejetruj się</h3>
+            <h3 class="mb-5">Register</h3>
             
             <form action="{{ route('register') }}" method="POST" autocomplete="off">
                 @csrf
@@ -50,7 +50,7 @@
                     <label class="form-label mt-1" for="password_confirmation">Password Confirmation</label>
                 </div>
 
-                <button class="btn btn-md btn-lg btn-primary w-100" type="submit">Zarejetruj się</button>
+                <button class="btn btn-md btn-lg btn-primary w-100" type="submit">Register</button>
             </form>
             
             <hr class="my-4">
@@ -64,10 +64,10 @@
     <div class="col-sm-12 col-md-12 col-lg-4 col-12 mt-4">
         <div class="card">
             <div class="card-body m-3" >
-                <h3 class="mb-5">Zakupy bez rejestracji</h3>
-                <strong>Aby złożyć zamówienie nie musisz zakładać konta w naszym sklepie.</strong>
-                <p class="text-start mt-3 mb-3">Wybierz przycisk "Złóż zamówienie".</p>
-                <a href="/cart/buyWithoutRegistration" class="btn btn-md btn-lg btn-primary w-100">Złóż zamówienie</a>
+                <h3 class="mb-5">Shopping without registration</h3>
+                <strong>You do not need to create an account in our store to place an order.</strong>
+                <p class="text-start mt-3 mb-3">Select the "Create Order" button.</p>
+                <a href="/cart/buyWithoutRegistration" class="btn btn-md btn-lg btn-primary w-100">Create Order</a>
             </div>
         </div>
     </div>
