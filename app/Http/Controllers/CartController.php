@@ -319,13 +319,41 @@ class CartController extends Controller
 
         $data = $request->except('_token');
         $data['user_id'] = $userId;
-        //$data['acceptance_of_the_regulations'] = 'on';
 
         $default_personal_details = $request->input('default_personal_details');
         if($default_personal_details=="0"){
             $data['company_or_private_person'] = 'private_person';
         }
        
+        $company_or_private_person = $data['company_or_private_person'];
+
+        $rules = [
+            'email' => 'required',
+            'firstName' => 'required',
+            'lastName' => 'required',
+            'phone' => 'required',
+
+            'street' => 'required',
+            'house_number' => 'required',
+            'zip_code' => 'required',
+            'city' => 'required',
+        ];
+
+        if ($request->has('acceptance_of_the_regulations')) {
+            $rules['acceptance_of_the_regulations'] = 'required';
+        } else {
+            $data['acceptance_of_the_regulations'] = '-';
+        }
+
+        if ($company_or_private_person == 'private_person') {
+            
+        }else{
+            $rules['company_name'] = 'required';
+            $rules['nip'] = 'required';
+            
+        }
+
+        $request->validate($rules);
         PersonalDetails::create($data);
 
         return redirect()->back()->with('success', 'Personal details saved successfully.');

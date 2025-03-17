@@ -1,6 +1,16 @@
 @extends('products.layout')
 @section('content')
 <div class="container">
+@if ($errors->any())
+    <div class="alert alert-danger pt-2 pb-2">
+        <strong>Whoops!</strong> There were some problems with your input.<br><br>
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
 <div class="row">
     <div class="col-lg-3 my-5">
         <div class="card" >
@@ -140,25 +150,25 @@
                             </div>
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                 <div class="form-group">
-                                    <label for="email" class="mb-1">Email</label>
+                                    <label for="email" class="mb-1">Email<span class="text-danger"> *</span></label>
                                     <input type="email" name="email" value="{{ $personalDetails->email ?? '' }}"  class="form-control mb-2" id="email" placeholder="Enter email">
                                 </div>
                             </div>
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                 <div class="form-group">
-                                    <label for="firstName" class="mb-1">First name</label>
+                                    <label for="firstName" class="mb-1">First name<span class="text-danger"> *</span></label>
                                     <input type="text" name="firstName" value="{{ $personalDetails->firstName ?? '' }}" class="form-control mb-2" id="firstName" placeholder="Enter first name">
                                 </div>
                             </div>
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                 <div class="form-group">
-                                    <label for="lastName" class="mb-1">Last name</label>
+                                    <label for="lastName" class="mb-1">Last name<span class="text-danger"> *</span></label>
                                     <input type="text" name="lastName" value="{{ $personalDetails->lastName ?? '' }}" class="form-control" id="lastName" placeholder="Enter last name">
                                 </div>
                             </div>
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                 <div class="form-group">
-                                    <label for="phone" class="mb-1">Phone</label>
+                                    <label for="phone" class="mb-1">Phone<span class="text-danger"> *</span></label>
                                     <input type="text" name="phone" value="{{ $personalDetails->phone ?? '' }}" class="form-control" id="phone" placeholder="Enter phone">
                                 </div>
                             </div>
@@ -197,25 +207,25 @@
                             
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                 <div class="form-group">
-                                    <label for="street" class="mb-1 mt-1">Street</label>
+                                    <label for="street" class="mb-1 mt-1">Street<span class="text-danger"> *</span></label>
                                     <input type="text" name="street" class="form-control mb-2" value="{{ $personalDetails->street ?? '' }}" id="Street" placeholder="Enter Street">
                                 </div>
                             </div>
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                 <div class="form-group">
-                                    <label for="house_number" class="mb-1 mt-1">House number</label>
+                                    <label for="house_number" class="mb-1 mt-1">House number<span class="text-danger"> *</span></label>
                                     <input type="text" name="house_number" class="form-control" value="{{ $personalDetails->house_number ?? '' }}" id="house number" placeholder="Enter house number">
                                 </div>
                             </div>
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                 <div class="form-group">
-                                    <label for="zip_code" class="mb-1">Zip Code</label>
+                                    <label for="zip_code" class="mb-1">Zip Code<span class="text-danger"> *</span></label>
                                     <input type="text" name="zip_code"  class="form-control" value="{{ $personalDetails->zip_code ?? '' }}" id="zip_code" placeholder="Zip Code">
                                 </div>
                             </div>
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                 <div class="form-group">
-                                    <label for="city" class="mb-1">City</label>
+                                    <label for="city" class="mb-1">City<span class="text-danger"> *</span></label>
                                     <input type="text" name="city"  class="form-control mb-2" value="{{ $personalDetails->city ?? '' }}" id="City" placeholder="Enter City">
                                 </div>
                             </div>
@@ -259,25 +269,25 @@
                             </div>
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                 <div class="form-group">
-                                    <label for="email" class="mb-1">Email</label>
+                                    <label for="email" class="mb-1">Email<span class="text-danger"> *</span></label>
                                     <input type="email" name="email" value="{{ $additionalPersonalDetails->email ?? '' }}" class="form-control mb-2" id="email" placeholder="Enter email">
                                 </div>
                             </div>
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                 <div class="form-group">
-                                    <label for="firstName" class="mb-1">First name</label>
+                                    <label for="firstName" class="mb-1">First name<span class="text-danger"> *</span></label>
                                     <input type="text" name="firstName" value="{{ $additionalPersonalDetails->firstName ?? '' }}" class="form-control mb-2" id="firstName" placeholder="Enter first name">
                                 </div>
                             </div>
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                 <div class="form-group">
-                                    <label for="lastName" class="mb-1">Last name</label>
+                                    <label for="lastName" class="mb-1">Last name<span class="text-danger"> *</span></label>
                                     <input type="text" name="lastName" value="{{ $additionalPersonalDetails->lastName ?? '' }}" class="form-control" id="lastName" placeholder="Enter last name">
                                 </div>
                             </div>
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                 <div class="form-group">
-                                    <label for="phone" class="mb-1">Phone</label>
+                                    <label for="phone" class="mb-1">Phone<span class="text-danger"> *</span></label>
                                     <input type="text" name="phone" value="{{ $additionalPersonalDetails->phone ?? '' }}" class="form-control" id="phone" placeholder="Enter phone">
                                 </div>
                             </div>
@@ -288,25 +298,25 @@
                             </div>
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                 <div class="form-group">
-                                    <label for="street" class="mb-1 mt-1">Street</label>
+                                    <label for="street" class="mb-1 mt-1">Street<span class="text-danger"> *</span></label>
                                     <input type="text" name="street" value="{{ $additionalPersonalDetails->street ?? '' }}" class="form-control mb-2" id="Street" placeholder="Enter Street">
                                 </div>
                             </div>
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                 <div class="form-group">
-                                    <label for="house_number" class="mb-1 mt-1">House number</label>
+                                    <label for="house_number" class="mb-1 mt-1">House number<span class="text-danger"> *</span></label>
                                     <input type="text" name="house_number" value="{{ $additionalPersonalDetails->house_number ?? '' }}" class="form-control" id="house_number" placeholder="Enter house number">
                                 </div>
                             </div>
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                 <div class="form-group">
-                                    <label for="zip_code" class="mb-1">Zip Code</label>
+                                    <label for="zip_code" class="mb-1">Zip Code<span class="text-danger"> *</span></label>
                                     <input type="text" name="zip_code" value="{{ $additionalPersonalDetails->zip_code ?? '' }}" class="form-control" id="zip code" placeholder="Zip Code">
                                 </div>
                             </div>
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                 <div class="form-group">
-                                    <label for="city" class="mb-1">City</label>
+                                    <label for="city" class="mb-1">City<span class="text-danger"> *</span></label>
                                     <input type="text" name="city" value="{{ $additionalPersonalDetails->city ?? '' }}" class="form-control mb-2" id="ciTy" placeholder="Enter City">
                                 </div>
                             </div>
