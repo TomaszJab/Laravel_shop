@@ -12,6 +12,7 @@ use App\Http\Controllers\StatuteController;
 use App\Models\promoCode;
 use App\Mail\AboutUsLetsTalkMail;
 
+use App\Http\Controllers\GoogleLoginController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -123,5 +124,8 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+
+Route::get('/google/redirect', [App\Http\Controllers\GoogleLoginController::class, 'redirectToGoogle'])->name('google.redirect');
+Route::get('/auth/google/callback', [App\Http\Controllers\GoogleLoginController::class, 'handleGoogleCallback'])->name('google.callback');
 
 require __DIR__.'/auth.php';

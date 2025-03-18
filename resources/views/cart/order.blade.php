@@ -180,15 +180,15 @@
 
                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                                 <div class="btn-group mb-1 mt-1" role="group">
-                                    <input type="radio" class="btn-check" name="company_or_private_person" value="private_person" id="private_person" autocomplete="off" {{ $personalDetails->company_or_private_person == 'private_person' ? 'checked' : '' }} checked>
+                                    <input type="radio" class="btn-check" name="company_or_private_person" value="private_person" id="private_person" autocomplete="off" {{ $personalDetails->company_or_private_person ?? '' == 'private_person' ? 'checked' : '' }} checked>
                                     <label class="btn btn-primary" for="private_person" onclick="showContent1('private person')">Private person</label>
 
-                                    <input type="radio" class="btn-check" name="company_or_private_person" value="company" id="company" autocomplete="off" {{ $personalDetails->company_or_private_person == 'company' ? 'checked' : '' }}>
+                                    <input type="radio" class="btn-check" name="company_or_private_person" value="company" id="company" autocomplete="off" {{ $personalDetails->company_or_private_person ?? '' == 'company' ? 'checked' : '' }}>
                                     <label class="btn btn-primary" for="company" onclick="showContent1('company_section')" >Company</label>
                                 </div>
                             </div>
 
-                            <div id="company_section" class="content-section_2" @if($personalDetails->company_or_private_person == 'company') style="display: block;" @else style="display: none;" @endif>
+                            <div id="company_section" class="content-section_2" @if($personalDetails->company_or_private_person ?? '' == 'company') style="display: block;" @else style="display: none;" @endif>
                                 <div class="row">
                                     <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                         <div class="form-group">
@@ -232,7 +232,7 @@
                             <div class="row pt-2">
                                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                                     <div class="form-check">
-                                        <input class="form-check-input" @if($personalDetails->acceptance_of_the_regulations=='on') checked @endif name="acceptance_of_the_regulations" type="checkbox" id="acceptance_of_the_regulations">
+                                        <input class="form-check-input" @if($personalDetails->acceptance_of_the_regulations ?? '' =='on') checked @endif name="acceptance_of_the_regulations" type="checkbox" id="acceptance_of_the_regulations">
                                         <label class="form-check-label" for="acceptance_of_the_regulations">I have read the <a href="/statutes" target="_blank">regulations</a> of the online store and accept their content.<span class="text-danger"> *</span></label>
                                     </div>
                                 </div>

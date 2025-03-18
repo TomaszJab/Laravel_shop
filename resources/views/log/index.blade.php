@@ -109,9 +109,10 @@
 
                 <hr class="my-4">
 
-                <button data-mdb-button-init data-mdb-ripple-init class="btn btn-md btn-lg btn-primary w-100" style="background-color: #dd4b39;"
-                type="submit"><i class="fab fa-google me-2"></i> Sign in with google</button>
-                <button data-mdb-button-init data-mdb-ripple-init class="btn btn-md btn-lg btn-primary mt-2 w-100" style="background-color: #3b5998;"
+                <a href="{{ route('google.redirect') }}" class="btn btn-md btn-lg btn-primary w-100" 
+                style="background-color: #dd4b39;"><i class="fab fa-google me-2"></i> Sign in with google</a>
+                
+                <button class="btn btn-md btn-lg btn-primary mt-2 w-100" style="background-color: #3b5998;"
                 type="submit"><i class="fab fa-facebook-f me-2"></i>Sign in with facebook</button>
             </div>
         </div>
