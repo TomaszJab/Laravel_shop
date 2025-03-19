@@ -104,7 +104,11 @@
                 
                 @include('cart.components.orderSummary')
                 
-                <a href="/cart/order" class="btn btn-primary w-100">Proceed to Checkout</a>
+                @auth
+                    <a href="/cart/buy" class="btn btn-primary w-100">Proceed to Checkout</a>
+                @else
+                    <a href="/login" class="btn btn-primary w-100">Proceed to Checkout</a>
+                @endauth
             </div>
         </div>
     </div>

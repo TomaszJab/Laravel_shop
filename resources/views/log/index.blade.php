@@ -1,3 +1,14 @@
+@php
+$cart = session('cart');
+
+if($cart){
+  $products = array_filter($cart, 'is_array');
+  $countCartProducts = count($products);
+}else{
+  $countCartProducts = 0;
+}
+@endphp
+
 @extends('products.layout')
 @section('content')
 <div class="container py-5">
@@ -15,7 +26,7 @@
                         <span class="text-danger">{{ $errors->first('registration_name') }}</span>
                     </div>
                     @endif
-                    <input  type="text" name="registration_name" id="registration_name" class="form-control form-control-lg" />
+                    <input  type="text" value="{{ old('registration_name') }}" name="registration_name" id="registration_name" class="form-control form-control-lg" />
                     <label class="form-label mt-1" for="registration_name">Name</label>
                 </div>
                 
@@ -25,7 +36,7 @@
                         <span class="text-danger">{{ $errors->first('registration_email') }}</span>
                     </div>
                     @endif
-                    <input type="email" name="registration_email" id="registration_email" class="form-control form-control-lg" autocomplete="new-email"/>
+                    <input type="email" value="{{ old('registration_email') }}" name="registration_email" id="registration_email" class="form-control form-control-lg" autocomplete="new-email"/>
                     <label class="form-label mt-1" for="registration_email">Email</label>
                 </div>
 
@@ -53,11 +64,11 @@
                 <button class="btn btn-md btn-lg btn-primary w-100" type="submit">Register</button>
             </form>
             
-            <hr class="my-4">
-            <button data-mdb-button-init data-mdb-ripple-init class="btn btn-md btn-lg btn-primary w-100" style="background-color: #dd4b39;"
+            <!-- <hr class="my-4"> -->
+            <!-- <button data-mdb-button-init data-mdb-ripple-init class="btn btn-md btn-lg btn-primary w-100" style="background-color: #dd4b39;"
                 type="submit"><i class="fab fa-google me-2"></i> Sign in with google</button>
                 <button data-mdb-button-init data-mdb-ripple-init class="btn btn-md btn-lg btn-primary mt-2 w-100" style="background-color: #3b5998;"
-                type="submit"><i class="fab fa-facebook-f me-2"></i>Sign in with facebook</button>
+                type="submit"><i class="fab fa-facebook-f me-2"></i>Sign in with facebook</button> -->
             </div>
         </div>
     </div>
@@ -66,8 +77,12 @@
             <div class="card-body m-3" >
                 <h3 class="mb-5">Shopping without registration</h3>
                 <strong>You do not need to create an account in our store to place an order.</strong>
-                <p class="text-start mt-3 mb-3">Select the "Create Order" button.</p>
-                <a href="/cart/buyWithoutRegistration" class="btn btn-md btn-lg btn-primary w-100">Create Order</a>
+                <p class="text-start mt-3 mb-3">Add the product to your cart, select a shipping method and click the "Create order" button.</p>
+                @if($countCartProducts > 0)
+                    <a href="/cart/buy" class="btn btn-md btn-lg btn-primary w-100">Create Order</a>
+                @else
+                    <a href="/cart/buy" class="btn btn-md btn-lg btn-primary w-100 disabled">Create Order</a>
+                @endif
             </div>
         </div>
     </div>
@@ -99,10 +114,10 @@
                     </div>
 
                     <!-- Checkbox -->
-                    <div class="form-check d-flex justify-content-start mb-4">
+                    <!-- <div class="form-check d-flex justify-content-start mb-4">
                         <input class="form-check-input" type="checkbox" value="" id="form1Example3" />
                         <label class="form-check-label" for="form1Example3">&nbsp;Remember password</label>
-                    </div>
+                    </div> -->
 
                     <button class="btn btn-md btn-lg btn-primary w-100" type="submit">Login</button>
                 </form>
