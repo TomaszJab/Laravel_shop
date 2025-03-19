@@ -198,6 +198,7 @@ class CartController extends Controller
             return view('cart.order', ['OrderProducts' => $OrderProducts, 'products' => $products]);
         }else{
             $idUser = auth()->user()->id;
+            //dd($idUser);
             $OrderProducts = OrderProduct::where('user_id', $idUser)->paginate(8);
             $defaultPersonalDetails = personalDetails::where('user_id', $idUser)->where('default_personal_details', '1')->latest()->first();
             $additionalPersonalDetails = personalDetails::where('user_id', $idUser)->where('default_personal_details', '0')->latest()->first();

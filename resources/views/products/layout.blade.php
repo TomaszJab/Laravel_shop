@@ -66,14 +66,14 @@ if($cart){
                       <a class="nav-link {{ request()->routeIs('carts.order') ? 'active' : '' }}" href="{{ route('carts.order') }}">Order</a>
                     </li>
                     <li class="nav-item">
-                      <form method="POST" action="{{ route('logout') }}">
+                      <form method="POST" action="{{ route('logout') }}" class="d-inline">
                           @csrf
                           <button type="submit" class="nav-link {{ request()->routeIs('logout') ? 'active' : '' }}">Logout</button>
                       </form>
                     </li>
                   @else
                     <li class="nav-item">
-                      <a class="nav-link {{ request()->routeIs('login') ? 'active' : '' }}" href="{{ route('login') }}">Login</a>
+                      <a class="nav-link {{ request()->routeIs('login') ? 'active' : '' }}" href="{{ route('login') }}">Login/Register</a>
                     </li>
                     @if (Route::has('register'))
                       <li class="nav-item">

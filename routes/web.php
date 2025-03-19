@@ -12,6 +12,7 @@ use App\Http\Controllers\StatuteController;
 use App\Models\promoCode;
 use App\Mail\AboutUsLetsTalkMail;
 
+use App\Http\Controllers\GoogleLoginController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -33,7 +34,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/cart/order/details/{order_product_id}', [CartController::class, 'details'])->name('carts.order.details');
 });
 
-Route::get('/cart/buyWithoutRegistration', [CartController::class, 'buyWithoutRegistration'])->name('carts.buyWithoutRegistration');
+Route::get('/cart/buy', [CartController::class, 'buyWithoutRegistration'])->name('carts.buyWithoutRegistration');
 Route::post('/cart/changePrice', [CartController::class, 'changePrice'])->name('carts.changePrice');
 
 Route::post('/cart/storewithoutregistration', [CartController::class, 'storewithoutregistration'])->name('carts.withoutregistration.store');
@@ -78,10 +79,6 @@ Route::post('/cart/add-promos', function (Request $request) {
 })->name('apply.promo.code');
 Route::post('/cart/updateDefaultPersonalDetails', [CartController::class, 'updateDefaultPersonalDetails'])->name('carts.updateDefaultPersonalDetails');
 
-Route::get('/log',function(){
-    return view('log.index');
-})->name('log');
-
 Route::resource('contacts', ContactController::class);
 Route::post('/contacts/send-mail', [ContactController::class, 'sendMailLetsTalkMail'])->name('contacts.sendMailLetsTalkMail');
 
@@ -110,9 +107,6 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/log', function () {
-    return view('log.index');
-});
 
 Route::get('/dashboard', function () {
     return view('dashboard');
@@ -123,5 +117,8 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+
+Route::get('/google/redirect', [GoogleLoginController::class, 'redirectToGoogle'])->name('google.redirect');
+Route::get('/auth/google/callback', [GoogleLoginController::class, 'handleGoogleCallback'])->name('google.callback');
 
 require __DIR__.'/auth.php';
