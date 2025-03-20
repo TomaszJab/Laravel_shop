@@ -27,25 +27,25 @@
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                 <div class="form-group">
                                     <label for="email" class="mb-1">Email<span class="text-danger"> *</span></label>
-                                    <input type="email" value="{{ old('email') }}" class="form-control mb-2" name="email" id="email" placeholder="Enter email">
+                                    <input type="email" value="{{ old('email') ?? $defaultPersonalDetails->email }}" class="form-control mb-2" name="email" id="email" placeholder="Enter email">
                                 </div>
                             </div>
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                 <div class="form-group">
                                     <label for="firstName" class="mb-1">First name<span class="text-danger"> *</span></label>
-                                    <input type="text" value="{{ old('firstName') }}" class="form-control mb-2" name="firstName" id="firstName" placeholder="Enter first name">
+                                    <input type="text" value="{{ old('firstName') ?? $defaultPersonalDetails->firstName }}" class="form-control mb-2" name="firstName" id="firstName" placeholder="Enter first name">
                                 </div>
                             </div>
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                 <div class="form-group">
                                     <label for="lastName" class="mb-1">Last name<span class="text-danger"> *</span></label>
-                                    <input type="text" class="form-control" value="{{ old('lastName') }}" name="lastName" id="lastName" placeholder="Enter last name">
+                                    <input type="text" class="form-control" value="{{ old('lastName') ?? $defaultPersonalDetails->lastName }}" name="lastName" id="lastName" placeholder="Enter last name">
                                 </div>
                             </div>
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                 <div class="form-group">
                                     <label for="phone" class="mb-1">Phone<span class="text-danger"> *</span></label>
-                                    <input type="phone" class="form-control"  value="{{ old('phone') }}" name="phone" id="phone" placeholder="Enter phone">
+                                    <input type="phone" class="form-control"  value="{{ old('phone') ?? $defaultPersonalDetails->phone }}" name="phone" id="phone" placeholder="Enter phone">
                                 </div>
                             </div>
                         </div>
@@ -56,10 +56,10 @@
                         </div>
 
                         <div class="btn-group mb-1 mt-1" role="group">
-                            <input type="radio" class="btn-check" name="company_or_private_person" value="private_person" id="private_person" autocomplete="off" {{ old('company_or_private_person') == 'private_person' ? 'checked' : '' }} checked>
+                            <input type="radio" class="btn-check" name="company_or_private_person" value="private_person" id="private_person" autocomplete="off" {{ old('company_or_private_person') ?? $defaultPersonalDetails->company_or_private_person == 'private_person' ? 'checked' : '' }} checked>
                             <label class="btn btn-primary" style="width: 130px;" for="private_person" onclick="showContent('private person')">Private person</label>
 
-                            <input type="radio" class="btn-check" name="company_or_private_person" value="company" id="company" autocomplete="off" {{ old('company_or_private_person') == 'company' ? 'checked' : '' }}>
+                            <input type="radio" class="btn-check" name="company_or_private_person" value="company" id="company" autocomplete="off" {{ old('company_or_private_person') ?? $defaultPersonalDetails->company_or_private_person == 'company' ? 'checked' : '' }}>
                             <label class="btn btn-primary" style="width: 130px;" for="company" onclick="showContent('company_section')" >Company</label>
                         </div>
 
@@ -68,13 +68,13 @@
                                 <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                     <div class="form-group">
                                         <label for="company_name" class="mb-1 mt-1">Company name<span class="text-danger"> *</span></label>
-                                        <input type="text" class="form-control mb-2" value="{{ old('company name') }}" name="company_name" id="company name" placeholder="Enter Company name">
+                                        <input type="text" class="form-control mb-2" value="{{ old('company name') ?? $defaultPersonalDetails->company_name }}" name="company_name" id="company name" placeholder="Enter Company name">
                                     </div>
                                 </div>
                                 <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                     <div class="form-group">
                                         <label for="nip" class="mb-1 mt-1">Nip<span class="text-danger"> *</span></label>
-                                        <input type="number" class="form-control mb-2" value="{{ old('nip') }}" name="nip" id="nip" placeholder="Enter Nip">
+                                        <input type="number" class="form-control mb-2" value="{{ old('nip') ?? $defaultPersonalDetails->nip }}" name="nip" id="nip" placeholder="Enter Nip">
                                     </div>
                                 </div>
                             </div>                           
@@ -85,25 +85,25 @@
                                 <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                     <div class="form-group">
                                         <label for="street" class="mb-1 mt-1">Street<span class="text-danger"> *</span></label>
-                                        <input type="text" value="{{ old('street') }}" name="street" class="form-control mb-2" id="street" placeholder="Enter Street">
+                                        <input type="text" value="{{ old('street') ?? $defaultPersonalDetails->street }}" name="street" class="form-control mb-2" id="street" placeholder="Enter Street">
                                     </div>
                                 </div>
                                 <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                     <div class="form-group">
                                         <label for="house_number" class="mb-1 mt-1">House number<span class="text-danger"> *</span></label>
-                                        <input type="text" value="{{ old('house_number') }}" name='house_number' class="form-control" id="house_number" placeholder="Enter house number">
+                                        <input type="text" value="{{ old('house_number') ?? $defaultPersonalDetails->house_number }}" name='house_number' class="form-control" id="house_number" placeholder="Enter house number">
                                     </div>
                                 </div>
                                 <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                     <div class="form-group">
                                         <label for="zip_code" class="mb-1">Zip Code<span class="text-danger"> *</span></label>
-                                        <input type="text" value="{{ old('zip_code') }}" name="zip_code" class="form-control" id="zip_code" placeholder="Zip Code">
+                                        <input type="text" value="{{ old('zip_code') ?? $defaultPersonalDetails->zip_code }}" name="zip_code" class="form-control" id="zip_code" placeholder="Zip Code">
                                     </div>
                                 </div>
                                 <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                     <div class="form-group">
                                         <label for="city" class="mb-1">City<span class="text-danger"> *</span></label>
-                                        <input type="text" value="{{ old('city') }}" name="city" class="form-control mb-2" id="city" placeholder="Enter City">
+                                        <input type="text" value="{{ old('city') ?? $defaultPersonalDetails->city }}" name="city" class="form-control mb-2" id="city" placeholder="Enter City">
                                     </div>
                                 </div>
                             </div>
