@@ -277,15 +277,16 @@ class CartController extends Controller
         $cartData = $this->dataCart();
 
         $orderProduct = [
-        'user_id' => $idUser,
-        'personal_details_id' => $personalDetails->id,
-        'method_delivery' => $cartData['method_delivery'],
-        'method_payment' => $cartData['method_payment'],
-        'promo_code' => $cartData['promo_code'],
-        'delivery' => $cartData['shipping'],
-        'subtotal' => $cartData['subtotal'],
-        'total' => $cartData['total'],
-        'payment' => $cartData['payment']];
+            'user_id' => $idUser,
+            'personal_details_id' => $personalDetails->id,
+            'method_delivery' => $cartData['method_delivery'],
+            'method_payment' => $cartData['method_payment'],
+            'promo_code' => $cartData['promo_code'],
+            'delivery' => $cartData['shipping'],
+            'subtotal' => $cartData['subtotal'],
+            'total' => $cartData['total'],
+            'payment' => $cartData['payment']
+        ];
 
         $orderProduct = OrderProduct::create($orderProduct);
         $order_product_id = $orderProduct -> id;
