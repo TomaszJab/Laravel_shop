@@ -3,8 +3,6 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
-
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Response;
 use Illuminate\View\View;
@@ -18,7 +16,6 @@ class CartController extends Controller
     public function index()
     {
         $cartData = $this->dataCart();
-       // dd($cartData);
         return view('cart.index', $cartData);
     }
 

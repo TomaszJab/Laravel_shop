@@ -28,7 +28,8 @@ class ProductApiController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $product = $this -> productService -> store($request);
+        return response() -> json($product, 201);
     }
 
     /**
@@ -36,7 +37,8 @@ class ProductApiController extends Controller
      */
     public function show(Product $product)
     {
-        //
+        $product = $this -> productService -> show($product);
+        return $product;
     }
 
     /**
@@ -44,7 +46,8 @@ class ProductApiController extends Controller
      */
     public function update(Request $request, Product $product)
     {
-        //
+        $this -> productService -> update($request, $product);
+        return response() -> json($product, 200);
     }
 
     /**
@@ -52,6 +55,7 @@ class ProductApiController extends Controller
      */
     public function destroy(Product $product)
     {
-        //
+        $product = $this -> productService -> delete($product);
+        return response() -> json(null, 204);
     }
 }
