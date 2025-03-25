@@ -32,7 +32,7 @@ class CartController extends Controller
         $total = $orderProductData -> total;
 
         $personal_details_id = $orderProductData -> personal_details_id;
-        $personalDetails = personalDetails::where('id', $orderProductData -> personal_details_id) -> first();
+        $personalDetails = personalDetails::where('id', $personal_details_id) -> first();
        
         return view('cart.summary', ['products' => $orderData,
             'subtotal' => $subtotal,

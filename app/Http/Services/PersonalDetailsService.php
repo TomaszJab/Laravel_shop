@@ -14,6 +14,18 @@ class PersonalDetailsService extends Controller
     {
         //
     }
+    
+    public function getPersonalDetailByPersonalDetailsId(int $personal_details_id){
+        return personalDetails::where('id', $personal_details_id) -> first();
+    }
+
+    public function getDefaultPersonalDetailsByUserId(int $idUser){
+        return personalDetails::where('user_id', $idUser)->where('default_personal_details', '1')->latest()->first();
+    }
+
+    public function getAdditionalPersonalDetailsByUserId(int $idUser){
+        return personalDetails::where('user_id', $idUser)->where('default_personal_details', '0')->latest()->first();
+    }
 
     /**
      * Store a newly created resource in storage.

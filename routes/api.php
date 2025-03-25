@@ -24,7 +24,11 @@ Route::apiResource('/products', ProductApiController::class);
 
 //to na dole to test jak co dziala
 Route::get('/test', function () {
+    $user = Auth::guard('sanctum')->user(); 
     return response()->json([
+        'user_id' => $user ? $user->id : null,
+        'user_isAdmin' => $user ? $user->isAdmin() : null,
+        'auth(sanctum)->check()' => auth('sanctum')->check(),
         'message' => 'To jest testowy endpoint API bez logowania!',
         'status' => 'success'
     ]);
@@ -37,12 +41,6 @@ Route::post('/login', function (Request $request) {
     ]);
 
     $user = User::where('email', $request->email)->first();
-
-    // return response()->json([
-    //     'message' => 'To jest testowy endpoint API bez logowania!',
-    //     'status' => 'success'
-    // ]);
-
 
     if (! $user || ! Hash::check($request->password, $user->password)) {
         throw ValidationException::withMessages([

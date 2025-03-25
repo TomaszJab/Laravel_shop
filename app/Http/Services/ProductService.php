@@ -10,15 +10,20 @@ class ProductService extends Controller
     /**
      * Display a listing of the resource.
      */
-    //index
+    //index test
     public function getAllProducts()
     {
         return Product::all();
     }
 
+    public function getAllProductPaginate($paginate){
+        return Product::paginate($paginate);
+    }
+
     /**
      * Store a newly created resource in storage.
      */
+    // test
     public function store(Request $request)
     {
         //walidacja
@@ -29,6 +34,7 @@ class ProductService extends Controller
     /**
      * Display the specified resource.
      */
+    // test
     public function show(Product $product)
     {
         return $product;
@@ -37,6 +43,7 @@ class ProductService extends Controller
     /**
      * Update the specified resource in storage.
      */
+    // test
     public function update(Request $request, Product $product)
     {
         //walidacja
@@ -47,6 +54,7 @@ class ProductService extends Controller
     /**
      * Remove the specified resource from storage.
      */
+    // test
     public function destroy(Product $product)
     {
         $product -> delete();

@@ -15,6 +15,10 @@ class OrderProductService extends Controller
         //
     }
 
+    public function getAllOrderProductPaginate(int $paginate){
+        return OrderProduct::paginate($paginate);
+    }
+
     public function getOrderProductByOrderProductId(int $order_product_id){
         return OrderProduct::where('id', $order_product_id) -> first();
     }
