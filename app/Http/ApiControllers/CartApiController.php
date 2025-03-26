@@ -3,6 +3,7 @@
 namespace App\Http\ApiControllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 use App\Models\personalDetails;
 use App\Models\OrderProduct;
@@ -25,7 +26,7 @@ class CartApiController extends Controller
     {
         $this->orderService = $orderService;
         $this->orderProductService = $orderProductService;
-        $this->personalDetails = $personalDetails;
+        $this->personalDetailsService = $personalDetailsService;
         $this->productService = $productService;
     }
     /**
@@ -36,12 +37,11 @@ class CartApiController extends Controller
         //
     }
 
+    //http://127.0.0.1:8000/api/cart/order/details/18
     public function details($order_product_id)
     {
-        //get order by order_product_id
         $orderData = $this->orderService->getOrdersByOrderProductId($order_product_id);
         //Order::where('order_product_id', $order_product_id) -> get();
-        //get personal details by id
         $orderProductData = $this->orderProductService->getOrderProductByOrderProductId($order_product_id);
         //OrderProduct::where('id', $order_product_id) -> first();
 
@@ -53,7 +53,7 @@ class CartApiController extends Controller
 
         $personal_details_id = $orderProductData -> personal_details_id;
         //get personalDetails details by personal_details_id
-        $personalDetails = $this->personalDetails->getPersonalDetailByPersonalDetailsId($personal_details_id);
+        $personalDetails = $this->personalDetailsService->getPersonalDetailByPersonalDetailsId($personal_details_id);
         //personalDetails::where('id', $orderProductData -> personal_details_id) -> first();
        
         return response() -> json(['products' => $orderData,
@@ -67,6 +67,7 @@ class CartApiController extends Controller
         ]);
     }
 
+    //http://127.0.0.1:8000/api/cart/order
     public function order()
     {
         //$userIsAdmin = auth()->user()->isAdmin();
@@ -85,10 +86,11 @@ class CartApiController extends Controller
         }else{
             $user = Auth::guard('sanctum')->user(); 
             $idUser = $user->id;
-            $OrderProducts = OrderProduct::where('user_id', $idUser)->paginate(8);
-            $defaultPersonalDetails = $this->personalDetails->getDefaultPersonalDetailsByUserId($idUser);
+            $OrderProducts = $this->orderProductService->getAllOrderProductPaginateByIdUser($idUser, 8);
+            //OrderProduct::where('user_id', $idUser)->paginate(8);
+            $defaultPersonalDetails = $this->personalDetailsService->getDefaultPersonalDetailsByUserId($idUser);
             //personalDetails::where('user_id', $idUser)->where('default_personal_details', '1')->latest()->first();
-            $additionalPersonalDetails = $this->personalDetails->getAdditionalPersonalDetailsByUserId($idUser);
+            $additionalPersonalDetails = $this->personalDetailsService->getAdditionalPersonalDetailsByUserId($idUser);
             //personalDetails::where('user_id', $idUser)->where('default_personal_details', '0')->latest()->first();
             //return view('cart.order', ['OrderProducts' => $OrderProducts,'personalDetails'=>$defaultPersonalDetails,'additionalPersonalDetails'=>$additionalPersonalDetails]);
             return response()->json([
@@ -99,23 +101,32 @@ class CartApiController extends Controller
         }
     }
 
+    //http://127.0.0.1:8000/api/cart/buy
     public function buyWithoutRegistration()
     {
-        $idUser = auth()->user()->id ?? null;
+        $idUser = Auth::guard('sanctum')->user()->id ?? null;
+        //$idUser = auth()->user()->id ?? null;
         if($idUser){
-            $defaultPersonalDetails = $this->personalDetails->getAdditionalPersonalDetailsByUserId($idUser);
+            $defaultPersonalDetails = $this->personalDetailsService->getAdditionalPersonalDetailsByUserId($idUser);
             //personalDetails::where('user_id', $idUser)->where('default_personal_details', '1')->latest()->first();
-            return view('cart.buyWithoutRegistration',['defaultPersonalDetails' => $defaultPersonalDetails]);
+            //return view('cart.buyWithoutRegistration',['defaultPersonalDetails' => $defaultPersonalDetails]);
         }else{
-            return view('cart.buyWithoutRegistration');
+            $defaultPersonalDetails = null;
+            //return view('cart.buyWithoutRegistration');
         }
+
+        return response()->json([
+            'defaultPersonalDetails' => $defaultPersonalDetails
+        ]);
     }
 
-    public function savewithoutregistration(Request $request)
+    public function savewithoutregistration(Request $request)////////////
     {
-        $data = session('cart_summary');
+        $data = $request->all();
+        //session('cart_summary');
 
-        $idUser = auth()->user()->id ?? null;
+        $idUser = Auth::guard('sanctum')->user()->id ?? null;
+        //$idUser = auth()->user()->id ?? null;
         $data['user_id'] = $idUser;
         //if ($data) {
             $personalDetails = personalDetails::create($data);
@@ -166,8 +177,9 @@ class CartApiController extends Controller
     }
 
 
-    public function updateDefaultPersonalDetails(Request $request){
-        $userId = auth()->user()->id;
+    public function updateDefaultPersonalDetails(Request $request){//////////
+        $userId = Auth::guard('sanctum')->user()->id ?? null;
+        //$userId = auth()->user()->id;
 
         $data = $request->except('_token');
         $data['user_id'] = $userId;

@@ -209,10 +209,12 @@ class CartController extends Controller
         if($idUser){
             $defaultPersonalDetails = personalDetails::where('user_id', $idUser)->where('default_personal_details', '1')->latest()->first();
             //$additionalPersonalDetails = personalDetails::where('user_id', $idUser)->where('default_personal_details', '0')->latest()->first();
-            return view('cart.buyWithoutRegistration',['defaultPersonalDetails' => $defaultPersonalDetails]);
+            //return view('cart.buyWithoutRegistration',['defaultPersonalDetails' => $defaultPersonalDetails]);
         }else{
-            return view('cart.buyWithoutRegistration');
+            $defaultPersonalDetails = null;
+            //return view('cart.buyWithoutRegistration', compact('defaultPersonalDetails'));
         }
+        return view('cart.buyWithoutRegistration', compact('defaultPersonalDetails'));
     }
 
     public function storewithoutregistration(Request $request)
@@ -263,7 +265,7 @@ class CartController extends Controller
     public function savewithoutregistration(Request $request)
     {
         $data = session('cart_summary');
-
+        dd($data);
         $idUser = auth()->user()->id ?? null;
         $data['user_id'] = $idUser;
         //if ($data) {
