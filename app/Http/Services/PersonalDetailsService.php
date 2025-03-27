@@ -32,7 +32,9 @@ class PersonalDetailsService extends Controller
      */
     public function store(Request $request)
     {
-        //
+        //validacja
+        $product = personalDetails::create($request -> except('_token'));
+        return $product;
     }
 
     /**

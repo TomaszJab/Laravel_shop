@@ -30,6 +30,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
 Route::get('/cart/buy', [CartApiController::class, 'buyWithoutRegistration'])->name('carts.buyWithoutRegistration');
 
+Route::post('/cart/updateDefaultPersonalDetails', [CartApiController::class, 'updateDefaultPersonalDetails'])->name('carts.updateDefaultPersonalDetails');
+
 //to na dole to test jak co dziala
 Route::get('/test', function () {
     $user = Auth::guard('sanctum')->user(); 

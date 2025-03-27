@@ -4,6 +4,7 @@ namespace App\Http\ApiControllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException;
 
 use App\Models\personalDetails;
 use App\Models\OrderProduct;
@@ -176,8 +177,23 @@ class CartApiController extends Controller
         return redirect()->route('products.index', ['category_products' => 'a'])->with('success', 'Order created successfully');
     }
 
-
-    public function updateDefaultPersonalDetails(Request $request){//////////
+    // POST http://127.0.0.1:8000/api/cart/updateDefaultPersonalDetails
+    // {
+    //     "email": "test@example.com",
+    //     "firstName": "Jan",
+    //     "lastName": "Kowalski",
+    //     "phone": "123456789",
+    //     "street": "Warszawska",
+    //     "house_number": "10",
+    //     "zip_code": "00-001",
+    //     "company_or_private_person": "company",
+    //     "company_name":"s",
+    //     "nip":"22",
+    //     "city": "Warszawa",
+    //     "default_personal_details": "1",
+    //     "acceptance_of_the_regulations": "yes"
+    // }
+    public function updateDefaultPersonalDetails(Request $request){
         $userId = Auth::guard('sanctum')->user()->id ?? null;
         //$userId = auth()->user()->id;
 
@@ -214,13 +230,19 @@ class CartApiController extends Controller
         }else{
             $rules['company_name'] = 'required';
             $rules['nip'] = 'required';
-            
         }
 
-        $request->validate($rules);
-        PersonalDetails::create($data);
+        try {
+            $validatedData = $request->validate($rules);
+        } catch (ValidationException $e) {
+            return response()->json(['errors' => $e->validator->errors()], 422);
+        }
 
-        return redirect()->back()->with('success', 'Personal details saved successfully.');
+        $personalDetails = $this -> personalDetailsService->store($data);
+        //PersonalDetails::create($data);
+
+        return response() -> json($personalDetails, 201);
+        //return redirect()->back()->with('success', 'Personal details saved successfully.');
     }
 
     /**

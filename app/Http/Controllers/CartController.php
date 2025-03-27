@@ -359,7 +359,6 @@ class CartController extends Controller
         }else{
             $rules['company_name'] = 'required';
             $rules['nip'] = 'required';
-            
         }
 
         $request->validate($rules);
