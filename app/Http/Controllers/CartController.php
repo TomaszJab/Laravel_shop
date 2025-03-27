@@ -3,8 +3,6 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
-
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Response;
 use Illuminate\View\View;
@@ -18,7 +16,6 @@ class CartController extends Controller
     public function index()
     {
         $cartData = $this->dataCart();
-       // dd($cartData);
         return view('cart.index', $cartData);
     }
 
@@ -35,7 +32,7 @@ class CartController extends Controller
         $total = $orderProductData -> total;
 
         $personal_details_id = $orderProductData -> personal_details_id;
-        $personalDetails = personalDetails::where('id', $orderProductData -> personal_details_id) -> first();
+        $personalDetails = personalDetails::where('id', $personal_details_id) -> first();
        
         return view('cart.summary', ['products' => $orderData,
             'subtotal' => $subtotal,
@@ -208,7 +205,16 @@ class CartController extends Controller
 
     public function buyWithoutRegistration()
     {
-        return view('cart.buyWithoutRegistration');
+        $idUser = auth()->user()->id ?? null;
+        if($idUser){
+            $defaultPersonalDetails = personalDetails::where('user_id', $idUser)->where('default_personal_details', '1')->latest()->first();
+            //$additionalPersonalDetails = personalDetails::where('user_id', $idUser)->where('default_personal_details', '0')->latest()->first();
+            //return view('cart.buyWithoutRegistration',['defaultPersonalDetails' => $defaultPersonalDetails]);
+        }else{
+            $defaultPersonalDetails = null;
+            //return view('cart.buyWithoutRegistration', compact('defaultPersonalDetails'));
+        }
+        return view('cart.buyWithoutRegistration', compact('defaultPersonalDetails'));
     }
 
     public function storewithoutregistration(Request $request)
@@ -259,25 +265,27 @@ class CartController extends Controller
     public function savewithoutregistration(Request $request)
     {
         $data = session('cart_summary');
-    
+        dd($data);
+        $idUser = auth()->user()->id ?? null;
+        $data['user_id'] = $idUser;
         //if ($data) {
             $personalDetails = personalDetails::create($data);
             session()->forget('cart_summary');
         //}
 
         $cartData = $this->dataCart();
-        $idUser = auth()->user()->id ?? null;
 
         $orderProduct = [
-        'user_id' => $idUser,
-        'personal_details_id' => $personalDetails->id,
-        'method_delivery' => $cartData['method_delivery'],
-        'method_payment' => $cartData['method_payment'],
-        'promo_code' => $cartData['promo_code'],
-        'delivery' => $cartData['shipping'],
-        'subtotal' => $cartData['subtotal'],
-        'total' => $cartData['total'],
-        'payment' => $cartData['payment']];
+            'user_id' => $idUser,
+            'personal_details_id' => $personalDetails->id,
+            'method_delivery' => $cartData['method_delivery'],
+            'method_payment' => $cartData['method_payment'],
+            'promo_code' => $cartData['promo_code'],
+            'delivery' => $cartData['shipping'],
+            'subtotal' => $cartData['subtotal'],
+            'total' => $cartData['total'],
+            'payment' => $cartData['payment']
+        ];
 
         $orderProduct = OrderProduct::create($orderProduct);
         $order_product_id = $orderProduct -> id;
@@ -351,7 +359,6 @@ class CartController extends Controller
         }else{
             $rules['company_name'] = 'required';
             $rules['nip'] = 'required';
-            
         }
 
         $request->validate($rules);
