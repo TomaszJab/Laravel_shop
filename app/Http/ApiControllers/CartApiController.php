@@ -130,7 +130,8 @@ class CartApiController extends Controller
         //$idUser = auth()->user()->id ?? null;
         $data['user_id'] = $idUser;
         //if ($data) {
-            $personalDetails = personalDetails::create($data);
+            $personalDetails = $this->personalDetailsService->store($data);
+            //personalDetails::create($data);
             session()->forget('cart_summary');
         //}
 
@@ -238,7 +239,7 @@ class CartApiController extends Controller
             return response()->json(['errors' => $e->validator->errors()], 422);
         }
 
-        $personalDetails = $this -> personalDetailsService->store($data);
+        $personalDetails = $this->personalDetailsService->store($data);
         //PersonalDetails::create($data);
 
         return response() -> json($personalDetails, 201);

@@ -4,6 +4,7 @@ namespace App\Http\Services;
 use App\Http\Controllers\Controller;
 use App\Models\Subscriber;
 use Illuminate\Http\Request;
+use App\Http\Requests\SubscriberRequest;
 
 class SubscriberService extends Controller
 {
@@ -18,9 +19,17 @@ class SubscriberService extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(SubscriberRequest $request)
     {
-        //
+        $request->validated();
+
+        $email_address = $request->input('email_address');
+        $email_subscriber = [
+            'email_subscriber' => $email_address
+        ];
+
+        $subscriber = Subscriber::create($email_subscriber);
+        return $subscriber;
     }
 
     /**

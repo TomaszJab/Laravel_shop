@@ -15,6 +15,15 @@ class CategoryProductService extends Controller
         //
     }
 
+    public function getProductsByCategoryName(string $categoryName, ?string $sortOption){
+        $category_products = CategoryProduct::where('name_category_product', $categoryName)->firstOrFail();
+        if($sortOption){
+            $products = $category_products->products()->orderBy('name', $sortOption)->paginate(6);
+        }else{
+            $products = $category_products->products()->orderBy('favorite', 'desc')->paginate(6);
+        }
+        return $products;
+    }
     /**
      * Store a newly created resource in storage.
      */
