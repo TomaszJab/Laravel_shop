@@ -25,11 +25,12 @@ class ProductApiController extends Controller
     protected $productService;//
     protected $categoryProductService;//
     protected $commentService;//
-    protected $subscriberService;
+    //protected $subscriberService;
 
     // public function __construct(OrderService $orderService, OrderProductService $orderProductService, PersonalDetailsService $personalDetailsService, ProductService $productService, CategoryProductService $categoryProductService,CommentService $commentService)
     public function __construct(ProductService $productService, CategoryProductService $categoryProductService, 
-    CommentService $commentService, SubscriberService $subscriberService)
+    CommentService $commentService)
+    //, SubscriberService $subscriberService)
     {
        // $this->orderService = $orderService;
         //$this->orderProductService = $orderProductService;
@@ -37,7 +38,7 @@ class ProductApiController extends Controller
         $this->productService = $productService;
         $this->categoryProductService = $categoryProductService;
         $this->commentService = $commentService;
-        $this->$subscriberService = $subscriberService;
+        //$this->$subscriberService = $subscriberService;
     }
     /**
      * Display a listing of the resource.
@@ -239,10 +240,10 @@ class ProductApiController extends Controller
         //     'email_subscriber' => $email_address
         // ];
 
-        $subscriber = $this->$subscriberService->store($request);
+        //$subscriber = $this->$subscriberService->store($request);
         //Subscriber::create($email_subscriber);
 
-        return response() -> json($subscriber, 201);
+        //return response() -> json($subscriber, 201);
         //return redirect()->route('products.index', ['category_products' => 'a'])->with('success', 'You are a subscriber!');
     }
 }
