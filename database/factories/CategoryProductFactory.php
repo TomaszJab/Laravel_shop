@@ -5,7 +5,7 @@ namespace Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\category_products>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\CategoryProduct>
  */
 class CategoryProductFactory extends Factory
 {
@@ -17,6 +17,7 @@ class CategoryProductFactory extends Factory
     public function definition(): array
     {
         return [
+            //jeśli zmieniasz zmien w kodzie również
             'name_category_product' => 'a'
         ];
     }

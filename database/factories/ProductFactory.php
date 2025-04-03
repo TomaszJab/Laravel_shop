@@ -20,9 +20,9 @@ class ProductFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => 'Example Product',
-            'price' => 99.99,
-            'detail' => 'This is a sample product description.',
+            'name' => fake()->name(),
+            'price' => fake()->randomFloat(2, 1, 10),
+            'detail' => fake()->realText($maxNbChars = 10, $indexSize = 2),
             'favorite' => 1,
             //'category_products_id' => 1, // Przypisanie do konkretnej kategorii
             'created_at' => now(),

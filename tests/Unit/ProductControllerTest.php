@@ -31,30 +31,52 @@ class ProductControllerTest extends TestCase
 
     use RefreshDatabase;
 
-    /** @test */
-    public function it_creates_a_product_and_returns_json_response()
-    {
-        // Dane testowe
+    // Dane testowe
         // $data = [
         //     'name' => 'Test Product',
         //     'description' => 'Test Product Description',
         //     'price' => 100,
         //     'category_id' => 1,
         // ];
+    //$response = $this->getJson(route('products.index', ['category_products' => 'a']));
+        //dd($response->getContent()); 
+    /** @test */
+    public function index_it_creates_a_product_and_returns_json_response()
+    {
         $categoryProduct = CategoryProduct::factory()->create();
-        $product = Product::factory()->create([
+        $product = Product::factory()->count(3)->create([
             'category_products_id' => $categoryProduct->id,
         ]);
         
-        //$response = $this->getJson('http://127.0.0.1:8000/api/products?category_products=a');
-        $response = $this->getJson('/api/products?category_products=a');
-        //$response = $this->getJson(route('products.index', ['category_products' => 'a']));
-        //dd($response->getContent()); 
+        // Uwaga category_products=a musi być takie jak w CategoryProduct::factory()->create();
+        $response = $this->getJson('/api/products?category_products='.$categoryProduct->name_category_product);
+        //dd($response->status(), $response->json());
         // Sprawdzenie odpowiedzi JSON
-        $response->assertStatus(200)->assertJsonStructure(['products', 'sortOption', 'favoriteProduct']);
-        //$this->assertTrue(true);
+        $response->assertStatus(200)->assertJsonStructure([
+            'products' => [
+                // 'current_page',
+                'data' => [
+                    '*' => ['id', 'name', 'detail', 'created_at', 'updated_at', 'price', 'category_products_id', 'favorite']
+                ],
+                // 'first_page_url',
+                // 'from',
+                // 'last_page',
+                // 'last_page_url',
+                // 'links',
+                // 'next_page_url',
+                // 'path',
+                // 'per_page',
+                // 'prev_page_url',
+                // 'to',
+                // 'total'
+            ],
+            'sortOption',
+            'favoriteProduct' => ['id', 'name', 'detail', 'created_at', 'updated_at', 'price', 'category_products_id', 'favorite']
+        ]);
     }
 
+    public function store(){
 
+    }
    
 }
