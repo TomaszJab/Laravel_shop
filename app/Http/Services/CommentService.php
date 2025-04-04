@@ -29,7 +29,7 @@ class CommentService extends Controller
 
         $comment = $product->comments()->create([
             'content' => $request->input('content'),
-            'author' => $nameUser,
+            'author' => $nameUser, //$request->input('author')
             'product_id' => $productId
         ]);
 

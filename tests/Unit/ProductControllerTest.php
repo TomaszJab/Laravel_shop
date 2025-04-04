@@ -14,7 +14,9 @@ namespace Tests\Unit;
 //use Mockery;
 use App\Models\Product;
 use App\Models\User;
+use App\Models\Comment;
 use App\Models\CategoryProduct;
+
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -49,10 +51,11 @@ class ProductControllerTest extends TestCase
         ]);
         
         // Uwaga category_products=a musi być takie jak w CategoryProduct::factory()->create();
-        $response = $this->getJson('/api/products?category_products='.$categoryProduct->name_category_product);
-        //dd($response->status(), $response->json());
+        $response1 = $this->getJson('/api/products?category_products='.$categoryProduct->name_category_product);
+        $response2 = $this->getJson('/api/products?category_products='.$categoryProduct->name_category_product.'&sortOption=asc');
+
         // Sprawdzenie odpowiedzi JSON
-        $response->assertStatus(200)->assertJsonStructure([
+        $response1->assertStatus(200)->assertJsonStructure([
             'products' => [
                 // 'current_page',
                 'data' => [
@@ -73,10 +76,51 @@ class ProductControllerTest extends TestCase
             'sortOption',
             'favoriteProduct' => ['id', 'name', 'detail', 'created_at', 'updated_at', 'price', 'category_products_id', 'favorite']
         ]);
+
+        $response2->assertStatus(200)->assertJsonStructure([
+            'products' => [
+                'data' => [
+                    '*' => ['id', 'name', 'detail', 'created_at', 'updated_at', 'price', 'category_products_id', 'favorite']
+                ],
+            ],
+            'sortOption',
+            'favoriteProduct' => ['id', 'name', 'detail', 'created_at', 'updated_at', 'price', 'category_products_id', 'favorite']
+        ]);
     }
 
-    public function store(){
-
+    //co w przypadku gdy nie przejdzie walidacji
+    public function test_create_product()
+    {   
+        $categoryProduct = CategoryProduct::factory()->create();
+        $product = Product::factory()->make([
+            'category_products_id' => $categoryProduct->id,
+        ])->toArray();
+        
+        $response = $this->postJson('/api/products', $product);
+        $response->assertStatus(201)->assertJson($product);
     }
+
+    public function test_create_product_validation_fails(){
+        $response = $this->postJson('/api/products', []);
+        $response->assertStatus(422);
+        $response->assertJsonValidationErrors(['name', 'price', 'detail', 'category_products_id']);
+    }
+    // dodac uwierzytelnianie
+    // public function test_storeComment(){
+    //     $comment = Comment::factory()->make()->toArray();
+    //     $categoryProduct = CategoryProduct::factory()->create();
+    //     $product = Product::factory()->create([
+    //         'category_products_id' => $categoryProduct->id,
+    //     ]);
+    //     $idProduct = $product->id;
+
+    //     $response = $this->postJson('api/products/'.$idProduct.'/comments', $comment);
+    //     $response->assertStatus(201)->assertJson($comment);
+
+    //     $this->assertDatabaseHas('comments', [
+    //         'product_id' => $idProduct,
+    //         'content' => $comment['content'],
+    //     ]);
+    // }
    
 }
