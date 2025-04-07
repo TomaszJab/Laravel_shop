@@ -22,14 +22,18 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::apiResource('/products', ProductApiController::class);
+Route::post('/products/subscribe', [ProductApiController::class, 'subscribe'])->name('products.subscribe');
+//orginalnie jest tu post ale to jest api i tutaj get
+Route::get('/products/{product}/add_to_cart', [ProductApiController::class, 'addToCart'])->name('products.add_to_cart');
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/cart/order', [CartApiController::class, 'order'])->name('carts.order');
     Route::get('/cart/order/details/{order_product_id}', [CartApiController::class, 'details'])->name('carts.order.details');
+    Route::post('/products/{product}/comments', [ProductApiController::class, 'storeComment'])->name('products.comments.store');
 });
 
 Route::get('/cart/buy', [CartApiController::class, 'buyWithoutRegistration'])->name('carts.buyWithoutRegistration');
-
+Route::post('/cart/savewithoutregistration', [CartApiController::class, 'savewithoutregistration'])->name('carts.savewithoutregistration');
 Route::post('/cart/updateDefaultPersonalDetails', [CartApiController::class, 'updateDefaultPersonalDetails'])->name('carts.updateDefaultPersonalDetails');
 
 //to na dole to test jak co dziala

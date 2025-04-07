@@ -38,6 +38,17 @@
                             <textarea class="form-control" style="height:150px" name="detail" placeholder="Detail"></textarea>
                         </div>
                     </div>
+                    <div class="col-xs-12 col-sm-12 col-md-12">
+                        <div class="form-group">
+                            <label for="category_products_id" class="my-2">Category Product<span class="text-danger"> *</span></label>
+                            <select class="form-control" name="category_products_id">
+                                <option value="">--- Select Category Product ---</option>
+                                @foreach($categoryProduct as $categoryProducts)
+                                <option value="{{ $categoryProducts->id}}">Category {{ $categoryProducts->name_category_product}}</option>
+                                @endforeach 
+                            </select>
+                        </div>
+                    </div>
                     <div class="col-xs-12 col-sm-12 col-md-12 text-end">
                         <button type="submit" class="btn btn-primary my-3">Submit</button>
                     </div>

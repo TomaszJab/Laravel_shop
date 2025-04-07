@@ -50,7 +50,8 @@ class ProductController extends Controller
      */
     public function create()
     {
-        return view('products.create');
+        $categoryProduct = CategoryProduct::all();
+        return view('products.create',compact('categoryProduct'));
     }
 
     /**
@@ -61,13 +62,13 @@ class ProductController extends Controller
         $request->validate([
             'name' => 'required',
             'price' => 'required',
-            'detail' => 'required'
+            'detail' => 'required',
+            'category_products_id' => 'required'
         ]);
 
         Product::create($request->except('_token'));
 
-        return redirect()->route('products.index')
-                        ->with('success','Product created successfully.');
+        return redirect()->route('products.index')->with('success','Product created successfully.');
     }
 
     public function storeComment(Request $request, $productId)

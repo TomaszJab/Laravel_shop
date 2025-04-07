@@ -4,6 +4,7 @@ namespace App\Http\Services;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Product;
+use App\Http\Requests\ProductRequest;
 
 class ProductService extends Controller
 {
@@ -20,13 +21,25 @@ class ProductService extends Controller
         return Product::paginate($paginate);
     }
 
+    public function getProductOrderByFavorite(string $sortOption){
+        return Product::orderBy('favorite', $sortOption)->firstOrFail();
+    }
+
     /**
      * Store a newly created resource in storage.
      */
     // test
-    public function store(Request $request)
+    public function store(ProductRequest $request)
     {
         //walidacja
+        // $request->validate([
+        //     'name' => 'required',
+        //     'price' => 'required',
+        //     'detail' => 'required',
+        //     'category_products_id' => 'required'
+        // ]);
+        $request->validated();
+
         $product = Product::create($request -> except('_token'));
         return $product;
     }
@@ -55,8 +68,8 @@ class ProductService extends Controller
      * Remove the specified resource from storage.
      */
     // test
-    public function destroy(Product $product)
+    public function destroy(Product $product)//
     {
-        $product -> delete();
+        $product->delete();
     }
 }
