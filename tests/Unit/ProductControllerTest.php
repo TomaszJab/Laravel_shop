@@ -148,7 +148,18 @@ class ProductControllerTest extends TestCase
 
     //addToCart_2
     //addToCart
+    public function test_add_to_cart(){
+        $categoryProduct = CategoryProduct::factory()->create();
+        $product = Product::factory()->create([
+            'category_products_id' => $categoryProduct->id,
+        ]);
+        $idProduct = $product->id;
+        $response = $this->getJson('api/products/'.$idProduct.'/add_to_cart');
 
+        $category_products = $categoryProduct->toArray();
+        $product = $product->toArray();
+        $response->assertStatus(200)->assertJson(compact('product', 'category_products'));
+    }
 
     //http://127.0.0.1:8000/products/1
     public function test_show_product_and_comment(){
@@ -224,18 +235,5 @@ class ProductControllerTest extends TestCase
         $response->assertStatus(201)->assertJson(Arr::except($subscriber, ['created_at', 'updated_at']));
 
         $this->assertDatabaseHas('subscribers', Arr::except($subscriber, ['created_at', 'updated_at','id']));
-    }
-
-    public function test_add_to_cart(){
-        $categoryProduct = CategoryProduct::factory()->create();
-        $product = Product::factory()->create([
-            'category_products_id' => $categoryProduct->id,
-        ]);
-        $idProduct = $product->id;
-        $response = $this->getJson('api/products/'.$idProduct.'/add_to_cart');
-
-        $category_products = $categoryProduct->toArray();
-        $product = $product->toArray();
-        $response->assertStatus(200)->assertJson(compact('product', 'category_products'));
     }
 }
