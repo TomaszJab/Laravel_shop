@@ -102,7 +102,7 @@ class CartApiController extends Controller
         }
     }
 
-    //http://127.0.0.1:8000/api/cart/buy
+    //http://127.0.0.1:8000/api/cart/buy test
     public function buyWithoutRegistration()
     {
         $idUser = Auth::guard('sanctum')->user()->id ?? null;

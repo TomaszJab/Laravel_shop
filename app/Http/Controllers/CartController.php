@@ -265,7 +265,7 @@ class CartController extends Controller
     public function savewithoutregistration(Request $request)
     {
         $data = session('cart_summary');
-        dd($data);
+        //dd($data);
         $idUser = auth()->user()->id ?? null;
         $data['user_id'] = $idUser;
         //if ($data) {
