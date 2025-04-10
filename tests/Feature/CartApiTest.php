@@ -16,6 +16,8 @@ class CartApiTest extends TestCase
 {
     use RefreshDatabase;
 
+    //dd($response->getContent());
+
     /**
      * A basic feature test example.
      */
@@ -29,13 +31,19 @@ class CartApiTest extends TestCase
     //http://127.0.0.1:8000/api/cart/order/details/18
     //details
     public function test_user_can_access__to_cart_details_route(){
-        $admin = User::factory()->create(['role' => 'user']);
-        $this->actingAs($admin, 'sanctum');
+        $user = User::factory()->create(['role' => 'user']);
+        $this->actingAs($user, 'sanctum');
         $this->assertAuthenticated('sanctum');
 
-        $orderProduct = OrderProduct::factory()->create();
+        $personalDetails = PersonalDetails::factory()->create([
+            'user_id' => $user->id,
+        ]);
+        $orderProduct = OrderProduct::factory()->create([
+            'personal_details_id' => $personalDetails->id,
+        ]);
         $idOrderProduct = $orderProduct->id;
         $order = Order::factory()->count(3)->create(['order_product_id' => $idOrderProduct]);
+
         $response = $this->getJson('/api/cart/order/details/'.$idOrderProduct);
         $response->assertStatus(200);
         $response->assertJsonStructure([
@@ -51,7 +59,7 @@ class CartApiTest extends TestCase
     }
 
     //http://127.0.0.1:8000/api/cart/order
-    //order
+    //admin
     public function test_admin_can_access_cart_order_route(){
         $admin = User::factory()->create(['role' => 'admin']); // lub is_admin => 1
         $this->actingAs($admin, 'sanctum');
@@ -66,7 +74,7 @@ class CartApiTest extends TestCase
     }
 
     //http://127.0.0.1:8000/api/cart/order
-    //order
+    //user
     public function test_user_can_access_cart_order_and_get_personal_details()
     {
         $user = User::factory()->create(['role' => 'user']); // lub is_admin => 0
@@ -88,14 +96,79 @@ class CartApiTest extends TestCase
         ]);
     }
 
-    //http://127.0.0.1:8000/api/cart/buy
+    //http://127.0.0.1:8000/api/cart/buy 
+    //guest
     public function test_guest_user_gets_null_personal_details()
     {
         $this->assertGuest('sanctum');
+
         $response = $this->getJson('/api/cart/buy');
         $response->assertStatus(200);
         $response->assertJson([
             'defaultPersonalDetails' => null
         ]);
+    }
+
+    //http://127.0.0.1:8000/api/cart/buy 
+    //user
+    public function test_authenticated_user_receives_personal_details(){
+        $user = User::factory()->create(['role' => 'user']);
+        //uwierzytalnianie uzytkownia
+        $this->actingAs($user, 'sanctum');
+        
+        $this->assertAuthenticated('sanctum');
+        $personalDetails = PersonalDetails::factory()->create([
+            'user_id' => $user->id,
+            'default_personal_details' => 1,
+        ]);
+
+        $response = $this->getJson('/api/cart/buy'); 
+        $response->assertStatus(200);
+        $response->assertExactJson([
+            'defaultPersonalDetails' => $personalDetails->toArray()
+        ]);
+    }
+
+    //savewithoutregistration
+
+    //updateDefaultPersonalDetails
+    public function test_update_default_personal_details()
+    {
+        // Tworzymy użytkownika za pomocą fabryki
+        $user = User::factory()->create();
+
+        // Tworzymy dane osobowe użytkownika (personal details)
+        $personalDetails = PersonalDetails::factory()->create([
+            'user_id' => $user->id,  // Przypisujemy utworzonemu użytkownikowi
+        ]);
+
+        // Zalogowanie użytkownika jako 'sanctum'
+        $this->actingAs($user, 'sanctum');
+        $this->assertAuthenticated('sanctum');
+    
+        $data = [
+            'user_id' => $user->id,
+            'email' => 'updateduser@example.com',
+            'firstName' => 'John',
+            'lastName' => 'Doe',
+            'phone' => '987654321',
+            'street' => 'New Test Street',
+            'house_number' => '999',
+            'zip_code' => '54321',
+            'city' => 'Updated City',
+            'acceptance_of_the_regulations' => '1',
+            'company_or_private_person' => 'private_person',
+            'default_personal_details' => '0',
+        ];
+       
+            // 'company_name' => $this->faker->company(),
+            // 'nip' => (int) $this->faker->numerify('##########'),
+            // 'additional_information' => $this->faker->optional()->sentence(),
+            // 'acceptance_of_the_invoice' => $this->faker->boolean() ? '1' : '0',
+           
+        //metoda tak na prawde dodaje nowy rekord ale go nie aktualizuje
+        $response = $this->postjson('/api/cart/updateDefaultPersonalDetails', $data);
+        $response->assertStatus(201);
+        $this->assertDatabaseHas('personal_details', $data);
     }
 }

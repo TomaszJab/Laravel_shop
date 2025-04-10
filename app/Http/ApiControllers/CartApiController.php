@@ -102,13 +102,13 @@ class CartApiController extends Controller
         }
     }
 
-    //http://127.0.0.1:8000/api/cart/buy test
+    //http://127.0.0.1:8000/api/cart/buy
     public function buyWithoutRegistration()
     {
         $idUser = Auth::guard('sanctum')->user()->id ?? null;
         //$idUser = auth()->user()->id ?? null;
         if($idUser){
-            $defaultPersonalDetails = $this->personalDetailsService->getAdditionalPersonalDetailsByUserId($idUser);
+            $defaultPersonalDetails = $this->personalDetailsService->getDefaultPersonalDetailsByUserId($idUser);
             //personalDetails::where('user_id', $idUser)->where('default_personal_details', '1')->latest()->first();
             //return view('cart.buyWithoutRegistration',['defaultPersonalDetails' => $defaultPersonalDetails]);
         }else{

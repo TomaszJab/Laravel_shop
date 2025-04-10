@@ -25,15 +25,15 @@ class PersonalDetailsFactory extends Factory
             'phone' => $this->faker->phoneNumber(),
             'company_name' => $this->faker->company(),
             'company_or_private_person' => $this->faker->randomElement(['company', 'private']),
-            'nip' => $this->faker->numerify('##########'),
+            'nip' => (int) $this->faker->numerify('##########'),
             'street' => $this->faker->streetName(),
             'house_number' => $this->faker->buildingNumber(),
             'zip_code' => $this->faker->postcode(),
             'city' => $this->faker->city(),
             'additional_information' => $this->faker->optional()->sentence(),
-            'acceptance_of_the_regulations' => true,
-            'acceptance_of_the_invoice' => $this->faker->boolean(),
-            'default_personal_details' => $this->faker->boolean(30), // np. 30% szans
+            'acceptance_of_the_regulations' => '1',
+            'acceptance_of_the_invoice' => $this->faker->boolean() ? '1' : '0',
+            'default_personal_details' => $this->faker->boolean(30) ? 1 : 0, // np. 30% szans
         ];
     }
 }
