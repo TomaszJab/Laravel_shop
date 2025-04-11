@@ -132,7 +132,7 @@ class CartApiTest extends TestCase
     //savewithoutregistration
 
     //updateDefaultPersonalDetails
-    public function test_update_default_personal_details()
+    public function test_user_can_update_default_personal_details()
     {
         // Tworzymy użytkownika za pomocą fabryki
         $user = User::factory()->create();

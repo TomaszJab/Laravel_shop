@@ -132,11 +132,15 @@ class CartApiController extends Controller
         //if ($data) {
             $personalDetails = $this->personalDetailsService->store($data);
             //personalDetails::create($data);
-            session()->forget('cart_summary');
+            //to nie bedzie
+           // session()->forget('cart_summary');
         //}
 
-        $cartData = $this->dataCart();
-
+        //$cartData = $this->dataCart();
+        $cartData = $request->input('cart_data');
+        // if (!$cartData || !isset($cartData['products'])) {
+        //     return response()->json(['error' => 'Invalid cart data'], 422);
+        // }
         $orderProduct = [
             'user_id' => $idUser,
             'personal_details_id' => $personalDetails->id,
@@ -173,9 +177,10 @@ class CartApiController extends Controller
         Product::whereIn('id', $productIds)->increment('favorite');
 
         $order = Order::insert($order);
-        session()->forget('cart');
+        //session()->forget('cart');
 
-        return redirect()->route('products.index', ['category_products' => 'a'])->with('success', 'Order created successfully');
+        //return redirect()->route('products.index', ['category_products' => 'a'])->with('success', 'Order created successfully');
+        return response()->json(['message' => 'Order created successfully'], 201);
     }
 
     // POST http://127.0.0.1:8000/api/cart/updateDefaultPersonalDetails
