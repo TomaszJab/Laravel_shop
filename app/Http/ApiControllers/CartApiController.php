@@ -108,7 +108,7 @@ class CartApiController extends Controller
         $idUser = Auth::guard('sanctum')->user()->id ?? null;
         //$idUser = auth()->user()->id ?? null;
         if($idUser){
-            $defaultPersonalDetails = $this->personalDetailsService->getAdditionalPersonalDetailsByUserId($idUser);
+            $defaultPersonalDetails = $this->personalDetailsService->getDefaultPersonalDetailsByUserId($idUser);
             //personalDetails::where('user_id', $idUser)->where('default_personal_details', '1')->latest()->first();
             //return view('cart.buyWithoutRegistration',['defaultPersonalDetails' => $defaultPersonalDetails]);
         }else{
@@ -123,20 +123,24 @@ class CartApiController extends Controller
 
     public function savewithoutregistration(Request $request)////////////
     {
-        $data = $request->all();
+        $dataPersonalDetails = $request->input('personal_details');
         //session('cart_summary');
 
         $idUser = Auth::guard('sanctum')->user()->id ?? null;
         //$idUser = auth()->user()->id ?? null;
-        $data['user_id'] = $idUser;
+        $dataPersonalDetails['user_id'] = $idUser;
         //if ($data) {
-            $personalDetails = $this->personalDetailsService->store($data);
+            $personalDetails = $this->personalDetailsService->store($dataPersonalDetails);
             //personalDetails::create($data);
-            session()->forget('cart_summary');
+            //to nie bedzie
+           // session()->forget('cart_summary');
         //}
 
-        $cartData = $this->dataCart();
-
+        //$cartData = $this->dataCart();
+        $cartData = $request->input('cart_data');
+        // if (!$cartData || !isset($cartData['products'])) {
+        //     return response()->json(['error' => 'Invalid cart data'], 422);
+        // }
         $orderProduct = [
             'user_id' => $idUser,
             'personal_details_id' => $personalDetails->id,
@@ -173,9 +177,10 @@ class CartApiController extends Controller
         Product::whereIn('id', $productIds)->increment('favorite');
 
         $order = Order::insert($order);
-        session()->forget('cart');
+        //session()->forget('cart');
 
-        return redirect()->route('products.index', ['category_products' => 'a'])->with('success', 'Order created successfully');
+        //return redirect()->route('products.index', ['category_products' => 'a'])->with('success', 'Order created successfully');
+        return response()->json(['message' => 'Order created successfully'], 201);
     }
 
     // POST http://127.0.0.1:8000/api/cart/updateDefaultPersonalDetails

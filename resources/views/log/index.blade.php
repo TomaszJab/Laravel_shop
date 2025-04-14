@@ -57,8 +57,8 @@ if($cart){
                         <span class="text-danger">{{ $errors->first('password_confirmation') }}</span>
                     </div>
                     @endif
-                    <input type="password" name="password_confirmation" id="password_confirmation" class="form-control form-control-lg" autocomplete="new-password"/>
-                    <label class="form-label mt-1" for="password_confirmation">Password Confirmation</label>
+                    <input type="password" name="registration_password_confirmation" id="password_confirmation" class="form-control form-control-lg" autocomplete="new-password"/>
+                    <label class="form-label mt-1" for="registration_password_confirmation">Password Confirmation</label>
                 </div>
 
                 <button class="btn btn-md btn-lg btn-primary w-100" type="submit">Register</button>
