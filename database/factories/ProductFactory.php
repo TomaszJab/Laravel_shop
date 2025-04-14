@@ -24,7 +24,7 @@ class ProductFactory extends Factory
             'price' => fake()->randomFloat(2, 1, 10),
             'detail' => fake()->realText($maxNbChars = 10, $indexSize = 2),
             'favorite' => 1,
-            //'category_products_id' => 1, // Przypisanie do konkretnej kategorii
+            'category_products_id' => CategoryProduct::factory(), //1, // Przypisanie do konkretnej kategorii
             'created_at' => now(),
             'updated_at' => now(),
         ];

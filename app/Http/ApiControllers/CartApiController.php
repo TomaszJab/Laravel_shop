@@ -123,14 +123,14 @@ class CartApiController extends Controller
 
     public function savewithoutregistration(Request $request)////////////
     {
-        $data = $request->all();
+        $dataPersonalDetails = $request->input('personal_details');
         //session('cart_summary');
 
         $idUser = Auth::guard('sanctum')->user()->id ?? null;
         //$idUser = auth()->user()->id ?? null;
-        $data['user_id'] = $idUser;
+        $dataPersonalDetails['user_id'] = $idUser;
         //if ($data) {
-            $personalDetails = $this->personalDetailsService->store($data);
+            $personalDetails = $this->personalDetailsService->store($dataPersonalDetails);
             //personalDetails::create($data);
             //to nie bedzie
            // session()->forget('cart_summary');
