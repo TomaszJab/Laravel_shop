@@ -97,7 +97,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
 // Route::get('products', [ProductController::class, 'category_products'])->name('products.category_products');;
 Route::post('/products/{product}/comments', [ProductController::class, 'storeComment'])->name('products.comments.store');
 Route::post('/products/{product}/add_to_cart', [ProductController::class, 'addToCart'])->name('products.add_to_cart');
-Route::post('/products/{product}/add_to_cart_2', [ProductController::class, 'addToCart_2'])->name('products.add_to_cart_2');
+Route::post('/products/{product}/add_to_cart_2', [ProductController::class, 'addToCart2'])->name('products.add_to_cart_2');
 
 Route::post('/products/subscribe', [ProductController::class, 'subscribe'])->name('products.subscribe');
 

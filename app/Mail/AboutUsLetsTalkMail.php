@@ -11,14 +11,16 @@ use Illuminate\Queue\SerializesModels;
 
 class AboutUsLetsTalkMail extends Mailable
 {
-    use Queueable, SerializesModels;
+    use Queueable;
+    use SerializesModels;
+
     public $data;
     /**
      * Create a new message instance.
      */
     public function __construct($data)
     {
-        $this->data = $data;//
+        $this->data = $data; //
     }
 
     public function build()

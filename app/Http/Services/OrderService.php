@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Services;
+
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use Illuminate\Http\Request;
@@ -15,8 +16,9 @@ class OrderService extends Controller
         //
     }
 
-    public function getOrdersByOrderProductId(int $order_product_id){
-        return Order::where('order_product_id', $order_product_id) -> get();
+    public function getOrdersByOrderProductId(int $order_product_id)
+    {
+        return Order::where('order_product_id', $order_product_id)->get();
     }
     /**
      * Store a newly created resource in storage.

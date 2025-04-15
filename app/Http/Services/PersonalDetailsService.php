@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Services;
+
 use App\Http\Controllers\Controller;
 use App\Models\personalDetails;
 use Illuminate\Http\Request;
@@ -14,16 +15,19 @@ class PersonalDetailsService extends Controller
     {
         //
     }
-    
-    public function getPersonalDetailByPersonalDetailsId(int $personal_details_id){
-        return personalDetails::where('id', $personal_details_id) -> first();
+
+    public function getPersonalDetailByPersonalDetailsId(int $personal_details_id)
+    {
+        return personalDetails::where('id', $personal_details_id)->first();
     }
 
-    public function getDefaultPersonalDetailsByUserId(int $idUser){
+    public function getDefaultPersonalDetailsByUserId(int $idUser)
+    {
         return personalDetails::where('user_id', $idUser)->where('default_personal_details', '1')->latest()->first();
     }
 
-    public function getAdditionalPersonalDetailsByUserId(int $idUser){
+    public function getAdditionalPersonalDetailsByUserId(int $idUser)
+    {
         return personalDetails::where('user_id', $idUser)->where('default_personal_details', '0')->latest()->first();
     }
 

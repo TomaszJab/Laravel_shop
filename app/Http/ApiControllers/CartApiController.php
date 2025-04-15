@@ -1,16 +1,15 @@
 <?php
 
 namespace App\Http\ApiControllers;
+
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
-
-use App\Models\personalDetails;
+use App\Models\User;
 use App\Models\OrderProduct;
 use App\Models\Order;
 use App\Models\Product;
-
 use App\Http\Services\OrderService;
 use App\Http\Services\OrderProductService;
 use App\Http\Services\PersonalDetailsService;
@@ -23,8 +22,12 @@ class CartApiController extends Controller
     protected $personalDetailsService;
     protected $productService;
 
-    public function __construct(OrderService $orderService, OrderProductService $orderProductService, PersonalDetailsService $personalDetailsService, ProductService $productService)
-    {
+    public function __construct(
+        OrderService $orderService,
+        OrderProductService $orderProductService,
+        PersonalDetailsService $personalDetailsService,
+        ProductService $productService
+    ) {
         $this->orderService = $orderService;
         $this->orderProductService = $orderProductService;
         $this->personalDetailsService = $personalDetailsService;
@@ -46,18 +49,19 @@ class CartApiController extends Controller
         $orderProductData = $this->orderProductService->getOrderProductByOrderProductId($order_product_id);
         //OrderProduct::where('id', $order_product_id) -> first();
 
-        $subtotal = $orderProductData -> subtotal;
-        $shipping = $orderProductData -> delivery; 
-        $payment = $orderProductData -> payment;
-        $promo_code = $orderProductData -> promo_code;
-        $total = $orderProductData -> total;
+        $subtotal = $orderProductData->subtotal;
+        $shipping = $orderProductData->delivery;
+        $payment = $orderProductData->payment;
+        $promo_code = $orderProductData->promo_code;
+        $total = $orderProductData->total;
 
-        $personal_details_id = $orderProductData -> personal_details_id;
+        $personal_details_id = $orderProductData->personal_details_id;
         //get personalDetails details by personal_details_id
         $personalDetails = $this->personalDetailsService->getPersonalDetailByPersonalDetailsId($personal_details_id);
         //personalDetails::where('id', $orderProductData -> personal_details_id) -> first();
-       
-        return response() -> json(['products' => $orderData,
+
+        return response()->json([
+            'products' => $orderData,
             'subtotal' => $subtotal,
             'shipping' => $shipping,
             'payment' => $payment,
@@ -74,7 +78,7 @@ class CartApiController extends Controller
         //$userIsAdmin = auth()->user()->isAdmin();
         $userIsAdmin = Auth::guard('sanctum')->user()->isAdmin();
 
-        if($userIsAdmin){
+        if ($userIsAdmin) {
             $products = $this->productService->getAllProductPaginate(8);
             //Product::paginate(8);
             $OrderProducts = $this->orderProductService->getAllOrderProductPaginate(8);
@@ -84,8 +88,8 @@ class CartApiController extends Controller
                 'OrderProducts' => $OrderProducts,
                 'products' => $products
             ]);
-        }else{
-            $user = Auth::guard('sanctum')->user(); 
+        } else {
+            $user = Auth::guard('sanctum')->user();
             $idUser = $user->id;
             $OrderProducts = $this->orderProductService->getAllOrderProductPaginateByIdUser($idUser, 8);
             //OrderProduct::where('user_id', $idUser)->paginate(8);
@@ -96,8 +100,8 @@ class CartApiController extends Controller
             //return view('cart.order', ['OrderProducts' => $OrderProducts,'personalDetails'=>$defaultPersonalDetails,'additionalPersonalDetails'=>$additionalPersonalDetails]);
             return response()->json([
                 'OrderProducts' => $OrderProducts,
-                'personalDetails'=>$defaultPersonalDetails,
-                'additionalPersonalDetails'=>$additionalPersonalDetails
+                'personalDetails' => $defaultPersonalDetails,
+                'additionalPersonalDetails' => $additionalPersonalDetails
             ]);
         }
     }
@@ -107,11 +111,11 @@ class CartApiController extends Controller
     {
         $idUser = Auth::guard('sanctum')->user()->id ?? null;
         //$idUser = auth()->user()->id ?? null;
-        if($idUser){
+        if ($idUser) {
             $defaultPersonalDetails = $this->personalDetailsService->getDefaultPersonalDetailsByUserId($idUser);
             //personalDetails::where('user_id', $idUser)->where('default_personal_details', '1')->latest()->first();
             //return view('cart.buyWithoutRegistration',['defaultPersonalDetails' => $defaultPersonalDetails]);
-        }else{
+        } else {
             $defaultPersonalDetails = null;
             //return view('cart.buyWithoutRegistration');
         }
@@ -121,7 +125,7 @@ class CartApiController extends Controller
         ]);
     }
 
-    public function savewithoutregistration(Request $request)////////////
+    public function savewithoutregistration(Request $request) ////////////
     {
         $dataPersonalDetails = $request->input('personal_details');
         //session('cart_summary');
@@ -130,10 +134,10 @@ class CartApiController extends Controller
         //$idUser = auth()->user()->id ?? null;
         $dataPersonalDetails['user_id'] = $idUser;
         //if ($data) {
-            $personalDetails = $this->personalDetailsService->store($dataPersonalDetails);
-            //personalDetails::create($data);
-            //to nie bedzie
-           // session()->forget('cart_summary');
+        $personalDetails = $this->personalDetailsService->store($dataPersonalDetails);
+        //personalDetails::create($data);
+        //to nie bedzie
+        // session()->forget('cart_summary');
         //}
 
         //$cartData = $this->dataCart();
@@ -154,22 +158,22 @@ class CartApiController extends Controller
         ];
 
         $orderProduct = OrderProduct::create($orderProduct);
-        $order_product_id = $orderProduct -> id;
+        $order_product_id = $orderProduct->id;
 
         $order = array_map(function ($product, $productId) use ($order_product_id) {
             list($productId, $size) = explode('_', $productId);
 
             return [
-                    'product_id' => $productId, 
-                    'order_product_id' => $order_product_id, 
-                    'name' => $product['name'], 
-                    'quantity' => $product['quantity'], 
-                    'price' => $product['price'],
-                    'size' => $size,
-                    'category_products_id' => $product['category_products_id'],
-                    'created_at' => now(),
-                    'updated_at' => now()
-                ];
+                'product_id' => $productId,
+                'order_product_id' => $order_product_id,
+                'name' => $product['name'],
+                'quantity' => $product['quantity'],
+                'price' => $product['price'],
+                'size' => $size,
+                'category_products_id' => $product['category_products_id'],
+                'created_at' => now(),
+                'updated_at' => now()
+            ];
         }, $cartData['products'], array_keys($cartData['products']));
 
         $productIds = array_keys($cartData['products']);
@@ -179,7 +183,8 @@ class CartApiController extends Controller
         $order = Order::insert($order);
         //session()->forget('cart');
 
-        //return redirect()->route('products.index', ['category_products' => 'a'])->with('success', 'Order created successfully');
+        //return redirect()->route('products.index',
+        // ['category_products' => 'a'])->with('success', 'Order created successfully');
         return response()->json(['message' => 'Order created successfully'], 201);
     }
 
@@ -199,7 +204,8 @@ class CartApiController extends Controller
     //     "default_personal_details": "1",
     //     "acceptance_of_the_regulations": "yes"
     // }
-    public function updateDefaultPersonalDetails(Request $request){
+    public function updateDefaultPersonalDetails(Request $request)
+    {
         $userId = Auth::guard('sanctum')->user()->id ?? null;
         //$userId = auth()->user()->id;
 
@@ -207,10 +213,10 @@ class CartApiController extends Controller
         $data['user_id'] = $userId;
 
         $default_personal_details = $request->input('default_personal_details');
-        if($default_personal_details=="0"){
+        if ($default_personal_details == "0") {
             $data['company_or_private_person'] = 'private_person';
         }
-       
+
         $company_or_private_person = $data['company_or_private_person'];
 
         $rules = [
@@ -232,8 +238,7 @@ class CartApiController extends Controller
         }
 
         if ($company_or_private_person == 'private_person') {
-            
-        }else{
+        } else {
             $rules['company_name'] = 'required';
             $rules['nip'] = 'required';
         }
@@ -247,7 +252,7 @@ class CartApiController extends Controller
         $personalDetails = $this->personalDetailsService->store($data);
         //PersonalDetails::create($data);
 
-        return response() -> json($personalDetails, 201);
+        return response()->json($personalDetails, 201);
         //return redirect()->back()->with('success', 'Personal details saved successfully.');
     }
 

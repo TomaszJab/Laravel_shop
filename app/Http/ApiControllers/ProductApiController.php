@@ -1,38 +1,33 @@
 <?php
 
 namespace App\Http\ApiControllers;
+
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-
 use App\Models\Product;
-use App\Models\CategoryProduct;//to potem pewnie sie nie przyda
-// use App\Http\Services\OrderService;
-// use App\Http\Services\OrderProductService;
-// use App\Http\Services\PersonalDetailsService;
+use App\Models\CategoryProduct; //to potem pewnie sie nie przyda
 use App\Http\Services\ProductService;
 use App\Http\Services\CategoryProductService;
 use App\Http\Services\CommentService;
 use App\Http\Services\SubscriberService;
-
 use App\Http\Requests\ProductRequest;
 use App\Http\Requests\CommentRequest;
 use App\Http\Requests\SubscriberRequest;
 
 class ProductApiController extends Controller
 {
-    //protected $orderService;
-    //protected $orderProductService;
-    //protected $personalDetailsService;
-    protected $productService;//
-    protected $categoryProductService;//
-    protected $commentService;//
+    protected $productService;
+    protected $categoryProductService;
+    protected $commentService;
     protected $subscriberService;
 
-    // public function __construct(OrderService $orderService, OrderProductService $orderProductService, PersonalDetailsService $personalDetailsService, ProductService $productService, CategoryProductService $categoryProductService,CommentService $commentService)
-    public function __construct(ProductService $productService, CategoryProductService $categoryProductService, 
-    CommentService $commentService, SubscriberService $subscriberService)
-    {
-       // $this->orderService = $orderService;
+    public function __construct(
+        ProductService $productService,
+        CategoryProductService $categoryProductService,
+        CommentService $commentService,
+        SubscriberService $subscriberService
+    ) {
+        // $this->orderService = $orderService;
         //$this->orderProductService = $orderProductService;
         //$this->personalDetailsService = $personalDetailsService;
         $this->productService = $productService;
@@ -53,10 +48,10 @@ class ProductApiController extends Controller
     public function index(Request $request)
     {
         $sortOption = $request->query('sortOption');
-        $categoryName = $request->query('category_products','a');
+        $categoryName = $request->query('category_products', 'a');
         $favoriteProduct = $this->productService->getProductOrderByFavorite('desc');
         //Product::orderBy('favorite', 'desc')->firstOrFail();
-  
+
         $products = $this->categoryProductService->getProductsByCategoryName($categoryName, $sortOption);
         // CategoryProduct::where('name_category_product', $categoryName)->firstOrFail();
         // if($sortOption){
@@ -64,9 +59,9 @@ class ProductApiController extends Controller
         // }else{
         //     $products = $category_products->products()->orderBy('favorite', 'desc')->paginate(6);
         // }
-        
+
         //return view('products.index',compact('products', 'sortOption', 'favoriteProduct'));
-        return response() -> json(compact('products', 'sortOption', 'favoriteProduct'));
+        return response()->json(compact('products', 'sortOption', 'favoriteProduct'));
         // return response()->json([
         //     'products' => $products,
         //     'sortOption' => $sortOption,
@@ -95,7 +90,7 @@ class ProductApiController extends Controller
         $product = $this->productService->store($request);
         //Product::create($request->except('_token'));
 
-        return response() -> json($product, 201);
+        return response()->json($product, 201);
         //return redirect()->route('products.index')->with('success','Product created successfully.');
     }
 
@@ -118,7 +113,7 @@ class ProductApiController extends Controller
         //     'author' => $nameUser,
         //     'product_id' => $productId
         // ]);
-        return response() -> json($comment, 201);
+        return response()->json($comment, 201);
         //return redirect()->back()->with('success', 'Comment added successfully!');
     }
 
@@ -128,7 +123,7 @@ class ProductApiController extends Controller
     //     return redirect()->route('carts.index');
     // }
 
-    public function addToCart($id, Request $request)///////////////////
+    public function addToCart($id, Request $request) ///////////////////
     {
         $product = Product::findOrFail($id);
         $category_products = CategoryProduct::where('id', $product->category_products_id)->first();
@@ -137,7 +132,7 @@ class ProductApiController extends Controller
         //$size = $request->input('size');
         //$quantity = $request->input('quantity');
         // $key = $product->id.'_'.$size;
-        
+
         // if (isset($cart[$key])) {
         //     $cart[$key]['quantity'] = $cart[$key]['quantity'] + $quantity;
         // } else {
@@ -156,7 +151,7 @@ class ProductApiController extends Controller
         // }
 
         // session()->put('cart', $cart);
-        return response() -> json(compact('product', 'category_products'));
+        return response()->json(compact('product', 'category_products'));
         //return back(); #->with('success', 'Produkt dodany do koszyka!');
     }
 
@@ -175,7 +170,7 @@ class ProductApiController extends Controller
         $comments = $this->commentService->getCommenstOrderByCreatedAt($product, 'desc');
         //$comments = $product->comments()->orderBy('created_at', 'desc')->get();
         //return view('products.show',compact('product', 'comments'));
-        return response() -> json(compact('product', 'comments'));
+        return response()->json(compact('product', 'comments'));
     }
 
     /**
@@ -186,7 +181,7 @@ class ProductApiController extends Controller
     //     $this -> productService -> update($request, $product);
     //     return response() -> json($product, 200);
     // }
-    public function update(Request $request, Product $product)///?
+    public function update(Request $request, Product $product) ///?
     {
         $request->validate([
             'name' => 'required',
@@ -220,7 +215,8 @@ class ProductApiController extends Controller
         return response()->json(null, 204);
     }
 
-    public function subscribe(SubscriberRequest $request){
+    public function subscribe(SubscriberRequest $request)
+    {
         $email_address = $request->input('email_address');
         $data = $request->validate(['email_address' => 'required|email']);
 
@@ -231,7 +227,8 @@ class ProductApiController extends Controller
         $subscriber = $this->subscriberService->store($request);
         //Subscriber::create($email_subscriber);
 
-        return response() -> json($subscriber, 201);
-        //return redirect()->route('products.index', ['category_products' => 'a'])->with('success', 'You are a subscriber!');
+        return response()->json($subscriber, 201);
+        //return redirect()->route('products.index',
+        // ['category_products' => 'a'])->with('success', 'You are a subscriber!');
     }
 }

@@ -5,9 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use App\Models\CategoryProduct;
 use App\Models\Subscriber;
-
 use Illuminate\Http\Request;
-
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Response;
 use Illuminate\View\View;
@@ -21,26 +19,26 @@ class ProductController extends Controller
     {
         //$sortOption = $request->query('sortOption', 'asc');
         $sortOption = $request->query('sortOption');
-        $categoryName = $request->query('category_products','a');
+        $categoryName = $request->query('category_products', 'a');
         $favoriteProduct = Product::orderBy('favorite', 'desc')->firstOrFail();
 
         $category_products = CategoryProduct::where('name_category_product', $categoryName)->firstOrFail();
-        if($sortOption){
+        if ($sortOption) {
             $products = $category_products->products()->orderBy('name', $sortOption)->paginate(6);
-        }else{
+        } else {
             $products = $category_products->products()->orderBy('favorite', 'desc')->paginate(6);
         }
-        
-        return view('products.index',compact('products', 'sortOption', 'favoriteProduct'));
+
+        return view('products.index', compact('products', 'sortOption', 'favoriteProduct'));
     }
 
     // public function category_products(Request $request)
     // {
-        // Fetch products based on the category passed in the route
-        // $products = Product::where('category', $category_products)->get();
+    // Fetch products based on the category passed in the route
+    // $products = Product::where('category', $category_products)->get();
 
-        // Return the view with the products and the selected category
-        // return view('products.index', compact('products', 'category_products'));
+    // Return the view with the products and the selected category
+    // return view('products.index', compact('products', 'category_products'));
 
     //     $products = Product::paginate(3);
     //     return view('products.index',compact('products'));
@@ -51,7 +49,7 @@ class ProductController extends Controller
     public function create()
     {
         $categoryProduct = CategoryProduct::all();
-        return view('products.create',compact('categoryProduct'));
+        return view('products.create', compact('categoryProduct'));
     }
 
     /**
@@ -68,7 +66,7 @@ class ProductController extends Controller
 
         Product::create($request->except('_token'));
 
-        return redirect()->route('products.index')->with('success','Product created successfully.');
+        return redirect()->route('products.index')->with('success', 'Product created successfully.');
     }
 
     public function storeComment(Request $request, $productId)
@@ -89,8 +87,9 @@ class ProductController extends Controller
         return redirect()->back()->with('success', 'Comment added successfully!');
     }
 
-    public function addToCart_2($id, Request $request){
-        $this -> addToCart($id, $request);
+    public function addToCart2($id, Request $request)
+    {
+        $this->addToCart($id, $request);
         return redirect()->route('carts.index');
     }
 
@@ -102,17 +101,17 @@ class ProductController extends Controller
 
         $size = $request->input('size');
         $quantity = $request->input('quantity');
-        $key = $product->id.'_'.$size;
-        
+        $key = $product->id . '_' . $size;
+
         if (isset($cart[$key])) {
             $cart[$key]['quantity'] = $cart[$key]['quantity'] + $quantity;
         } else {
             $cart[$key] = [
-                'name' => $product -> name,
+                'name' => $product->name,
                 'quantity' => 1,
-                'price' => $product -> price,
-                'name_category_product' => $category_products -> name_category_product,
-                'category_products_id' => $product -> category_products_id
+                'price' => $product->price,
+                'name_category_product' => $category_products->name_category_product,
+                'category_products_id' => $product->category_products_id
             ];
         }
 
@@ -129,11 +128,11 @@ class ProductController extends Controller
         }
 
         if (!isset($cart['delivery'])) {
-            $cart['delivery'] = number_format(25,2);
+            $cart['delivery'] = number_format(25, 2);
         }
-    
+
         if (!isset($cart['payment'])) {
-            $cart['payment'] = number_format(0,2);
+            $cart['payment'] = number_format(0, 2);
         }
 
         session()->put('cart', $cart);
@@ -144,12 +143,12 @@ class ProductController extends Controller
     public function show(Product $product)
     {
         $comments = $product->comments()->orderBy('created_at', 'desc')->get();
-        return view('products.show',compact('product', 'comments'));
+        return view('products.show', compact('product', 'comments'));
     }
 
     public function edit(Product $product)
     {
-        return view('products.edit',compact('product'));
+        return view('products.edit', compact('product'));
     }
 
     public function update(Request $request, Product $product)
@@ -163,7 +162,7 @@ class ProductController extends Controller
         $product->update($request->all());
 
         return redirect()->route('products.index')
-                        ->with('success','Product updated successfully');
+            ->with('success', 'Product updated successfully');
     }
 
     public function destroy(Product $product)
@@ -171,10 +170,11 @@ class ProductController extends Controller
         $product->delete();
 
         return redirect()->route('products.index')
-                        ->with('success','Product deleted successfully');
+            ->with('success', 'Product deleted successfully');
     }
 
-    public function subscribe(Request $request){
+    public function subscribe(Request $request)
+    {
         $email_address = $request->input('email_address');
         $data = $request->validate(['email_address' => 'required|email']);
 
@@ -184,6 +184,8 @@ class ProductController extends Controller
 
         Subscriber::create($email_subscriber);
 
-        return redirect()->route('products.index', ['category_products' => 'a'])->with('success', 'You are a subscriber!');
+        return redirect()
+            ->route('products.index', ['category_products' => 'a'])
+            ->with('success', 'You are a subscriber!');
     }
 }

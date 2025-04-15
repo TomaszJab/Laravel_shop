@@ -23,7 +23,7 @@ class OrderProductFactory extends Factory
     {
         return [
             'user_id' => User::factory(),
-            'personal_details_id' => PersonalDetails::factory(), 
+            'personal_details_id' => PersonalDetails::factory(),
             'method_delivery' => fake()->name(),
             'method_payment' => fake()->name(),
             'promo_code' => fake()->name(),
