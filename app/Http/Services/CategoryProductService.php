@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Services;
+
 use App\Http\Controllers\Controller;
 use App\Models\CategoryProduct;
 use Illuminate\Http\Request;
@@ -15,11 +16,12 @@ class CategoryProductService extends Controller
         //
     }
 
-    public function getProductsByCategoryName(string $categoryName, ?string $sortOption){
+    public function getProductsByCategoryName(string $categoryName, ?string $sortOption)
+    {
         $category_products = CategoryProduct::where('name_category_product', $categoryName)->firstOrFail();
-        if($sortOption){
+        if ($sortOption) {
             $products = $category_products->products()->orderBy('name', $sortOption)->paginate(6);
-        }else{
+        } else {
             $products = $category_products->products()->orderBy('favorite', 'desc')->paginate(6);
         }
         return $products;

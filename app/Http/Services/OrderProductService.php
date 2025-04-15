@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Services;
+
 use App\Http\Controllers\Controller;
 use App\Models\OrderProduct;
 use Illuminate\Http\Request;
@@ -15,16 +16,19 @@ class OrderProductService extends Controller
         //
     }
 
-    public function getAllOrderProductPaginate(int $paginate){
+    public function getAllOrderProductPaginate(int $paginate)
+    {
         return OrderProduct::paginate($paginate);
     }
 
-    public function getAllOrderProductPaginateByIdUser(int $idUser, int $paginate){
+    public function getAllOrderProductPaginateByIdUser(int $idUser, int $paginate)
+    {
         return OrderProduct::where('user_id', $idUser)->paginate($paginate);
     }
 
-    public function getOrderProductByOrderProductId(int $order_product_id){
-        return OrderProduct::where('id', $order_product_id) -> first();
+    public function getOrderProductByOrderProductId(int $order_product_id)
+    {
+        return OrderProduct::where('id', $order_product_id)->first();
     }
     /**
      * Store a newly created resource in storage.

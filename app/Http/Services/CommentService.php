@@ -1,8 +1,8 @@
 <?php
 
 namespace App\Http\Services;
-use App\Http\Controllers\Controller;
 
+use App\Http\Controllers\Controller;
 use App\Models\Comment;
 use App\Models\Product;
 use Illuminate\Http\Request;
@@ -36,7 +36,8 @@ class CommentService extends Controller
         return $comment;
     }
 
-    public function getCommenstOrderByCreatedAt(Product $product, string $sortOption){
+    public function getCommenstOrderByCreatedAt(Product $product, string $sortOption)
+    {
         $comments = $product->comments()->orderBy('created_at', $sortOption)->get();
         return $comments;
     }
