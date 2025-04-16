@@ -23,9 +23,10 @@ use Illuminate\Support\Arr;
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
+
 class ProductControllerTest extends TestCase
 {
-   // use RefreshDatabase;
+    // use RefreshDatabase;
     /**
      * A basic unit test example.
      */
@@ -37,16 +38,17 @@ class ProductControllerTest extends TestCase
     use RefreshDatabase;
 
     // Dane testowe
-        // $data = [
-        //     'name' => 'Test Product',
-        //     'description' => 'Test Product Description',
-        //     'price' => 100,
-        //     'category_id' => 1,
-        // ];
+    // $data = [
+    //     'name' => 'Test Product',
+    //     'description' => 'Test Product Description',
+    //     'price' => 100,
+    //     'category_id' => 1,
+    // ];
     //$response = $this->getJson(route('products.index', ['category_products' => 'a']));
-        //dd($response->getContent()); 
+    //dd($response->getContent()); 
 
-    public function uwierzytelnij_urzytkownika(){
+    public function uwierzytelnij_urzytkownika()
+    {
         $user = User::factory()->create();
 
         $response = $this->post('/login', [
@@ -64,66 +66,89 @@ class ProductControllerTest extends TestCase
         $product = Product::factory()->count(3)->create([
             'category_products_id' => $categoryProduct->id,
         ]);
-        
+
         // Uwaga category_products=a musi być takie jak w CategoryProduct::factory()->create();
-        $response1 = $this->getJson('/api/products?category_products='.$categoryProduct->name_category_product);
-        $response2 = $this->getJson('/api/products?category_products='.$categoryProduct->name_category_product.'&sortOption=asc');
+        $response1 = $this->getJson('/api/products?category_products=' . $categoryProduct->name_category_product);
+        $response2 = $this->getJson('/api/products?category_products=' . $categoryProduct->name_category_product . '&sortOption=asc');
 
         // Sprawdzenie odpowiedzi JSON
-        $response1->assertStatus(200)->assertJsonStructure([
-            'products' => [
-                // 'current_page',
-                'data' => [
-                    '*' => ['id', 'name', 'detail', 'created_at', 'updated_at', 'price', 'category_products_id', 'favorite']
+        $response1->assertStatus(200)
+            ->assertJsonStructure([
+                'products' => [
+                    '*' => [
+                        'id',
+                        'name',
+                        'detail',
+                        'created_at',
+                        'updated_at',
+                        'price',
+                        'category_products_id',
+                        'favorite'
+                    ]
                 ],
-                // 'first_page_url',
-                // 'from',
-                // 'last_page',
-                // 'last_page_url',
-                // 'links',
-                // 'next_page_url',
-                // 'path',
-                // 'per_page',
-                // 'prev_page_url',
-                // 'to',
-                // 'total'
-            ],
-            'sortOption',
-            'favoriteProduct' => ['id', 'name', 'detail', 'created_at', 'updated_at', 'price', 'category_products_id', 'favorite']
-        ]);
+                'sortOption',
+                'favoriteProduct' => [
+                    'id',
+                    'name',
+                    'detail',
+                    'created_at',
+                    'updated_at',
+                    'price',
+                    'category_products_id',
+                    'favorite'
+                ]
+            ]);
 
         $response2->assertStatus(200)->assertJsonStructure([
             'products' => [
-                'data' => [
-                    '*' => ['id', 'name', 'detail', 'created_at', 'updated_at', 'price', 'category_products_id', 'favorite']
-                ],
+                '*' => [
+                    'id',
+                    'name',
+                    'detail',
+                    'created_at',
+                    'updated_at',
+                    'price',
+                    'category_products_id',
+                    'favorite'
+                ]
             ],
             'sortOption',
-            'favoriteProduct' => ['id', 'name', 'detail', 'created_at', 'updated_at', 'price', 'category_products_id', 'favorite']
+            'favoriteProduct' => [
+                'id',
+                'name',
+                'detail',
+                'created_at',
+                'updated_at',
+                'price',
+                'category_products_id',
+                'favorite'
+            ]
         ]);
     }
 
     public function test_create_product()
-    {   
+    {
         $categoryProduct = CategoryProduct::factory()->create();
         $product = Product::factory()->make([
             'category_products_id' => $categoryProduct->id,
         ])->toArray();
-        
+
         $response = $this->postJson('/api/products', $product);
         $response->assertStatus(201)->assertJson(Arr::except($product, ['created_at', 'updated_at']));
 
         $this->assertDatabaseHas('products', Arr::except($product, ['created_at', 'updated_at', 'id']));
     }
 
-    public function test_create_product_validation_fails(){
+    public function test_create_product_validation_fails()
+    {
         $response = $this->postJson('/api/products', []);
         $response->assertStatus(422);
         $response->assertJsonValidationErrors(['name', 'price', 'detail', 'category_products_id']);
     }
 
     //storeComment
-    public function test_storeComment(){
+    public function test_storeComment()
+    {
         //aby dodac komentarz urzytkownik musi byc zalogowany
         $this->uwierzytelnij_urzytkownika();
 
@@ -137,7 +162,7 @@ class ProductControllerTest extends TestCase
         ]);
         $idProduct = $product->id;
 
-        $response = $this->postJson('api/products/'.$idProduct.'/comments', $comment);
+        $response = $this->postJson('api/products/' . $idProduct . '/comments', $comment);
         $response->assertStatus(201)->assertJson($comment);
 
         $this->assertDatabaseHas('comments', [
@@ -146,15 +171,16 @@ class ProductControllerTest extends TestCase
         ]);
     }
 
-    //addToCart_2
+    //addToCart2
     //addToCart
-    public function test_add_to_cart(){
+    public function test_add_to_cart()
+    {
         $categoryProduct = CategoryProduct::factory()->create();
         $product = Product::factory()->create([
             'category_products_id' => $categoryProduct->id,
         ]);
         $idProduct = $product->id;
-        $response = $this->getJson('api/products/'.$idProduct.'/add_to_cart');
+        $response = $this->getJson('api/products/' . $idProduct . '/add_to_cart');
 
         $category_products = $categoryProduct->toArray();
         $product = $product->toArray();
@@ -162,12 +188,13 @@ class ProductControllerTest extends TestCase
     }
 
     //http://127.0.0.1:8000/products/1
-    public function test_show_product_and_comment(){
+    public function test_show_product_and_comment()
+    {
         $categoryProduct = CategoryProduct::factory()->create();
         $product = Product::factory()->create([
             'category_products_id' => $categoryProduct->id,
         ]);
-        
+
         $idProduct = $product->id;
 
         $user = User::factory()->create();
@@ -177,11 +204,18 @@ class ProductControllerTest extends TestCase
             'author' => $user->name
         ]);
 
-        $response = $this->getJson('api/products/'.$idProduct);
+        $response = $this->getJson('api/products/' . $idProduct);
         $response->assertStatus(200);
         $response->assertJsonStructure([
             'product' => [
-                'id', 'name', 'detail', 'created_at', 'updated_at', 'price', 'category_products_id', 'favorite'
+                'id',
+                'name',
+                'detail',
+                'created_at',
+                'updated_at',
+                'price',
+                'category_products_id',
+                'favorite'
             ],
             'comments' => [
                 '*' => ['id', 'product_id', 'author', 'content', 'created_at', 'updated_at']
@@ -201,22 +235,24 @@ class ProductControllerTest extends TestCase
     //     "category_products_id": 2
     // }
     //update
-    public function test_update_product(){
+    public function test_update_product()
+    {
         $product = Product::factory()->create();
 
         $updatedProduct = $product->toArray();
         $updatedProduct['name'] = 'Product 1';
         $updatedProduct['price'] = 2;
 
-        $response = $this->putJson('/api/products/'.$product->id, $updatedProduct);
+        $response = $this->putJson('/api/products/' . $product->id, $updatedProduct);
 
         $response->assertStatus(200)->assertJson($updatedProduct);
     }
 
-    public function test_delete_product(){
+    public function test_delete_product()
+    {
         $product = Product::factory()->create();
 
-        $response = $this->deleteJson('/api/products/'.$product->id);
+        $response = $this->deleteJson('/api/products/' . $product->id);
 
         $response->assertStatus(204);
 
@@ -226,14 +262,15 @@ class ProductControllerTest extends TestCase
     }
 
     //subscribe
-    public function test_add_subscriber(){
+    public function test_add_subscriber()
+    {
         //$subscriber
         $subscriber = Subscriber::factory()->make()->toArray();
         $email['email_address'] = $subscriber['email_subscriber'];
         $response = $this->postJson('api/products/subscribe', $email);
-       
+
         $response->assertStatus(201)->assertJson(Arr::except($subscriber, ['created_at', 'updated_at']));
 
-        $this->assertDatabaseHas('subscribers', Arr::except($subscriber, ['created_at', 'updated_at','id']));
+        $this->assertDatabaseHas('subscribers', Arr::except($subscriber, ['created_at', 'updated_at', 'id']));
     }
 }

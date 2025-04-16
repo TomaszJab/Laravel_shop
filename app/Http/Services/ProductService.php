@@ -60,9 +60,9 @@ class ProductService extends Controller
      * Update the specified resource in storage.
      */
     // test
-    public function update(Request $request, Product $product)
+    public function update(ProductRequest $request, Product $product)
     {
-        //walidacja
+        $request->validated();
         $product->update($request->all());
         return $product;
     }

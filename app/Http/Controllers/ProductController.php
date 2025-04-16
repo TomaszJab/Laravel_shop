@@ -96,7 +96,7 @@ class ProductController extends Controller
     public function addToCart($id, Request $request)
     {
         $product = Product::findOrFail($id);
-        $category_products = CategoryProduct::where('id', $product->category_products_id)->first();
+        $categoryProducts = CategoryProduct::where('id', $product->category_products_id)->first();
         $cart = session()->get('cart', []);
 
         $size = $request->input('size');
@@ -110,7 +110,7 @@ class ProductController extends Controller
                 'name' => $product->name,
                 'quantity' => 1,
                 'price' => $product->price,
-                'name_category_product' => $category_products->name_category_product,
+                'name_category_product' => $categoryProducts->name_category_product,
                 'category_products_id' => $product->category_products_id
             ];
         }

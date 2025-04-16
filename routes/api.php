@@ -4,8 +4,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Models\User;
 
-use App\Http\ApiControllers\ProductApiController;
-use App\Http\ApiControllers\CartApiController;
+use App\Http\Controllers\Api\ProductController;
+use App\Http\Controllers\Api\CartController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -21,20 +21,20 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::apiResource('/products', ProductApiController::class);
-Route::post('/products/subscribe', [ProductApiController::class, 'subscribe'])->name('products.subscribe');
+Route::apiResource('/products', ProductController::class);
+Route::post('/products/subscribe', [ProductController::class, 'subscribe'])->name('products.subscribe');
 //orginalnie jest tu post ale to jest api i tutaj get
-Route::get('/products/{product}/add_to_cart', [ProductApiController::class, 'addToCart'])->name('products.add_to_cart');
+Route::get('/products/{product}/add_to_cart', [ProductController::class, 'addToCart'])->name('products.add_to_cart');
 
 Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/cart/order', [CartApiController::class, 'order'])->name('carts.order');
-    Route::get('/cart/order/details/{order_product_id}', [CartApiController::class, 'details'])->name('carts.order.details');
-    Route::post('/products/{product}/comments', [ProductApiController::class, 'storeComment'])->name('products.comments.store');
+    Route::get('/cart/order', [CartController::class, 'order'])->name('carts.order');
+    Route::get('/cart/order/details/{order_product_id}', [CartController::class, 'details'])->name('carts.order.details');
+    Route::post('/products/{product}/comments', [ProductController::class, 'storeComment'])->name('products.comments.store');
 });
 
-Route::get('/cart/buy', [CartApiController::class, 'buyWithoutRegistration'])->name('carts.buyWithoutRegistration');
-Route::post('/cart/savewithoutregistration', [CartApiController::class, 'savewithoutregistration'])->name('carts.savewithoutregistration');
-Route::post('/cart/updateDefaultPersonalDetails', [CartApiController::class, 'updateDefaultPersonalDetails'])->name('carts.updateDefaultPersonalDetails');
+Route::get('/cart/buy', [CartController::class, 'buyWithoutRegistration'])->name('carts.buyWithoutRegistration');
+Route::post('/cart/savewithoutregistration', [CartController::class, 'savewithoutregistration'])->name('carts.savewithoutregistration');
+Route::post('/cart/updateDefaultPersonalDetails', [CartController::class, 'updateDefaultPersonalDetails'])->name('carts.updateDefaultPersonalDetails');
 
 //to na dole to test jak co dziala
 Route::get('/test', function () {

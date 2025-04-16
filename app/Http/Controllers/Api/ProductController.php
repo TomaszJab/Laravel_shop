@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\ApiControllers;
+namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -10,11 +10,12 @@ use App\Http\Services\ProductService;
 use App\Http\Services\CategoryProductService;
 use App\Http\Services\CommentService;
 use App\Http\Services\SubscriberService;
+use App\Http\Resources\ProductResource;
 use App\Http\Requests\ProductRequest;
 use App\Http\Requests\CommentRequest;
 use App\Http\Requests\SubscriberRequest;
 
-class ProductApiController extends Controller
+class ProductController extends Controller
 {
     protected $productService;
     protected $categoryProductService;
@@ -27,9 +28,6 @@ class ProductApiController extends Controller
         CommentService $commentService,
         SubscriberService $subscriberService
     ) {
-        // $this->orderService = $orderService;
-        //$this->orderProductService = $orderProductService;
-        //$this->personalDetailsService = $personalDetailsService;
         $this->productService = $productService;
         $this->categoryProductService = $categoryProductService;
         $this->commentService = $commentService;
@@ -61,7 +59,13 @@ class ProductApiController extends Controller
         // }
 
         //return view('products.index',compact('products', 'sortOption', 'favoriteProduct'));
-        return response()->json(compact('products', 'sortOption', 'favoriteProduct'));
+        //return response()->json(compact('products', 'sortOption', 'favoriteProduct'));
+        return [
+            'products' => ProductResource::collection($products),
+            'sortOption' => $sortOption, // zwykła wartość
+            'favoriteProduct' => ProductResource::make($favoriteProduct),
+        ];
+        
         // return response()->json([
         //     'products' => $products,
         //     'sortOption' => $sortOption,
@@ -126,7 +130,7 @@ class ProductApiController extends Controller
     public function addToCart($id, Request $request) ///////////////////
     {
         $product = Product::findOrFail($id);
-        $category_products = CategoryProduct::where('id', $product->category_products_id)->first();
+        $category_products = CategoryProduct::where('id', $product->category_products_id)->first();//$categoryProducts
         //$cart = session()->get('cart', []);
 
         //$size = $request->input('size');
@@ -167,7 +171,7 @@ class ProductApiController extends Controller
     public function show(Product $product)
     {
         //getCommenstOrderByCreatedAt
-        $comments = $this->commentService->getCommenstOrderByCreatedAt($product, 'desc');
+        $comments = $this->commentService->getCommenstsOrderByCreatedAt($product, 'desc');
         //$comments = $product->comments()->orderBy('created_at', 'desc')->get();
         //return view('products.show',compact('product', 'comments'));
         return response()->json(compact('product', 'comments'));
@@ -181,19 +185,12 @@ class ProductApiController extends Controller
     //     $this -> productService -> update($request, $product);
     //     return response() -> json($product, 200);
     // }
-    public function update(Request $request, Product $product) ///?
+    public function update(ProductRequest $request, Product $product) ///?
     {
-        $request->validate([
-            'name' => 'required',
-            'price' => 'required',
-            'detail' => 'required',
-        ]);
-
         $product->update($request->all());
 
         // return redirect()->route('products.index')
         //                 ->with('success','Product updated successfully');
-        //dd($product);
         return response()->json($product, 200);
     }
 
@@ -217,13 +214,6 @@ class ProductApiController extends Controller
 
     public function subscribe(SubscriberRequest $request)
     {
-        $email_address = $request->input('email_address');
-        $data = $request->validate(['email_address' => 'required|email']);
-
-        $email_subscriber = [
-            'email_subscriber' => $email_address
-        ];
-
         $subscriber = $this->subscriberService->store($request);
         //Subscriber::create($email_subscriber);
 
