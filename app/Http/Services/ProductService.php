@@ -64,7 +64,7 @@ class ProductService extends Controller
     {
         $request->validated();
         $product->update($request->all());
-        return $product;
+        return $product->fresh();
     }
 
     /**

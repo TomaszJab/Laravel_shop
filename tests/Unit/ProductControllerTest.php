@@ -245,7 +245,11 @@ class ProductControllerTest extends TestCase
 
         $response = $this->putJson('/api/products/' . $product->id, $updatedProduct);
 
-        $response->assertStatus(200)->assertJson($updatedProduct);
+        $response->assertStatus(200)->assertJson(['product' => $updatedProduct]);
+        $this->assertDatabaseHas('products', Arr::except($updatedProduct, [
+            'created_at',
+            'updated_at'
+        ]));
     }
 
     public function test_delete_product()
@@ -269,8 +273,8 @@ class ProductControllerTest extends TestCase
         $email['email_address'] = $subscriber['email_subscriber'];
         $response = $this->postJson('api/products/subscribe', $email);
 
-        $response->assertStatus(201)->assertJson(Arr::except($subscriber, ['created_at', 'updated_at']));
-
+        //$response->assertStatus(201)->assertJson(Arr::except($subscriber, ['created_at', 'updated_at']));
+        $response->assertStatus(201)->assertJson(['subscriber' => Arr::except($subscriber, ['created_at', 'updated_at'])]);
         $this->assertDatabaseHas('subscribers', Arr::except($subscriber, ['created_at', 'updated_at', 'id']));
     }
 }

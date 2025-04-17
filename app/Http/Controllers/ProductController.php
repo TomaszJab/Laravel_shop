@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use App\Models\CategoryProduct;
 use App\Models\Subscriber;
+use App\Http\Requests\ProductRequest;
+use App\Http\Requests\CommentRequest;
+use App\Http\Requests\SubscriberRequest;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Response;
@@ -55,7 +58,7 @@ class ProductController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(ProductRequest $request)
     {
         $request->validate([
             'name' => 'required',
@@ -69,7 +72,7 @@ class ProductController extends Controller
         return redirect()->route('products.index')->with('success', 'Product created successfully.');
     }
 
-    public function storeComment(Request $request, $productId)
+    public function storeComment(CommentRequest $request, $productId)
     {
         $request->validate([
             'content' => 'required|string|max:255'
@@ -151,7 +154,7 @@ class ProductController extends Controller
         return view('products.edit', compact('product'));
     }
 
-    public function update(Request $request, Product $product)
+    public function update(ProductRequest $request, Product $product)
     {
         $request->validate([
             'name' => 'required',
@@ -173,7 +176,7 @@ class ProductController extends Controller
             ->with('success', 'Product deleted successfully');
     }
 
-    public function subscribe(Request $request)
+    public function subscribe(SubscriberRequest $request)
     {
         $email_address = $request->input('email_address');
         $data = $request->validate(['email_address' => 'required|email']);

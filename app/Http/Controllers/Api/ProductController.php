@@ -11,6 +11,8 @@ use App\Http\Services\CategoryProductService;
 use App\Http\Services\CommentService;
 use App\Http\Services\SubscriberService;
 use App\Http\Resources\ProductResource;
+use App\Http\Resources\CommentResource;
+use App\Http\Resources\SubscriberResource;
 use App\Http\Requests\ProductRequest;
 use App\Http\Requests\CommentRequest;
 use App\Http\Requests\SubscriberRequest;
@@ -65,12 +67,6 @@ class ProductController extends Controller
             'sortOption' => $sortOption, // zwykła wartość
             'favoriteProduct' => ProductResource::make($favoriteProduct),
         ];
-        
-        // return response()->json([
-        //     'products' => $products,
-        //     'sortOption' => $sortOption,
-        //     'favoriteProduct' => $favoriteProduct
-        // ]);
     }
 
     /**
@@ -104,10 +100,6 @@ class ProductController extends Controller
     // }
     public function storeComment(CommentRequest $request, $productId)
     {
-        // $request->validate([
-        //     'content' => 'required|string|max:255'
-        // ]);
-
         $comment = $this->commentService->store($request, $productId);
         //$product = Product::findOrFail($productId);
         // $nameUser = auth()->user()->name;
@@ -130,7 +122,7 @@ class ProductController extends Controller
     public function addToCart($id, Request $request) ///////////////////
     {
         $product = Product::findOrFail($id);
-        $category_products = CategoryProduct::where('id', $product->category_products_id)->first();//$categoryProducts
+        $category_products = CategoryProduct::where('id', $product->category_products_id)->first(); //$categoryProducts
         //$cart = session()->get('cart', []);
 
         //$size = $request->input('size');
@@ -174,7 +166,10 @@ class ProductController extends Controller
         $comments = $this->commentService->getCommenstsOrderByCreatedAt($product, 'desc');
         //$comments = $product->comments()->orderBy('created_at', 'desc')->get();
         //return view('products.show',compact('product', 'comments'));
-        return response()->json(compact('product', 'comments'));
+        return [
+            'product' => ProductResource::make($product),
+            'comments' => CommentResource::collection($comments)
+        ];
     }
 
     /**
@@ -187,11 +182,14 @@ class ProductController extends Controller
     // }
     public function update(ProductRequest $request, Product $product) ///?
     {
-        $product->update($request->all());
-
         // return redirect()->route('products.index')
         //                 ->with('success','Product updated successfully');
-        return response()->json($product, 200);
+        $product = $this->productService->update($request, $product);
+        //return response()->json($product, 200);
+
+        return [
+            'product' => ProductResource::make($product)
+        ];
     }
 
     /**
@@ -217,7 +215,10 @@ class ProductController extends Controller
         $subscriber = $this->subscriberService->store($request);
         //Subscriber::create($email_subscriber);
 
-        return response()->json($subscriber, 201);
+        //return response()->json($subscriber, 201);
+        return response()->json([
+            'subscriber' => new SubscriberResource($subscriber),
+        ], 201);
         //return redirect()->route('products.index',
         // ['category_products' => 'a'])->with('success', 'You are a subscriber!');
     }
