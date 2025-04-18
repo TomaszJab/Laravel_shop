@@ -44,7 +44,6 @@ class ProductController extends Controller
     //     return $products;
     // }
 
-    //przyklad, mogą też być inne http://127.0.0.1:8000/api/products?category_products=a
     public function index(Request $request)
     {
         $sortOption = $request->query('sortOption');
@@ -64,7 +63,7 @@ class ProductController extends Controller
         //return response()->json(compact('products', 'sortOption', 'favoriteProduct'));
         return [
             'products' => ProductResource::collection($products),
-            'sortOption' => $sortOption, // zwykła wartość
+            'sortOption' => $sortOption,
             'favoriteProduct' => ProductResource::make($favoriteProduct),
         ];
     }
@@ -78,13 +77,6 @@ class ProductController extends Controller
     //     return response() -> json($product, 201);
     // }
 
-    // post http://127.0.0.1:8000/api/products
-    // {
-    //     "name": "Nowy Produkt",
-    //     "price": 99.99,
-    //     "detail": "Opis produktu",
-    //     "category_products_id": "1"
-    //   }
     public function store(ProductRequest $request)
     {
         $product = $this->productService->store($request);

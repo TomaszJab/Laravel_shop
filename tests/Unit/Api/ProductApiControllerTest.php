@@ -24,7 +24,7 @@ use Illuminate\Http\Request;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-class ProductControllerTest extends TestCase
+class ProductApiControllerTest extends TestCase
 {
     // use RefreshDatabase;
     /**
@@ -60,7 +60,9 @@ class ProductControllerTest extends TestCase
     }
 
     /** @test */
-    public function index_it_creates_a_product_and_returns_json_response()
+    //index
+    //przyklad, mogą też być inne http://127.0.0.1:8000/api/products?category_products=a
+    public function test_api_index_it_show_a_product_and_returns_json_response()
     {
         $categoryProduct = CategoryProduct::factory()->create();
         $product = Product::factory()->count(3)->create([
@@ -126,7 +128,14 @@ class ProductControllerTest extends TestCase
         ]);
     }
 
-    public function test_create_product()
+    // post http://127.0.0.1:8000/api/products
+    // {
+    //     "name": "Nowy Produkt",
+    //     "price": 99.99,
+    //     "detail": "Opis produktu",
+    //     "category_products_id": "1"
+    //  }
+    public function test_api_store_product()//logowanie
     {
         $categoryProduct = CategoryProduct::factory()->create();
         $product = Product::factory()->make([
@@ -139,7 +148,7 @@ class ProductControllerTest extends TestCase
         $this->assertDatabaseHas('products', Arr::except($product, ['created_at', 'updated_at', 'id']));
     }
 
-    public function test_create_product_validation_fails()
+    public function test_api_store_product_validation_fails()
     {
         $response = $this->postJson('/api/products', []);
         $response->assertStatus(422);
@@ -147,7 +156,7 @@ class ProductControllerTest extends TestCase
     }
 
     //storeComment
-    public function test_storeComment()
+    public function test_api_storeComment()
     {
         //aby dodac komentarz urzytkownik musi byc zalogowany
         $this->uwierzytelnij_urzytkownika();
@@ -173,7 +182,7 @@ class ProductControllerTest extends TestCase
 
     //addToCart2
     //addToCart
-    public function test_add_to_cart()
+    public function test_api_add_to_cart()
     {
         $categoryProduct = CategoryProduct::factory()->create();
         $product = Product::factory()->create([
@@ -188,7 +197,7 @@ class ProductControllerTest extends TestCase
     }
 
     //http://127.0.0.1:8000/products/1
-    public function test_show_product_and_comment()
+    public function test_api_show_product_and_comment()
     {
         $categoryProduct = CategoryProduct::factory()->create();
         $product = Product::factory()->create([
@@ -235,7 +244,7 @@ class ProductControllerTest extends TestCase
     //     "category_products_id": 2
     // }
     //update
-    public function test_update_product()
+    public function test_api_update_product()
     {
         $product = Product::factory()->create();
 
@@ -252,7 +261,7 @@ class ProductControllerTest extends TestCase
         ]));
     }
 
-    public function test_delete_product()
+    public function test_api_delete_product()
     {
         $product = Product::factory()->create();
 
@@ -266,7 +275,7 @@ class ProductControllerTest extends TestCase
     }
 
     //subscribe
-    public function test_add_subscriber()
+    public function test_api_add_subscriber()
     {
         //$subscriber
         $subscriber = Subscriber::factory()->make()->toArray();

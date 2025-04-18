@@ -5,6 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use App\Models\CategoryProduct;
 use App\Models\Subscriber;
+use App\Http\Services\ProductService;
+use App\Http\Services\CategoryProductService;
+use App\Http\Services\CommentService;
+use App\Http\Services\SubscriberService;
 use App\Http\Requests\ProductRequest;
 use App\Http\Requests\CommentRequest;
 use App\Http\Requests\SubscriberRequest;
@@ -15,22 +19,39 @@ use Illuminate\View\View;
 
 class ProductController extends Controller
 {
+    protected $productService;
+    protected $categoryProductService;
+    protected $commentService;
+    protected $subscriberService;
+
+    public function __construct(
+        ProductService $productService,
+        CategoryProductService $categoryProductService,
+        CommentService $commentService,
+        SubscriberService $subscriberService
+    ) {
+        $this->productService = $productService;
+        $this->categoryProductService = $categoryProductService;
+        $this->commentService = $commentService;
+        $this->subscriberService = $subscriberService;
+    }
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request)
     {
-        //$sortOption = $request->query('sortOption', 'asc');
         $sortOption = $request->query('sortOption');
         $categoryName = $request->query('category_products', 'a');
-        $favoriteProduct = Product::orderBy('favorite', 'desc')->firstOrFail();
 
-        $category_products = CategoryProduct::where('name_category_product', $categoryName)->firstOrFail();
-        if ($sortOption) {
-            $products = $category_products->products()->orderBy('name', $sortOption)->paginate(6);
-        } else {
-            $products = $category_products->products()->orderBy('favorite', 'desc')->paginate(6);
-        }
+        $favoriteProduct = $this->productService->getProductOrderByFavorite('desc');
+        //Product::orderBy('favorite', 'desc')->firstOrFail();
+        $products = $this->categoryProductService->getProductsByCategoryName($categoryName, $sortOption);
+        // $category_products = CategoryProduct::where('name_category_product', $categoryName)->firstOrFail();
+        // if ($sortOption) {
+        //     $products = $category_products->products()->orderBy('name', $sortOption)->paginate(6);
+        // } else {
+        //     $products = $category_products->products()->orderBy('favorite', 'desc')->paginate(6);
+        // }
 
         return view('products.index', compact('products', 'sortOption', 'favoriteProduct'));
     }
@@ -60,14 +81,7 @@ class ProductController extends Controller
      */
     public function store(ProductRequest $request)
     {
-        $request->validate([
-            'name' => 'required',
-            'price' => 'required',
-            'detail' => 'required',
-            'category_products_id' => 'required'
-        ]);
-
-        Product::create($request->except('_token'));
+        $this->productService->store($request);
 
         return redirect()->route('products.index')->with('success', 'Product created successfully.');
     }
