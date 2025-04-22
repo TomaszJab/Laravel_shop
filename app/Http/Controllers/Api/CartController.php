@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\ApiControllers;
+namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -15,7 +15,7 @@ use App\Http\Services\OrderProductService;
 use App\Http\Services\PersonalDetailsService;
 use App\Http\Services\ProductService;
 
-class CartApiController extends Controller
+class CartController extends Controller
 {
     protected $orderService;
     protected $orderProductService;

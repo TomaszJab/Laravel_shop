@@ -5,7 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class CommentResource extends JsonResource
+class ProductResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -16,9 +16,11 @@ class CommentResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'content' => $this->content,
-            'author' => $this->author,
-            'product_id' => $this->product_id,
+            'name' => $this->name,
+            'price' => $this->price,
+            'detail' => $this->detail,
+            'favorite' => $this->favorite,
+            'category_products_id' => $this->category_products_id,
             'created_at' => $this->created_at,//?->toDateTimeString(),
             'updated_at' => $this->updated_at//?->toDateTimeString(),
         ];

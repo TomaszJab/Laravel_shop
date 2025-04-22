@@ -36,7 +36,7 @@ class CommentService extends Controller
         return $comment;
     }
 
-    public function getCommenstOrderByCreatedAt(Product $product, string $sortOption)
+    public function getCommenstsOrderByCreatedAt(Product $product, string $sortOption)
     {
         $comments = $product->comments()->orderBy('created_at', $sortOption)->get();
         return $comments;

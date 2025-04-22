@@ -24,12 +24,12 @@ class SubscriberService extends Controller
     {
         $request->validated();
 
-        $email_address = $request->input('email_address');
-        $email_subscriber = [
-            'email_subscriber' => $email_address
+        $emailAddress = $request->input('email_address');
+        $emailSubscriber = [
+            'email_subscriber' => $emailAddress
         ];
 
-        $subscriber = Subscriber::create($email_subscriber);
+        $subscriber = Subscriber::create($emailSubscriber);
         return $subscriber;
     }
 
