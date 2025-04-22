@@ -176,6 +176,7 @@ class ProductApiControllerTest extends TestCase
 
         $this->assertDatabaseHas('comments', [
             'product_id' => $idProduct,
+            'author' => $comment['author'],
             'content' => $comment['content'],
         ]);
     }

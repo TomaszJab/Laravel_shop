@@ -44,14 +44,7 @@ class ProductController extends Controller
         $categoryName = $request->query('category_products', 'a');
 
         $favoriteProduct = $this->productService->getProductOrderByFavorite('desc');
-        //Product::orderBy('favorite', 'desc')->firstOrFail();
         $products = $this->categoryProductService->getProductsByCategoryName($categoryName, $sortOption);
-        // $category_products = CategoryProduct::where('name_category_product', $categoryName)->firstOrFail();
-        // if ($sortOption) {
-        //     $products = $category_products->products()->orderBy('name', $sortOption)->paginate(6);
-        // } else {
-        //     $products = $category_products->products()->orderBy('favorite', 'desc')->paginate(6);
-        // }
 
         return view('products.index', compact('products', 'sortOption', 'favoriteProduct'));
     }
@@ -88,18 +81,7 @@ class ProductController extends Controller
 
     public function storeComment(CommentRequest $request, $productId)
     {
-        $request->validate([
-            'content' => 'required|string|max:255'
-        ]);
-
-        $product = Product::findOrFail($productId);
-        $nameUser = auth()->user()->name;
-
-        $product->comments()->create([
-            'content' => $request->input('content'),
-            'author' => $nameUser,
-            'product_id' => $productId
-        ]);
+        $this->commentService->store($request, $productId);
 
         return redirect()->back()->with('success', 'Comment added successfully!');
     }
@@ -170,13 +152,14 @@ class ProductController extends Controller
 
     public function update(ProductRequest $request, Product $product)
     {
-        $request->validate([
-            'name' => 'required',
-            'price' => 'required',
-            'detail' => 'required',
-        ]);
+        // $request->validate([
+        //     'name' => 'required',
+        //     'price' => 'required',
+        //     'detail' => 'required',
+        // ]);
 
-        $product->update($request->all());
+        // $product->update($request->all());
+        $this->productService->update($request, $product);
 
         return redirect()->route('products.index')
             ->with('success', 'Product updated successfully');
@@ -184,7 +167,8 @@ class ProductController extends Controller
 
     public function destroy(Product $product)
     {
-        $product->delete();
+        //$product->delete();
+        $this->productService->destroy($product);
 
         return redirect()->route('products.index')
             ->with('success', 'Product deleted successfully');
@@ -192,14 +176,7 @@ class ProductController extends Controller
 
     public function subscribe(SubscriberRequest $request)
     {
-        $email_address = $request->input('email_address');
-        $data = $request->validate(['email_address' => 'required|email']);
-
-        $email_subscriber = [
-            'email_subscriber' => $email_address
-        ];
-
-        Subscriber::create($email_subscriber);
+        $this->subscriberService->store($request);
 
         return redirect()
             ->route('products.index', ['category_products' => 'a'])

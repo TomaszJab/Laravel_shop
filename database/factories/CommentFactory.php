@@ -19,7 +19,7 @@ class CommentFactory extends Factory
     {
         return [
             "content" => fake()->name(),
-            //'author' => 'a'
+            'author' => 'a'
         ];
     }
 }
