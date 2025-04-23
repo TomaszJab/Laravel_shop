@@ -195,14 +195,50 @@ class ProductControllerTest extends TestCase
 
     //show
     //guest
-    // public function test_show_guest_can_show_product()
-    // {
+    public function test_show_guest_can_show_product()
+    {
+        $product = Product::factory()->create();
 
-    // }
+        // Tworzymy kilka komentarzy do produktu
+        // $comments = Comment::factory()->count(3)->create([
+        //     'product_id' => $product->id,
+        //     'created_at' => fake()->dateTime('2014-02-25 08:37:17'),
+        // ]);
+        $comments = Comment::factory()->count(3)->create([
+            'product_id' => $product->id,
+        ])->each(function ($comment)  {
+            $comment->created_at = fake()->dateTime('2014-02-25 08:37:17');
+            $comment->save();
+        });
+// dd(gettype($comments));
+//dd(gettype($comments->sortByDesc('created_at')->pluck('id')->toArray()));
+dd($comments->sortByDesc('created_at'));
+        // Wysyłamy żądanie GET do widoku produktu
+        $response = $this->get('/products/' . $product->id);
+
+        $response->assertStatus(200);
+        $response->assertViewIs('products.show');
+
+        $response->assertViewHasAll([
+            'product',
+            'comments',
+        ]);
+
+        $viewProduct = $response->viewData('product');
+        $viewComments = $response->viewData('comments');
+         // int(123)
+
+        // $this->assertTrue($viewProduct->is($product));
+        // $this->assertCount(3, $viewComments);
+        // $this->assertEquals(
+        //     $comments->sortByDesc('created_at')->pluck('id')->toArray(),
+        //     $viewComments->pluck('id')->toArray()
+        // );
+    }/////////////////////////////////
 
     //edit
     //admin
-    public function test_edit_admin_can_edit_product()//jak i admin to i gosc niezalogowany database has
+    public function test_edit_admin_can_edit_product() //jak i admin to i gosc niezalogowany database has
     {
         $user = User::factory()->create([
             'role' => 'admin'
@@ -218,10 +254,10 @@ class ProductControllerTest extends TestCase
         $response->assertViewHas('product', $product);
         $response->assertViewHas('product', function ($value) use ($product) {
             return $value->name === $product->name &&
-                   $value->price === $product->price &&
-                   $value->detail === $product->detail &&
-                   $value->favorite === $product->favorite &&
-                   $value->category_products_id === $product->category_products_id;
+                $value->price === $product->price &&
+                $value->detail === $product->detail &&
+                $value->favorite === $product->favorite &&
+                $value->category_products_id === $product->category_products_id;
         });
     }
 
@@ -241,17 +277,55 @@ class ProductControllerTest extends TestCase
 
     //update
     //admin
-    // public function test_update_admin_can_update_product()
-    // {
+    public function test_update_admin_can_update_product()
+    {
+        $user = User::factory()->create([
+            'role' => 'admin'
+        ]);
+        $this->actingAs($user);
+        $this->assertAuthenticated();
 
-    // }
+        $product = Product::factory()->create();
+
+        $updatedProduct = $product->toArray();
+        $updatedProduct['name'] = 'Product 1';
+        $updatedProduct['price'] = 2;
+
+        $response = $this->put('/products/' . $product->id, $updatedProduct);
+
+        $response->assertRedirect(route('products.index'));
+        $response->assertSessionHas('success', 'Product updated successfully');
+
+        $this->assertDatabaseHas('products', Arr::except($updatedProduct, [
+            'created_at',
+            'updated_at'
+        ]));
+    }
 
     //update
     //user
-    // public function test_update_user_cannot_update_product()
-    // {
+    public function test_update_user_cannot_update_product()
+    {
+        $user = User::factory()->create();
+        $this->actingAs($user);
+        $this->assertAuthenticated();
 
-    // }
+        $product = Product::factory()->create();
+
+        $updatedProduct = $product->toArray();
+        $updatedProduct['name'] = 'Product 1';
+        $updatedProduct['price'] = 2;
+
+        $response = $this->put('/products/' . $product->id, $updatedProduct);
+
+        $response->assertStatus(403);
+        $response->assertSessionMissing('success');
+
+        $this->assertDatabaseMissing('products', Arr::except($updatedProduct, [
+            'created_at',
+            'updated_at'
+        ]));
+    }
 
     //destroy
     //admin
@@ -262,7 +336,7 @@ class ProductControllerTest extends TestCase
         ]);
         $this->actingAs($user);
         $this->assertAuthenticated();
-        
+
         $product = Product::factory()->create();
         $productId = $product->id;
 

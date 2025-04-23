@@ -142,6 +142,7 @@ class ProductController extends Controller
     public function show(Product $product)
     {
         $comments = $product->comments()->orderBy('created_at', 'desc')->get();
+
         return view('products.show', compact('product', 'comments'));
     }
 
@@ -152,13 +153,6 @@ class ProductController extends Controller
 
     public function update(ProductRequest $request, Product $product)
     {
-        // $request->validate([
-        //     'name' => 'required',
-        //     'price' => 'required',
-        //     'detail' => 'required',
-        // ]);
-
-        // $product->update($request->all());
         $this->productService->update($request, $product);
 
         return redirect()->route('products.index')
@@ -167,7 +161,6 @@ class ProductController extends Controller
 
     public function destroy(Product $product)
     {
-        //$product->delete();
         $this->productService->destroy($product);
 
         return redirect()->route('products.index')

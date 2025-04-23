@@ -21,7 +21,13 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::apiResource('/products', ProductController::class);
+//Route::apiResource('/products', ProductController::class);
+
+Route::apiresource('/products', ProductController::class)->only(['index','show']);
+Route::middleware(['auth:sanctum', 'admin'])->group(function () {
+    Route::apiresource('products', ProductController::class)->only(['create','edit','store','destroy','update']);
+});
+
 Route::post('/products/subscribe', [ProductController::class, 'subscribe'])->name('products.subscribe');
 //orginalnie jest tu post ale to jest api i tutaj get
 Route::get('/products/{product}/add_to_cart', [ProductController::class, 'addToCart'])->name('products.add_to_cart');

@@ -135,8 +135,13 @@ class ProductApiControllerTest extends TestCase
     //     "detail": "Opis produktu",
     //     "category_products_id": "1"
     //  }
-    public function test_api_store_product()//logowanie
+    //admin
+    public function test_api_admin_can_store_product() //logowanie
     {
+        $user = User::factory()->create(['role' => 'admin']);
+        $this->actingAs($user, 'sanctum');
+        $this->assertAuthenticated();
+
         $categoryProduct = CategoryProduct::factory()->create();
         $product = Product::factory()->make([
             'category_products_id' => $categoryProduct->id,
@@ -148,8 +153,13 @@ class ProductApiControllerTest extends TestCase
         $this->assertDatabaseHas('products', Arr::except($product, ['created_at', 'updated_at', 'id']));
     }
 
+    //admin
     public function test_api_store_product_validation_fails()
     {
+        $user = User::factory()->create(['role' => 'admin']);
+        $this->actingAs($user, 'sanctum');
+        $this->assertAuthenticated();
+
         $response = $this->postJson('/api/products', []);
         $response->assertStatus(422);
         $response->assertJsonValidationErrors(['name', 'price', 'detail', 'category_products_id']);
@@ -158,11 +168,14 @@ class ProductApiControllerTest extends TestCase
     //storeComment
     public function test_api_storeComment()
     {
-        //aby dodac komentarz urzytkownik musi byc zalogowany
-        $this->uwierzytelnij_urzytkownika();
+        $user = User::factory()->create();
+        $this->actingAs($user, 'sanctum');
+        $this->assertAuthenticated();
 
         //tworze komentarz
-        $comment = Comment::factory()->make()->toArray();
+        $comment = Comment::factory()->make([
+            'author' => $user->name//bez tego niby nie zadziala
+        ])->toArray();
 
         //tworze kategorie produktu i produkt
         $categoryProduct = CategoryProduct::factory()->create();
@@ -176,7 +189,7 @@ class ProductApiControllerTest extends TestCase
 
         $this->assertDatabaseHas('comments', [
             'product_id' => $idProduct,
-            'author' => $comment['author'],
+            'author' => $user->name,
             'content' => $comment['content'],
         ]);
     }
@@ -245,8 +258,13 @@ class ProductApiControllerTest extends TestCase
     //     "category_products_id": 2
     // }
     //update
-    public function test_api_update_product()
+    //admin
+    public function test_api_admin_can_update_product()
     {
+        $user = User::factory()->create(['role' => 'admin']);
+        $this->actingAs($user, 'sanctum');
+        $this->assertAuthenticated();
+
         $product = Product::factory()->create();
 
         $updatedProduct = $product->toArray();
@@ -262,8 +280,38 @@ class ProductApiControllerTest extends TestCase
         ]));
     }
 
+    //update
+    //user
+    public function test_api_user_cant_update_product()
+    {
+        $user = User::factory()->create();
+        $this->actingAs($user, 'sanctum');
+        $this->assertAuthenticated();
+
+        $product = Product::factory()->create();
+
+        $updatedProduct = $product->toArray();
+        $updatedProduct['name'] = 'Product 1';
+        $updatedProduct['price'] = 2;
+
+        $response = $this->putJson('/api/products/' . $product->id, $updatedProduct);
+
+        $response->assertStatus(403);
+        $this->assertDatabaseMissing('products', Arr::except($updatedProduct, [
+            'created_at',
+            'updated_at'
+        ]));
+    }
+
+    //admin
     public function test_api_delete_product()
     {
+        $user = User::factory()->create([
+            'role' => 'admin'
+        ]);
+        $this->actingAs($user, 'sanctum');
+        $this->assertAuthenticated();
+
         $product = Product::factory()->create();
 
         $response = $this->deleteJson('/api/products/' . $product->id);
@@ -283,7 +331,6 @@ class ProductApiControllerTest extends TestCase
         $email['email_address'] = $subscriber['email_subscriber'];
         $response = $this->postJson('api/products/subscribe', $email);
 
-        //$response->assertStatus(201)->assertJson(Arr::except($subscriber, ['created_at', 'updated_at']));
         $response->assertStatus(201)->assertJson(['subscriber' => Arr::except($subscriber, ['created_at', 'updated_at'])]);
         $this->assertDatabaseHas('subscribers', Arr::except($subscriber, ['created_at', 'updated_at', 'id']));
     }

@@ -87,10 +87,7 @@ Route::resource('AboutUs', AboutUsController::class);
 Route::resource('homepage', HomePageController::class);
 
 Route::resource('products', ProductController::class)->only(['index','show','create']);
-// Route::resource('products', ProductController::class)->except(['create', 'edit','store','destroy','update']);
-//Route::resource('products', ProductController::class);
 Route::middleware(['auth', 'admin'])->group(function () {
-    //Route::resource('products', ProductController::class)->only(['create', 'edit','store','destroy','update']);
     Route::resource('products', ProductController::class)->only(['create','edit','store','destroy','update']);
 });
 
