@@ -95,7 +95,7 @@ class ProductController extends Controller
     public function addToCart($id, Request $request)
     {
         $product = Product::findOrFail($id);
-        $categoryProducts = CategoryProduct::where('id', $product->category_products_id)->first();
+        $categoryProducts = CategoryProduct::where('id', $product->category_products_id)->first();//to zle bo przekazac od produkt
         $cart = session()->get('cart', []);
 
         $size = $request->input('size');
@@ -112,27 +112,33 @@ class ProductController extends Controller
                 'name_category_product' => $categoryProducts->name_category_product,
                 'category_products_id' => $product->category_products_id
             ];
-        }
 
-        if (!isset($cart['method_delivery'])) {
             $cart['method_delivery'] = 'Kurier';
-        }
-
-        if (!isset($cart['method_payment'])) {
             $cart['method_payment'] = 'AutoPay';
-        }
-
-        if (!isset($cart['promo_code'])) {
             $cart['promo_code'] = null;
-        }
-
-        if (!isset($cart['delivery'])) {
             $cart['delivery'] = number_format(25, 2);
-        }
-
-        if (!isset($cart['payment'])) {
             $cart['payment'] = number_format(0, 2);
         }
+
+        // if (!isset($cart['method_delivery'])) {
+        //     $cart['method_delivery'] = 'Kurier';
+        // }
+
+        // if (!isset($cart['method_payment'])) {
+        //     $cart['method_payment'] = 'AutoPay';
+        // }
+
+        // if (!isset($cart['promo_code'])) {
+        //     $cart['promo_code'] = null;
+        // }
+
+        // if (!isset($cart['delivery'])) {
+        //     $cart['delivery'] = number_format(25, 2);
+        // }
+
+        // if (!isset($cart['payment'])) {
+        //     $cart['payment'] = number_format(0, 2);
+        // }
 
         session()->put('cart', $cart);
 

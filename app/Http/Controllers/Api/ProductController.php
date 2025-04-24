@@ -38,29 +38,14 @@ class ProductController extends Controller
     /**
      * Display a listing of the resource.
      */
-    // public function index()
-    // {
-    //     $products = $this -> productService -> getAllProducts();
-    //     return $products;
-    // }
-
     public function index(Request $request)
     {
         $sortOption = $request->query('sortOption');
         $categoryName = $request->query('category_products', 'a');
+
         $favoriteProduct = $this->productService->getProductOrderByFavorite('desc');
-        //Product::orderBy('favorite', 'desc')->firstOrFail();
-
         $products = $this->categoryProductService->getProductsByCategoryName($categoryName, $sortOption);
-        // CategoryProduct::where('name_category_product', $categoryName)->firstOrFail();
-        // if($sortOption){
-        //     $products = $category_products->products()->orderBy('name', $sortOption)->paginate(6);
-        // }else{
-        //     $products = $category_products->products()->orderBy('favorite', 'desc')->paginate(6);
-        // }
 
-        //return view('products.index',compact('products', 'sortOption', 'favoriteProduct'));
-        //return response()->json(compact('products', 'sortOption', 'favoriteProduct'));
         return [
             'products' => ProductResource::collection($products),
             'sortOption' => $sortOption,
@@ -71,38 +56,16 @@ class ProductController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    // public function store(Request $request)
-    // {
-    //     $product = $this -> productService -> store($request);
-    //     return response() -> json($product, 201);
-    // }
-
     public function store(ProductRequest $request)
     {
         $product = $this->productService->store($request);
-        //Product::create($request->except('_token'));
-
         return response()->json($product, 201);
-        //return redirect()->route('products.index')->with('success','Product created successfully.');
     }
 
-    // POST http://127.0.0.1:8000/api/products/2/comments
-    // {
-    //     "content": "Nowy Produkt"
-    // }
     public function storeComment(CommentRequest $request, $productId)
     {
         $comment = $this->commentService->store($request, $productId);
-        //$product = Product::findOrFail($productId);
-        // $nameUser = auth()->user()->name;
-
-        // $product->comments()->create([
-        //     'content' => $request->input('content'),
-        //     'author' => $nameUser,
-        //     'product_id' => $productId
-        // ]);
         return response()->json($comment, 201);
-        //return redirect()->back()->with('success', 'Comment added successfully!');
     }
 
     // to raczej sie tutaj nie przyda
@@ -115,6 +78,8 @@ class ProductController extends Controller
     {
         $product = Product::findOrFail($id);
         $category_products = CategoryProduct::where('id', $product->category_products_id)->first(); //$categoryProducts
+        //tu pobrac size quantity key i reszta to przekazanie po stronie aplikaji
+
         //$cart = session()->get('cart', []);
 
         //$size = $request->input('size');
@@ -146,18 +111,10 @@ class ProductController extends Controller
     /**
      * Display the specified resource.
      */
-    // public function show(Product $product)
-    // {
-    //     $product = $this -> productService -> show($product);
-    //     return $product;
-    // }
-
     public function show(Product $product)
     {
-        //getCommenstOrderByCreatedAt
         $comments = $this->commentService->getCommenstsOrderByCreatedAt($product, 'desc');
-        //$comments = $product->comments()->orderBy('created_at', 'desc')->get();
-        //return view('products.show',compact('product', 'comments'));
+
         return [
             'product' => ProductResource::make($product),
             'comments' => CommentResource::collection($comments)
@@ -167,17 +124,9 @@ class ProductController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    // public function update(Request $request, Product $product)
-    // {
-    //     $this -> productService -> update($request, $product);
-    //     return response() -> json($product, 200);
-    // }
-    public function update(ProductRequest $request, Product $product) ///?
+    public function update(ProductRequest $request, Product $product)
     {
-        // return redirect()->route('products.index')
-        //                 ->with('success','Product updated successfully');
         $product = $this->productService->update($request, $product);
-        //return response()->json($product, 200);
 
         return [
             'product' => ProductResource::make($product)
@@ -187,31 +136,19 @@ class ProductController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    // public function destroy(Product $product)
-    // {
-    //     $product = $this -> productService -> delete($product);
-    //     return response() -> json(null, 204);
-    // }
     public function destroy(Product $product)
     {
-        // $product->delete();
-
-        // return redirect()->route('products.index')
-        //                 ->with('success','Product deleted successfully');
         $product = $this->productService->destroy($product);
+
         return response()->json(null, 204);
     }
 
     public function subscribe(SubscriberRequest $request)
     {
         $subscriber = $this->subscriberService->store($request);
-        //Subscriber::create($email_subscriber);
 
-        //return response()->json($subscriber, 201);
         return response()->json([
             'subscriber' => new SubscriberResource($subscriber),
         ], 201);
-        //return redirect()->route('products.index',
-        // ['category_products' => 'a'])->with('success', 'You are a subscriber!');
     }
 }

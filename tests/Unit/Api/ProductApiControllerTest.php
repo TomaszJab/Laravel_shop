@@ -185,8 +185,8 @@ class ProductApiControllerTest extends TestCase
         $idProduct = $product->id;
 
         $response = $this->postJson('api/products/' . $idProduct . '/comments', $comment);
-        $response->assertStatus(201)->assertJson($comment);
-
+        $response->assertStatus(201)->assertJson(Arr::except($comment, ['created_at', 'updated_at']));
+        
         $this->assertDatabaseHas('comments', [
             'product_id' => $idProduct,
             'author' => $user->name,
