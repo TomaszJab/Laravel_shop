@@ -174,7 +174,7 @@ class ProductApiControllerTest extends TestCase
 
         //tworze komentarz
         $comment = Comment::factory()->make([
-            'author' => $user->name//bez tego niby nie zadziala
+            'author' => $user->name //bez tego niby nie zadziala
         ])->toArray();
 
         //tworze kategorie produktu i produkt
@@ -186,7 +186,7 @@ class ProductApiControllerTest extends TestCase
 
         $response = $this->postJson('api/products/' . $idProduct . '/comments', $comment);
         $response->assertStatus(201)->assertJson(Arr::except($comment, ['created_at', 'updated_at']));
-        
+
         $this->assertDatabaseHas('comments', [
             'product_id' => $idProduct,
             'author' => $user->name,
@@ -203,11 +203,20 @@ class ProductApiControllerTest extends TestCase
             'category_products_id' => $categoryProduct->id,
         ]);
         $idProduct = $product->id;
-        $response = $this->getJson('api/products/' . $idProduct . '/add_to_cart');
 
-        $category_products = $categoryProduct->toArray();
+        $cartData = [
+            'size' => 'S',
+            'quantity' => 2
+        ];
+
+        $response = $this->postJson('api/products/' . $idProduct . '/add_to_cart', $cartData);
+
+        $categoryProducts = $categoryProduct->toArray();
         $product = $product->toArray();
-        $response->assertStatus(200)->assertJson(compact('product', 'category_products'));
+        $quantity = $cartData['quantity'];
+        $key = $idProduct . '_' . $cartData['size'];
+
+        $response->assertStatus(200)->assertJson(compact('product', 'categoryProducts', 'quantity', 'key'));
     }
 
     //http://127.0.0.1:8000/products/1
@@ -304,6 +313,7 @@ class ProductApiControllerTest extends TestCase
     }
 
     //admin
+    //delete
     public function test_api_delete_product()
     {
         $user = User::factory()->create([
@@ -315,13 +325,17 @@ class ProductApiControllerTest extends TestCase
         $product = Product::factory()->create();
 
         $response = $this->deleteJson('/api/products/' . $product->id);
-
         $response->assertStatus(204);
-
         $this->assertDatabaseMissing('products', [
             'id' => $product->id,
         ]);
     }
+
+    //user
+    //delete
+
+    //guest
+    //delete
 
     //subscribe
     public function test_api_add_subscriber()

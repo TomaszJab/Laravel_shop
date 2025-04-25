@@ -13,6 +13,7 @@ use App\Http\Services\SubscriberService;
 use App\Http\Resources\ProductResource;
 use App\Http\Resources\CommentResource;
 use App\Http\Resources\SubscriberResource;
+use App\Http\Resources\CategoryProductsResource;
 use App\Http\Requests\ProductRequest;
 use App\Http\Requests\CommentRequest;
 use App\Http\Requests\SubscriberRequest;
@@ -74,38 +75,50 @@ class ProductController extends Controller
     //     return redirect()->route('carts.index');
     // }
 
-    public function addToCart($id, Request $request) ///////////////////
+    public function addToCart($id, Request $request)
     {
         $product = Product::findOrFail($id);
-        $category_products = CategoryProduct::where('id', $product->category_products_id)->first(); //$categoryProducts
-        //tu pobrac size quantity key i reszta to przekazanie po stronie aplikaji
+        $categoryProducts = $product->categoryProducts()->first();
 
-        //$cart = session()->get('cart', []);
+        $size = $request->input('size');
+        $quantity = $request->input('quantity');
+        $key = $product->id . '_' . $size;
 
-        //$size = $request->input('size');
-        //$quantity = $request->input('quantity');
-        // $key = $product->id.'_'.$size;
+        /* //kod po stronie aplikacji telefonu
+        $cart = session()->get('cart', []);
 
-        // if (isset($cart[$key])) {
-        //     $cart[$key]['quantity'] = $cart[$key]['quantity'] + $quantity;
-        // } else {
-        //     $cart[$key] = [
-        //         'name' => $product -> name,
-        //         'quantity' => 1,
-        //         'price' => $product -> price,
-        //         'name_category_product' => $category_products -> name_category_product,
-        //         'category_products_id' => $product -> category_products_id
-        //     ];
-        //     $cart['method_delivery'] = 'Kurier';
-        //     $cart['method_payment'] = 'AutoPay';
-        //     $cart['promo_code'] = null;
-        //     $cart['delivery'] = number_format(25,2);
-        //     $cart['payment'] = number_format(0,2);
-        // }
+        if (isset($cart[$key])) {
+            $cart[$key]['quantity'] = $cart[$key]['quantity'] + $quantity;
+        } else {
+            $categoryProducts = $product->categoryProducts()->first();
 
-        // session()->put('cart', $cart);
-        return response()->json(compact('product', 'category_products'));
-        //return back(); #->with('success', 'Produkt dodany do koszyka!');
+            $cart[$key] = [
+                'name' => $product->name,
+                'quantity' => 1,
+                'price' => $product->price,
+                'name_category_product' => $categoryProducts->name_category_product,
+                'category_products_id' => $product->category_products_id
+            ];
+
+            if (!isset($cart['method_delivery'])) {
+                $cart['method_delivery'] = 'Kurier';
+                $cart['method_payment'] = 'AutoPay';
+                $cart['promo_code'] = null;
+                $cart['delivery'] = number_format(25, 2);
+                $cart['payment'] = number_format(0, 2);
+            }
+        }
+
+        session()->put('cart', $cart);*/
+
+        // return back();
+        //return response()->json(compact('product', 'category_products'));
+        return [
+            'product' => ProductResource::make($product),
+            'categoryProducts' => CategoryProductsResource::make($categoryProducts),
+            'quantity' => $quantity,
+            'key' => $key
+        ];
     }
 
     /**

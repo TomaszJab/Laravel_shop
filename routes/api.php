@@ -29,8 +29,7 @@ Route::middleware(['auth:sanctum', 'admin'])->group(function () {
 });
 
 Route::post('/products/subscribe', [ProductController::class, 'subscribe'])->name('products.subscribe');
-//orginalnie jest tu post ale to jest api i tutaj get
-Route::get('/products/{product}/add_to_cart', [ProductController::class, 'addToCart'])->name('products.add_to_cart');
+Route::post('/products/{product}/add_to_cart', [ProductController::class, 'addToCart'])->name('products.add_to_cart');
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/cart/order', [CartController::class, 'order'])->name('carts.order');
