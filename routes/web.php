@@ -24,7 +24,7 @@ use App\Http\Controllers\GoogleLoginController;
 |
 */
 Route::resource('carts', CartController::class);
-// Route::delete('/cart/AJAX_destroy', [CartController::class, 'AJAX_destroy'])->name('carts.AJAX_destroy');
+
 Route::post('/cart/clear', [CartController::class, 'clearCart'])->name('carts.clear');
 Route::post('/cart/changequantity', [CartController::class, 'changequantity'])->name('carts.changequantity');
 Route::get('/cart/delivery', [CartController::class, 'delivery'])->name('carts.delivery');
@@ -40,25 +40,11 @@ Route::post('/cart/changePrice', [CartController::class, 'changePrice'])->name('
 Route::post('/cart/storewithoutregistration', [CartController::class, 'storewithoutregistration'])->name('carts.withoutregistration.store');
 Route::get('/cart/summary', [CartController::class, 'summary'])->name('carts.summary');
 Route::post('/cart/savewithoutregistration', [CartController::class, 'savewithoutregistration'])->name('carts.savewithoutregistration');
-use Illuminate\Http\Request;
-Route::post('/carts/add-promo', function (Request $request) {
-    // $request->validate([
-    //     'promo_code' => 'required|unique:promo_codes,promo_code',
-    //     'valid_from' => 'required|date',
-    //     'valid_until' => 'nullable|date|after_or_equal:valid_from',
-    // ]);
 
-    // Dodanie kodu rabatowego do bazy danych
-    // $promo = promoCode::create([
-    //     'promo_code' => $request->input('promo_code'),
-    //     'valid_from' => $request->input('valid_from'),
-    //     'valid_until' => $request->input('valid_until') ?: null, // Ustawienie null, jeśli 'valid_until' jest pusty
-    // ]);
- 
+use Illuminate\Http\Request;
+Route::post('/carts/add-promo', function (Request $request) { 
     $promo_code = $request->input('promo_code');
     $promo = promoCode::where('promo_code', $promo_code)->first();
-
-  //->where('votes', '=', 100)
 
     // Odpowiedź JSON
    // return response()->json(['success' => true]);
@@ -91,7 +77,6 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::resource('products', ProductController::class)->only(['create','edit','store','destroy','update']);
 });
 
-// Route::get('products', [ProductController::class, 'category_products'])->name('products.category_products');
 Route::middleware('auth')->group(function () {
     Route::post('/products/{product}/comments', [ProductController::class, 'storeComment'])->name('products.comments.store');
 });

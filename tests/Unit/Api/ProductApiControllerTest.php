@@ -43,8 +43,7 @@ class ProductApiControllerTest extends TestCase
     //     'description' => 'Test Product Description',
     //     'price' => 100,
     //     'category_id' => 1,
-    // ];
-    //$response = $this->getJson(route('products.index', ['category_products' => 'a']));
+    // ]
     //dd($response->getContent()); 
 
     public function uwierzytelnij_urzytkownika()
@@ -69,7 +68,6 @@ class ProductApiControllerTest extends TestCase
             'category_products_id' => $categoryProduct->id,
         ]);
 
-        // Uwaga category_products=a musi być takie jak w CategoryProduct::factory()->create();
         $response1 = $this->getJson('/api/products?category_products=' . $categoryProduct->name_category_product);
         $response2 = $this->getJson('/api/products?category_products=' . $categoryProduct->name_category_product . '&sortOption=asc');
 
