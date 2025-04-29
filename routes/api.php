@@ -36,7 +36,7 @@ Route::post('/cart/changePrice', [CartController::class, 'changePrice'])->name('
 
 Route::post('/cart/storewithoutregistration', [CartController::class, 'storewithoutregistration'])->name('carts.withoutregistration.store');
 Route::get('/cart/summary', [CartController::class, 'summary'])->name('carts.summary');
-Route::post('/cart/savewithoutregistration', [CartController::class, 'savewithoutregistration'])->name('carts.savewithoutregistration');
+Route::post('/cart/savewithoutregistration', [CartController::class, 'saveWithoutRegistration'])->name('carts.savewithoutregistration');
 
 use App\Models\promoCode;
 Route::post('/carts/add-promo', function (Request $request) { 

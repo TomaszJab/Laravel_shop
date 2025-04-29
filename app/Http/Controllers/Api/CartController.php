@@ -125,7 +125,7 @@ class CartController extends Controller
         ]);
     }
 
-    public function savewithoutregistration(Request $request) ////////////
+    public function saveWithoutRegistration(Request $request) ////////////
     {
         $dataPersonalDetails = $request->input('personal_details');
         //session('cart_summary');

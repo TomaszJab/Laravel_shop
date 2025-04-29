@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Product;
-use App\Models\CategoryProduct; //to potem pewnie sie nie przyda
 use App\Http\Services\ProductService;
 use App\Http\Services\CategoryProductService;
 use App\Http\Services\CommentService;
@@ -77,7 +76,7 @@ class ProductController extends Controller
 
     public function addToCart($id, Request $request)
     {
-        $product = Product::findOrFail($id);
+        $product = $this->productService->getProductById($id);
         $categoryProducts = $product->categoryProducts()->first();
 
         $size = $request->input('size');
