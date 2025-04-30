@@ -28,7 +28,8 @@ class ProductService extends Controller
         return Product::orderBy('favorite', $sortOption)->firstOrFail();
     }
 
-    public function getProductById(int $id){
+    public function getProductById(int $id)
+    {
         $product = Product::findOrFail($id);
         return $product;
     }
@@ -70,7 +71,7 @@ class ProductService extends Controller
      * Remove the specified resource from storage.
      */
     // test
-    public function destroy(Product $product) //
+    public function destroy(Product $product)
     {
         $product->delete();
     }

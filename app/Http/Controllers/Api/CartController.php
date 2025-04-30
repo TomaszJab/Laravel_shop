@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
-use App\Models\User;
 use App\Models\OrderProduct;
 use App\Models\Order;
 use App\Models\Product;
@@ -36,10 +35,10 @@ class CartController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
-        //
-    }
+    // public function index()
+    // {
+    //     //
+    // }
 
     //http://127.0.0.1:8000/api/cart/order/details/18
     public function details($order_product_id)
