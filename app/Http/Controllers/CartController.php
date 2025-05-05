@@ -19,11 +19,11 @@ class CartController extends Controller
         return view('cart.index', $cartData);
     }
 
-    public function details($order_product_id)
+    public function details($orderProductId)
     {
-        $orderData = Order::where('order_product_id', $order_product_id)->get();
+        $orderData = Order::where('order_product_id', $orderProductId)->get();
 
-        $orderProductData = OrderProduct::where('id', $order_product_id)->first();
+        $orderProductData = OrderProduct::where('id', $orderProductId)->first();
 
         $subtotal = $orderProductData->subtotal;
         $shipping = $orderProductData->delivery;
@@ -31,8 +31,8 @@ class CartController extends Controller
         $promo_code = $orderProductData->promo_code;
         $total = $orderProductData->total;
 
-        $personal_details_id = $orderProductData->personal_details_id;
-        $personalDetails = personalDetails::where('id', $personal_details_id)->first();
+        $personalDetailsId = $orderProductData->personal_details_id;
+        $personalDetails = personalDetails::where('id', $personalDetailsId)->first();
 
         return view('cart.summary', [
             'products' => $orderData,
@@ -230,7 +230,7 @@ class CartController extends Controller
         return view('cart.buyWithoutRegistration', compact('defaultPersonalDetails'));
     }
 
-    public function storewithoutregistration(Request $request)
+    public function storeWithoutRegistration(Request $request)
     {
         $company_or_private_person = $request->input('company_or_private_person');
 
@@ -275,7 +275,7 @@ class CartController extends Controller
         //->with('success','Product created successfully.');
     }
 
-    public function savewithoutregistration(Request $request)
+    public function saveWithoutRegistration(Request $request)
     {
         $data = session('cart_summary');
         //dd($data);

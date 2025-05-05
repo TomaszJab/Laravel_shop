@@ -40,65 +40,53 @@ class CartController extends Controller
     //     //
     // }
 
-    //http://127.0.0.1:8000/api/cart/order/details/18
-    public function details($order_product_id)
+    public function details($orderProductId)
     {
-        $orderData = $this->orderService->getOrdersByOrderProductId($order_product_id);
-        //Order::where('order_product_id', $order_product_id) -> get();
-        $orderProductData = $this->orderProductService->getOrderProductByOrderProductId($order_product_id);
-        //OrderProduct::where('id', $order_product_id) -> first();
+        $orderData = $this->orderService->getOrdersByOrderProductId($orderProductId);
+        $orderProductData = $orderData->first()->orderProduct;
 
         $subtotal = $orderProductData->subtotal;
         $shipping = $orderProductData->delivery;
         $payment = $orderProductData->payment;
-        $promo_code = $orderProductData->promo_code;
+        $promoCode = $orderProductData->promo_code;
         $total = $orderProductData->total;
 
-        $personal_details_id = $orderProductData->personal_details_id;
-        //get personalDetails details by personal_details_id
-        $personalDetails = $this->personalDetailsService->getPersonalDetailByPersonalDetailsId($personal_details_id);
-        //personalDetails::where('id', $orderProductData -> personal_details_id) -> first();
+        $personalDetailsId = $orderProductData->personal_details_id;
+        $personalDetails = $this->personalDetailsService->getPersonalDetailByPersonalDetailsId($personalDetailsId);
 
         return response()->json([
             'products' => $orderData,
             'subtotal' => $subtotal,
             'shipping' => $shipping,
             'payment' => $payment,
-            'promo_code' => $promo_code,
+            'promo_code' => $promoCode,
             'total' => $total,
             'enableButtons' => false,
             'summary' => $personalDetails
         ]);
     }
 
-    //http://127.0.0.1:8000/api/cart/order
     public function order()
     {
-        //$userIsAdmin = auth()->user()->isAdmin();
         $userIsAdmin = Auth::guard('sanctum')->user()->isAdmin();
 
         if ($userIsAdmin) {
             $products = $this->productService->getAllProductPaginate(8);
-            //Product::paginate(8);
-            $OrderProducts = $this->orderProductService->getAllOrderProductPaginate(8);
-            //OrderProduct::paginate(8);
-            //return view('cart.order', ['OrderProducts' => $OrderProducts, 'products' => $products]);
+            $orderProducts = $this->orderProductService->getAllOrderProductPaginate(8);
+
             return response()->json([
-                'OrderProducts' => $OrderProducts,
+                'orderProducts' => $orderProducts,
                 'products' => $products
             ]);
         } else {
             $user = Auth::guard('sanctum')->user();
             $idUser = $user->id;
-            $OrderProducts = $this->orderProductService->getAllOrderProductPaginateByIdUser($idUser, 8);
-            //OrderProduct::where('user_id', $idUser)->paginate(8);
+            $orderProducts = $this->orderProductService->getAllOrderProductPaginateByIdUser($idUser, 8);
             $defaultPersonalDetails = $this->personalDetailsService->getDefaultPersonalDetailsByUserId($idUser);
-            //personalDetails::where('user_id', $idUser)->where('default_personal_details', '1')->latest()->first();
             $additionalPersonalDetails = $this->personalDetailsService->getAdditionalPersonalDetailsByUserId($idUser);
-            //personalDetails::where('user_id', $idUser)->where('default_personal_details', '0')->latest()->first();
-            //return view('cart.order', ['OrderProducts' => $OrderProducts,'personalDetails'=>$defaultPersonalDetails,'additionalPersonalDetails'=>$additionalPersonalDetails]);
+
             return response()->json([
-                'OrderProducts' => $OrderProducts,
+                'orderProducts' => $orderProducts,
                 'personalDetails' => $defaultPersonalDetails,
                 'additionalPersonalDetails' => $additionalPersonalDetails
             ]);
@@ -109,19 +97,60 @@ class CartController extends Controller
     public function buyWithoutRegistration()
     {
         $idUser = Auth::guard('sanctum')->user()->id ?? null;
-        //$idUser = auth()->user()->id ?? null;
         if ($idUser) {
             $defaultPersonalDetails = $this->personalDetailsService->getDefaultPersonalDetailsByUserId($idUser);
-            //personalDetails::where('user_id', $idUser)->where('default_personal_details', '1')->latest()->first();
-            //return view('cart.buyWithoutRegistration',['defaultPersonalDetails' => $defaultPersonalDetails]);
         } else {
             $defaultPersonalDetails = null;
-            //return view('cart.buyWithoutRegistration');
         }
 
         return response()->json([
             'defaultPersonalDetails' => $defaultPersonalDetails
         ]);
+    }
+
+    public function storeWithoutRegistration(Request $request)
+    {
+        $company_or_private_person = $request->input('company_or_private_person');
+
+        if ($company_or_private_person == 'private_person') {
+            $request->validate([
+                'email' => 'required',
+                'firstName' => 'required',
+                'lastName' => 'required',
+                'phone' => 'required',
+
+                'street' => 'required',
+                'house_number' => 'required',
+                'zip_code' => 'required',
+                'city' => 'required',
+
+                'acceptance_of_the_regulations' => 'required'
+            ]);
+        } else {
+            $request->validate([
+                'email' => 'required',
+                'firstName' => 'required',
+                'lastName' => 'required',
+                'phone' => 'required',
+
+                'company_name' => 'required',
+                'nip' => 'required',
+
+                'street' => 'required',
+                'house_number' => 'required',
+                'zip_code' => 'required',
+                'city' => 'required',
+
+                'acceptance_of_the_regulations' => 'required'
+            ]);
+        }
+
+        $summary = $request->except('_token');
+
+        // Przekazanie danych do sesji
+        session(['cart_summary' => $summary]);
+        return redirect()->route('carts.summary');
+        //->with('success','Product created successfully.');
     }
 
     public function saveWithoutRegistration(Request $request) ////////////
@@ -187,22 +216,6 @@ class CartController extends Controller
         return response()->json(['message' => 'Order created successfully'], 201);
     }
 
-    // POST http://127.0.0.1:8000/api/cart/updateDefaultPersonalDetails
-    // {
-    //     "email": "test@example.com",
-    //     "firstName": "Jan",
-    //     "lastName": "Kowalski",
-    //     "phone": "123456789",
-    //     "street": "Warszawska",
-    //     "house_number": "10",
-    //     "zip_code": "00-001",
-    //     "company_or_private_person": "company",
-    //     "company_name":"s",
-    //     "nip":"22",
-    //     "city": "Warszawa",
-    //     "default_personal_details": "1",
-    //     "acceptance_of_the_regulations": "yes"
-    // }
     public function updateDefaultPersonalDetails(Request $request)
     {
         $userId = Auth::guard('sanctum')->user()->id ?? null;

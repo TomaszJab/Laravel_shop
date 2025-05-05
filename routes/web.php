@@ -31,15 +31,18 @@ Route::get('/cart/delivery', [CartController::class, 'delivery'])->name('carts.d
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/cart/order', [CartController::class, 'order'])->name('carts.order');
-    Route::get('/cart/order/details/{order_product_id}', [CartController::class, 'details'])->name('carts.order.details');
+});
+
+Route::middleware('auth','ownerOrAdmin')->group(function () {
+    Route::get('/cart/order/details/{orderProductId}', [CartController::class, 'details'])->name('carts.order.details');
 });
 
 Route::get('/cart/buy', [CartController::class, 'buyWithoutRegistration'])->name('carts.buyWithoutRegistration');
 Route::post('/cart/changePrice', [CartController::class, 'changePrice'])->name('carts.changePrice');
 
-Route::post('/cart/storewithoutregistration', [CartController::class, 'storewithoutregistration'])->name('carts.withoutregistration.store');
+Route::post('/cart/storeWithoutRegistration', [CartController::class, 'storeWithoutRegistration'])->name('carts.withoutregistration.store');
 Route::get('/cart/summary', [CartController::class, 'summary'])->name('carts.summary');
-Route::post('/cart/savewithoutregistration', [CartController::class, 'savewithoutregistration'])->name('carts.savewithoutregistration');
+Route::post('/cart/saveWithoutRegistration', [CartController::class, 'saveWithoutRegistration'])->name('carts.savewithoutregistration');
 
 use Illuminate\Http\Request;
 Route::post('/carts/add-promo', function (Request $request) { 
