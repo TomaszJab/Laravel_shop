@@ -32,7 +32,7 @@ class CartApiTest extends TestCase
     //http://127.0.0.1:8000/api/cart/order/details/18
     //details
     //user
-    public function test_user_can_access__to_cart_details_route(){
+    public function test_user_can_access_to_cart_details_route(){
         $user = User::factory()->create(['role' => 'user']);
         $this->actingAs($user, 'sanctum');
         $this->assertAuthenticated('sanctum');
@@ -180,12 +180,16 @@ class CartApiTest extends TestCase
         $this->actingAs($admin, 'sanctum');
         $this->assertAuthenticated('sanctum');
 
+        $orderProduct = OrderProduct::factory()->create();
+
         $response = $this->getJson('/api/cart/order');
         $response->assertStatus(200);
         $response->assertJsonStructure([
-            'OrderProducts',
+            'orderProducts',
             'products',
         ]);
+
+        //$this->assertDatabaseHas('order_products', $orderProduct->toArray());
     }
 
     //http://127.0.0.1:8000/api/cart/order
@@ -206,7 +210,7 @@ class CartApiTest extends TestCase
         //dd($response->getContent()); 
         $response->assertStatus(200);
         $response->assertJsonStructure([
-            'OrderProducts',
+            'orderProducts',
             'personalDetails',
             'additionalPersonalDetails',
         ]);
