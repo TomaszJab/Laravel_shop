@@ -28,7 +28,7 @@ class CheckOrderOwnerOrAdmin
         if ($user->id == $orderProduct->user_id || $user->role == 'admin') {
             return $next($request);
         }
-        
+
         abort(403, 'Unauthorized');
     }
 }

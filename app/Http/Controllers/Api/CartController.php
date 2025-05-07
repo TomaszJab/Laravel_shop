@@ -13,6 +13,7 @@ use App\Http\Services\OrderService;
 use App\Http\Services\OrderProductService;
 use App\Http\Services\PersonalDetailsService;
 use App\Http\Services\ProductService;
+use App\Http\Requests\PersonalDetailsRequest;
 
 class CartController extends Controller
 {
@@ -108,48 +109,16 @@ class CartController extends Controller
         ]);
     }
 
-    public function storeWithoutRegistration(Request $request)
+    public function storeWithoutRegistration(PersonalDetailsRequest $request)
     {
-        $company_or_private_person = $request->input('company_or_private_person');
+        $validatedSummary = $request->validated();
+       
+        return response()->json([
+            'summary' => $validatedSummary
+        ]);
 
-        if ($company_or_private_person == 'private_person') {
-            $request->validate([
-                'email' => 'required',
-                'firstName' => 'required',
-                'lastName' => 'required',
-                'phone' => 'required',
-
-                'street' => 'required',
-                'house_number' => 'required',
-                'zip_code' => 'required',
-                'city' => 'required',
-
-                'acceptance_of_the_regulations' => 'required'
-            ]);
-        } else {
-            $request->validate([
-                'email' => 'required',
-                'firstName' => 'required',
-                'lastName' => 'required',
-                'phone' => 'required',
-
-                'company_name' => 'required',
-                'nip' => 'required',
-
-                'street' => 'required',
-                'house_number' => 'required',
-                'zip_code' => 'required',
-                'city' => 'required',
-
-                'acceptance_of_the_regulations' => 'required'
-            ]);
-        }
-
-        $summary = $request->except('_token');
-
-        // Przekazanie danych do sesji
-        session(['cart_summary' => $summary]);
-        return redirect()->route('carts.summary');
+        // session(['cart_summary' => $summary]);
+        // return redirect()->route('carts.summary');
         //->with('success','Product created successfully.');
     }
 
@@ -186,14 +155,14 @@ class CartController extends Controller
         ];
 
         $orderProduct = OrderProduct::create($orderProduct);
-        $order_product_id = $orderProduct->id;
+        $orderProductId = $orderProduct->id;
 
-        $order = array_map(function ($product, $productId) use ($order_product_id) {
+        $order = array_map(function ($product, $productId) use ($orderProductId) {
             list($productId, $size) = explode('_', $productId);
 
             return [
                 'product_id' => $productId,
-                'order_product_id' => $order_product_id,
+                'order_product_id' => $orderProductId,
                 'name' => $product['name'],
                 'quantity' => $product['quantity'],
                 'price' => $product['price'],
@@ -224,12 +193,12 @@ class CartController extends Controller
         $data = $request->except('_token');
         $data['user_id'] = $userId;
 
-        $default_personal_details = $request->input('default_personal_details');
-        if ($default_personal_details == "0") {
+        $defaultPersonalDetails = $request->input('default_personal_details');
+        if ($defaultPersonalDetails == "0") {
             $data['company_or_private_person'] = 'private_person';
         }
 
-        $company_or_private_person = $data['company_or_private_person'];
+        $companyOrPrivatePerson = $data['company_or_private_person'];
 
         $rules = [
             'email' => 'required',
@@ -249,7 +218,7 @@ class CartController extends Controller
             $data['acceptance_of_the_regulations'] = '-';
         }
 
-        if ($company_or_private_person == 'private_person') {
+        if ($companyOrPrivatePerson == 'private_person') {
         } else {
             $rules['company_name'] = 'required';
             $rules['nip'] = 'required';

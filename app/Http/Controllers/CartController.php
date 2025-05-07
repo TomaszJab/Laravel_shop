@@ -10,6 +10,7 @@ use App\Models\personalDetails;
 use App\Models\OrderProduct;
 use App\Models\Order;
 use App\Models\Product;
+use App\Http\Requests\PersonalDetailsRequest;
 
 class CartController extends Controller
 {
@@ -230,42 +231,9 @@ class CartController extends Controller
         return view('cart.buyWithoutRegistration', compact('defaultPersonalDetails'));
     }
 
-    public function storeWithoutRegistration(Request $request)
+    public function storeWithoutRegistration(PersonalDetailsRequest $request)
     {
-        $company_or_private_person = $request->input('company_or_private_person');
-
-        if ($company_or_private_person == 'private_person') {
-            $request->validate([
-                'email' => 'required',
-                'firstName' => 'required',
-                'lastName' => 'required',
-                'phone' => 'required',
-
-                'street' => 'required',
-                'house_number' => 'required',
-                'zip_code' => 'required',
-                'city' => 'required',
-
-                'acceptance_of_the_regulations' => 'required'
-            ]);
-        } else {
-            $request->validate([
-                'email' => 'required',
-                'firstName' => 'required',
-                'lastName' => 'required',
-                'phone' => 'required',
-
-                'company_name' => 'required',
-                'nip' => 'required',
-
-                'street' => 'required',
-                'house_number' => 'required',
-                'zip_code' => 'required',
-                'city' => 'required',
-
-                'acceptance_of_the_regulations' => 'required'
-            ]);
-        }
+        $request->validated();
 
         $summary = $request->except('_token');
 

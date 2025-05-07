@@ -32,7 +32,8 @@ class CartApiTest extends TestCase
     //http://127.0.0.1:8000/api/cart/order/details/18
     //details
     //user
-    public function test_user_can_access_to_cart_details_route(){
+    public function test_user_can_access_to_cart_details_route()
+    {
         $user = User::factory()->create(['role' => 'user']);
         $this->actingAs($user, 'sanctum');
         $this->assertAuthenticated('sanctum');
@@ -47,7 +48,7 @@ class CartApiTest extends TestCase
         $idOrderProduct = $orderProduct->id;
         Order::factory()->count(3)->create(['order_product_id' => $idOrderProduct]);
 
-        $response = $this->getJson('/api/cart/order/details/'.$idOrderProduct);
+        $response = $this->getJson('/api/cart/order/details/' . $idOrderProduct);
         $response->assertStatus(200);
         $response->assertJsonStructure([
             'products',
@@ -63,7 +64,8 @@ class CartApiTest extends TestCase
 
     //details
     //other user
-    public function test_other_user_cannot_access_to_other_user_cart_details_route(){
+    public function test_other_user_cannot_access_to_other_user_cart_details_route()
+    {
         $user = User::factory()->create(['role' => 'user']);
         $otherUser = User::factory()->create(['role' => 'user']);
         $this->actingAs($otherUser, 'sanctum');
@@ -79,13 +81,14 @@ class CartApiTest extends TestCase
         $idOrderProduct = $orderProduct->id;
         Order::factory()->count(3)->create(['order_product_id' => $idOrderProduct]);
 
-        $response = $this->getJson('/api/cart/order/details/'.$idOrderProduct);
+        $response = $this->getJson('/api/cart/order/details/' . $idOrderProduct);
         $response->assertStatus(403);
     }
 
     //details
     //admin
-    public function test_admin_can_access_to_cart_details_route(){
+    public function test_admin_can_access_to_cart_details_route()
+    {
         $user = User::factory()->create(['role' => 'user']);
         $admin = User::factory()->create(['role' => 'admin']);
         $this->actingAs($admin, 'sanctum');
@@ -101,7 +104,7 @@ class CartApiTest extends TestCase
         $idOrderProduct = $orderProduct->id;
         Order::factory()->count(3)->create(['order_product_id' => $idOrderProduct]);
 
-        $response = $this->getJson('/api/cart/order/details/'.$idOrderProduct);
+        $response = $this->getJson('/api/cart/order/details/' . $idOrderProduct);
         $response->assertStatus(200);
         $response->assertJsonStructure([
             'products',
@@ -117,7 +120,8 @@ class CartApiTest extends TestCase
 
     //details
     //admin
-    public function test_admin_can_access_to_own_cart_details_route(){
+    public function test_admin_can_access_to_own_cart_details_route()
+    {
         $admin = User::factory()->create(['role' => 'admin']);
         $this->actingAs($admin, 'sanctum');
         $this->assertAuthenticated('sanctum');
@@ -132,7 +136,7 @@ class CartApiTest extends TestCase
         $idOrderProduct = $orderProduct->id;
         Order::factory()->count(3)->create(['order_product_id' => $idOrderProduct]);
 
-        $response = $this->getJson('/api/cart/order/details/'.$idOrderProduct);
+        $response = $this->getJson('/api/cart/order/details/' . $idOrderProduct);
         $response->assertStatus(200);
         $response->assertJsonStructure([
             'products',
@@ -148,48 +152,53 @@ class CartApiTest extends TestCase
 
     //details
     //admin
-    public function test_admin_cannot_access_to_non_existing_order_cart_details_route(){
+    public function test_admin_cannot_access_to_non_existing_order_cart_details_route()
+    {
         $admin = User::factory()->create(['role' => 'admin']);
         $this->actingAs($admin, 'sanctum');
         $this->assertAuthenticated('sanctum');
 
         $idOrderProduct = 1;
 
-        $response = $this->getJson('/api/cart/order/details/'.$idOrderProduct);
+        $response = $this->getJson('/api/cart/order/details/' . $idOrderProduct);
         $response->assertStatus(404);
     }
 
     //details
     //user
-    public function test_user_cannot_access_to_non_existing_order_cart_details_route(){
+    public function test_user_cannot_access_to_non_existing_order_cart_details_route()
+    {
         $user = User::factory()->create(['role' => 'user']);
         $this->actingAs($user, 'sanctum');
         $this->assertAuthenticated('sanctum');
 
         $idOrderProduct = 1;
 
-        $response = $this->getJson('/api/cart/order/details/'.$idOrderProduct);
+        $response = $this->getJson('/api/cart/order/details/' . $idOrderProduct);
         $response->assertStatus(404);
     }
 
     //http://127.0.0.1:8000/api/cart/order
     //admin
     //order
-    public function test_admin_can_access_cart_order_route(){
+    public function test_admin_can_access_cart_order_route()
+    {
         $admin = User::factory()->create(['role' => 'admin']);
         $this->actingAs($admin, 'sanctum');
         $this->assertAuthenticated('sanctum');
 
-        $orderProduct = OrderProduct::factory()->create();
+        OrderProduct::factory()->create();
+        Product::factory()->create();
 
         $response = $this->getJson('/api/cart/order');
         $response->assertStatus(200);
         $response->assertJsonStructure([
             'orderProducts',
-            'products',
+            'products'
         ]);
 
-        //$this->assertDatabaseHas('order_products', $orderProduct->toArray());
+        $this->assertNotEmpty($response->json('products.data'));
+        $this->assertNotEmpty($response->json('orderProducts.data'));
     }
 
     //http://127.0.0.1:8000/api/cart/order
@@ -200,20 +209,34 @@ class CartApiTest extends TestCase
         $user = User::factory()->create();
         //uwierzytalnianie uzytkownia
         $this->actingAs($user, 'sanctum');
-        
+
         $this->assertAuthenticated('sanctum');
-        PersonalDetails::factory()->create([
+        $personalDetails = PersonalDetails::factory()->create([
             'user_id' => $user->id,
+            'default_personal_details' => '0'
+        ]);
+
+        $defaultPersonalDetails = PersonalDetails::factory()->create([
+            'user_id' => $user->id,
+            'default_personal_details' => 1
+        ]);
+
+        OrderProduct::factory()->create([
+            'user_id' => $user->id,
+            'personal_details_id' => $personalDetails->id
         ]);
 
         $response = $this->getJson('/api/cart/order');
-        //dd($response->getContent()); 
         $response->assertStatus(200);
         $response->assertJsonStructure([
             'orderProducts',
             'personalDetails',
-            'additionalPersonalDetails',
+            'additionalPersonalDetails'
         ]);
+
+        $this->assertNotEmpty($response->json('orderProducts.data'));
+        $this->assertNotEmpty($response->json('personalDetails'));
+        $this->assertNotEmpty($response->json('additionalPersonalDetails'));
     }
 
     //http://127.0.0.1:8000/api/cart/buy 
@@ -233,22 +256,96 @@ class CartApiTest extends TestCase
     //http://127.0.0.1:8000/api/cart/buy 
     //user
     //buyWithoutRegistration
-    public function test_authenticated_user_receives_personal_details(){
+    public function test_authenticated_user_receives_personal_details()
+    {
         $user = User::factory()->create(['role' => 'user']);
-        //uwierzytalnianie uzytkownia
         $this->actingAs($user, 'sanctum');
-        
+
         $this->assertAuthenticated('sanctum');
-        $personalDetails = PersonalDetails::factory()->create([
+        $defaultPersonalDetails = PersonalDetails::factory()->create([
             'user_id' => $user->id,
             'default_personal_details' => 1,
         ]);
 
-        $response = $this->getJson('/api/cart/buy'); 
+        $response = $this->getJson('/api/cart/buy');
         $response->assertStatus(200);
         $response->assertExactJson([
-            'defaultPersonalDetails' => $personalDetails->toArray()
+            'defaultPersonalDetails' => $defaultPersonalDetails->toArray()
         ]);
+    }
+
+    //storeWithoutRegistration
+    //guest walidation error
+    //$companyOrPrivatePerson = 'private_person';
+    public function test_guest_have_validation_error1_store_without_registration()
+    {
+        $companyOrPrivatePerson = 'private_person';
+
+        $response = $this->postJson('/api/cart/storeWithoutRegistration', [
+            'company_or_private_person' => $companyOrPrivatePerson
+        ]);
+
+        $response->assertStatus(422);
+        $response->assertJsonValidationErrors([
+            'email',
+            'firstName',
+            'lastName',
+            'phone',
+            'street',
+            'house_number',
+            'zip_code',
+            'city',
+            'acceptance_of_the_regulations'
+        ]);
+    }
+
+    //storeWithoutRegistration
+    //guest walidation error
+    //$companyOrPrivatePerson = 'company';
+    public function test_guest_have_validation_error2_store_without_registration()
+    {
+        $companyOrPrivatePerson = 'company';
+
+        $response = $this->postJson('/api/cart/storeWithoutRegistration', [
+            'company_or_private_person' => $companyOrPrivatePerson
+        ]);
+
+        $response->assertStatus(422);
+        $response->assertJsonValidationErrors([
+            'email',
+            'firstName',
+            'lastName',
+            'phone',
+
+            'company_name',
+            'nip',
+
+            'street',
+            'house_number',
+            'zip_code',
+            'city',
+            'acceptance_of_the_regulations'
+        ]);
+    }
+
+    //storeWithoutRegistration
+    //guest walidation error
+    //$companyOrPrivatePerson = 'company';
+    public function test_guest_can_store_without_registration()
+    {
+        $personalDetails = PersonalDetails::factory()->create([
+            'default_personal_details' => 1,
+            'company_or_private_person' => 'company'
+        ]);
+
+        $personalDetails = $personalDetails->toArray();
+
+        $response = $this->postJson('/api/cart/storeWithoutRegistration', $personalDetails);
+
+        $response->assertStatus(200);
+        // $response->assertJson([ assertJsonFragment ///////////////////////////////////////
+        //     'summary' => $personalDetails
+        // ]);
     }
 
     //savewithoutregistration
@@ -265,7 +362,7 @@ class CartApiTest extends TestCase
 
         $cart_data = [
             'products' => [
-                ($product_1['id'] . '_M') => $product_1, 
+                ($product_1['id'] . '_M') => $product_1,
                 ($product_2['id'] . '_L') => $product_2,
             ],
             'method_delivery' => 'kurier',
@@ -302,9 +399,7 @@ class CartApiTest extends TestCase
     //     $this->assertAuthenticated('sanctum');
     // }
 
-    //storeWithoutRegistration
-    //saveWithoutRegistration
-    
+
     // POST http://127.0.0.1:8000/api/cart/updateDefaultPersonalDetails
     // {
     //     "email": "test@example.com",
@@ -335,7 +430,7 @@ class CartApiTest extends TestCase
         // Zalogowanie użytkownika jako 'sanctum'
         $this->actingAs($user, 'sanctum');
         $this->assertAuthenticated('sanctum');
-    
+
         $personal_details = [
             'user_id' => $user->id,
             'email' => 'updateduser@example.com',
@@ -350,12 +445,12 @@ class CartApiTest extends TestCase
             'company_or_private_person' => 'private_person',
             'default_personal_details' => '0',
         ];
-       
-            // 'company_name' => $this->faker->company(),
-            // 'nip' => (int) $this->faker->numerify('##########'),
-            // 'additional_information' => $this->faker->optional()->sentence(),
-            // 'acceptance_of_the_invoice' => $this->faker->boolean() ? '1' : '0',
-           
+
+        // 'company_name' => $this->faker->company(),
+        // 'nip' => (int) $this->faker->numerify('##########'),
+        // 'additional_information' => $this->faker->optional()->sentence(),
+        // 'acceptance_of_the_invoice' => $this->faker->boolean() ? '1' : '0',
+
         //metoda tak na prawde dodaje nowy rekord ale go nie aktualizuje
         $response = $this->postjson('/api/cart/updateDefaultPersonalDetails', $personal_details);
         $response->assertStatus(201);
