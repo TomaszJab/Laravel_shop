@@ -43,8 +43,7 @@ class ProductApiControllerTest extends TestCase
     //     'description' => 'Test Product Description',
     //     'price' => 100,
     //     'category_id' => 1,
-    // ];
-    //$response = $this->getJson(route('products.index', ['category_products' => 'a']));
+    // ]
     //dd($response->getContent()); 
 
     public function uwierzytelnij_urzytkownika()
@@ -69,7 +68,6 @@ class ProductApiControllerTest extends TestCase
             'category_products_id' => $categoryProduct->id,
         ]);
 
-        // Uwaga category_products=a musi być takie jak w CategoryProduct::factory()->create();
         $response1 = $this->getJson('/api/products?category_products=' . $categoryProduct->name_category_product);
         $response2 = $this->getJson('/api/products?category_products=' . $categoryProduct->name_category_product . '&sortOption=asc');
 
@@ -135,8 +133,13 @@ class ProductApiControllerTest extends TestCase
     //     "detail": "Opis produktu",
     //     "category_products_id": "1"
     //  }
-    public function test_api_store_product()//logowanie
+    //admin
+    public function test_api_admin_can_store_product() //logowanie
     {
+        $user = User::factory()->create(['role' => 'admin']);
+        $this->actingAs($user, 'sanctum');
+        $this->assertAuthenticated();
+
         $categoryProduct = CategoryProduct::factory()->create();
         $product = Product::factory()->make([
             'category_products_id' => $categoryProduct->id,
@@ -148,8 +151,13 @@ class ProductApiControllerTest extends TestCase
         $this->assertDatabaseHas('products', Arr::except($product, ['created_at', 'updated_at', 'id']));
     }
 
+    //admin
     public function test_api_store_product_validation_fails()
     {
+        $user = User::factory()->create(['role' => 'admin']);
+        $this->actingAs($user, 'sanctum');
+        $this->assertAuthenticated();
+
         $response = $this->postJson('/api/products', []);
         $response->assertStatus(422);
         $response->assertJsonValidationErrors(['name', 'price', 'detail', 'category_products_id']);
@@ -158,11 +166,14 @@ class ProductApiControllerTest extends TestCase
     //storeComment
     public function test_api_storeComment()
     {
-        //aby dodac komentarz urzytkownik musi byc zalogowany
-        $this->uwierzytelnij_urzytkownika();
+        $user = User::factory()->create();
+        $this->actingAs($user, 'sanctum');
+        $this->assertAuthenticated();
 
         //tworze komentarz
-        $comment = Comment::factory()->make()->toArray();
+        $comment = Comment::factory()->make([
+            'author' => $user->name //bez tego niby nie zadziala
+        ])->toArray();
 
         //tworze kategorie produktu i produkt
         $categoryProduct = CategoryProduct::factory()->create();
@@ -172,11 +183,11 @@ class ProductApiControllerTest extends TestCase
         $idProduct = $product->id;
 
         $response = $this->postJson('api/products/' . $idProduct . '/comments', $comment);
-        $response->assertStatus(201)->assertJson($comment);
+        $response->assertStatus(201)->assertJson(Arr::except($comment, ['created_at', 'updated_at']));
 
         $this->assertDatabaseHas('comments', [
             'product_id' => $idProduct,
-            'author' => $comment['author'],
+            'author' => $user->name,
             'content' => $comment['content'],
         ]);
     }
@@ -190,11 +201,20 @@ class ProductApiControllerTest extends TestCase
             'category_products_id' => $categoryProduct->id,
         ]);
         $idProduct = $product->id;
-        $response = $this->getJson('api/products/' . $idProduct . '/add_to_cart');
 
-        $category_products = $categoryProduct->toArray();
+        $cartData = [
+            'size' => 'S',
+            'quantity' => 2
+        ];
+
+        $response = $this->postJson('api/products/' . $idProduct . '/add_to_cart', $cartData);
+
+        $categoryProducts = $categoryProduct->toArray();
         $product = $product->toArray();
-        $response->assertStatus(200)->assertJson(compact('product', 'category_products'));
+        $quantity = $cartData['quantity'];
+        $key = $idProduct . '_' . $cartData['size'];
+
+        $response->assertStatus(200)->assertJson(compact('product', 'categoryProducts', 'quantity', 'key'));
     }
 
     //http://127.0.0.1:8000/products/1
@@ -245,8 +265,13 @@ class ProductApiControllerTest extends TestCase
     //     "category_products_id": 2
     // }
     //update
-    public function test_api_update_product()
+    //admin
+    public function test_api_admin_can_update_product()
     {
+        $user = User::factory()->create(['role' => 'admin']);
+        $this->actingAs($user, 'sanctum');
+        $this->assertAuthenticated();
+
         $product = Product::factory()->create();
 
         $updatedProduct = $product->toArray();
@@ -262,18 +287,53 @@ class ProductApiControllerTest extends TestCase
         ]));
     }
 
+    //update
+    //user
+    public function test_api_user_cant_update_product()
+    {
+        $user = User::factory()->create();
+        $this->actingAs($user, 'sanctum');
+        $this->assertAuthenticated();
+
+        $product = Product::factory()->create();
+
+        $updatedProduct = $product->toArray();
+        $updatedProduct['name'] = 'Product 1';
+        $updatedProduct['price'] = 2;
+
+        $response = $this->putJson('/api/products/' . $product->id, $updatedProduct);
+
+        $response->assertStatus(403);
+        $this->assertDatabaseMissing('products', Arr::except($updatedProduct, [
+            'created_at',
+            'updated_at'
+        ]));
+    }
+
+    //admin
+    //delete
     public function test_api_delete_product()
     {
+        $user = User::factory()->create([
+            'role' => 'admin'
+        ]);
+        $this->actingAs($user, 'sanctum');
+        $this->assertAuthenticated();
+
         $product = Product::factory()->create();
 
         $response = $this->deleteJson('/api/products/' . $product->id);
-
         $response->assertStatus(204);
-
         $this->assertDatabaseMissing('products', [
             'id' => $product->id,
         ]);
     }
+
+    //user
+    //delete
+
+    //guest
+    //delete
 
     //subscribe
     public function test_api_add_subscriber()
@@ -283,7 +343,6 @@ class ProductApiControllerTest extends TestCase
         $email['email_address'] = $subscriber['email_subscriber'];
         $response = $this->postJson('api/products/subscribe', $email);
 
-        //$response->assertStatus(201)->assertJson(Arr::except($subscriber, ['created_at', 'updated_at']));
         $response->assertStatus(201)->assertJson(['subscriber' => Arr::except($subscriber, ['created_at', 'updated_at'])]);
         $this->assertDatabaseHas('subscribers', Arr::except($subscriber, ['created_at', 'updated_at', 'id']));
     }

@@ -3,7 +3,7 @@
 namespace Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
+//use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 use App\Models\Product;
 use App\Models\User;
@@ -23,6 +23,9 @@ class ProductControllerTest extends TestCase
         $response = $this->get('/');
 
         $response->assertStatus(200);
+
+        //sprawdzanie typu zmiennej
+        //dd(gettype($comments))
     }
 
     //index
@@ -34,7 +37,6 @@ class ProductControllerTest extends TestCase
             'category_products_id' => $categoryProduct->id,
         ]);
 
-        // Uwaga category_products=a musi być takie jak w CategoryProduct::factory()->create();
         $response1 = $this->get('/products?category_products=' . $categoryProduct->name_category_product);
         $response2 = $this->get('/products?category_products=' . $categoryProduct->name_category_product . '&sortOption=asc');
 
@@ -71,12 +73,7 @@ class ProductControllerTest extends TestCase
         $this->assertNotEmpty($favoriteProduct);
     }
 
-    //do tego nie ma api
-    // public function create()
-    // {
-    //     $categoryProduct = CategoryProduct::all();
-    //     return view('products.create', compact('categoryProduct'));
-    // }
+    //create
     //admin
     public function test_create_admin_displays_create_product_with_categories()
     {
@@ -129,7 +126,7 @@ class ProductControllerTest extends TestCase
 
         $response = $this->post('/products', $product);
 
-        $response->assertStatus(302); //sprawdzic to
+        $response->assertStatus(302);
         $response->assertRedirect(route('products.index'));
         $response->assertSessionHas('success', 'Product created successfully.');
         $this->assertDatabaseHas('products', Arr::except($product, ['created_at', 'updated_at', 'id']));
@@ -150,10 +147,13 @@ class ProductControllerTest extends TestCase
         $this->assertDatabaseMissing('products', Arr::except($product, ['created_at', 'updated_at', 'id']));
     }
 
-    //dorobic wszedzie bledna walidacje
     //storeComment
     //user
-    public function test_storeComment_user_can_store_comment() //to mnie zastanawia zwrocic z komentarza autora, zalogowac i sprawdzic czy dodało sie do bazy danych
+    // POST http://127.0.0.1:8000/api/products/2/comments
+    // {
+    //     "content": "Nowy Produkt"
+    // }
+    public function test_storeComment_user_can_store_comment()
     {
         $user = User::factory()->create();
         $this->actingAs($user);
@@ -195,14 +195,41 @@ class ProductControllerTest extends TestCase
 
     //show
     //guest
-    // public function test_show_guest_can_show_product()
-    // {
+    public function test_show_guest_can_show_product()
+    {
+        $product = Product::factory()->create();
 
-    // }
+        $comments = Comment::factory()->count(3)->create([
+            'product_id' => $product->id,
+        ]);//->each(function ($comment)  {
+        //     $comment->created_at = fake()->dateTime('2014-02-25 08:37:17');
+        //     $comment->save();
+        // });
+
+        $response = $this->get('/products/' . $product->id);
+
+        $response->assertStatus(200);
+        $response->assertViewIs('products.show');
+
+        $response->assertViewHasAll([
+            'product',
+            'comments',
+        ]);
+
+        $viewDataProduct = $response->viewData('product');
+        $viewDataComments = $response->viewData('comments');
+
+        $this->assertTrue($viewDataProduct->is($product));
+        $this->assertCount(3, $viewDataComments);
+        $this->assertEquals(
+            $comments->sortByDesc('created_at')->pluck('id'),
+            $viewDataComments->pluck('id')
+        );
+    }
 
     //edit
     //admin
-    public function test_edit_admin_can_edit_product()//jak i admin to i gosc niezalogowany database has
+    public function test_edit_admin_can_edit_product()
     {
         $user = User::factory()->create([
             'role' => 'admin'
@@ -218,10 +245,10 @@ class ProductControllerTest extends TestCase
         $response->assertViewHas('product', $product);
         $response->assertViewHas('product', function ($value) use ($product) {
             return $value->name === $product->name &&
-                   $value->price === $product->price &&
-                   $value->detail === $product->detail &&
-                   $value->favorite === $product->favorite &&
-                   $value->category_products_id === $product->category_products_id;
+                $value->price === $product->price &&
+                $value->detail === $product->detail &&
+                $value->favorite === $product->favorite &&
+                $value->category_products_id === $product->category_products_id;
         });
     }
 
@@ -241,17 +268,55 @@ class ProductControllerTest extends TestCase
 
     //update
     //admin
-    // public function test_update_admin_can_update_product()
-    // {
+    public function test_update_admin_can_update_product()
+    {
+        $user = User::factory()->create([
+            'role' => 'admin'
+        ]);
+        $this->actingAs($user);
+        $this->assertAuthenticated();
 
-    // }
+        $product = Product::factory()->create();
+
+        $updatedProduct = $product->toArray();
+        $updatedProduct['name'] = 'Product 1';
+        $updatedProduct['price'] = 2;
+
+        $response = $this->put('/products/' . $product->id, $updatedProduct);
+
+        $response->assertRedirect(route('products.index'));
+        $response->assertSessionHas('success', 'Product updated successfully');
+
+        $this->assertDatabaseHas('products', Arr::except($updatedProduct, [
+            'created_at',
+            'updated_at'
+        ]));
+    }
 
     //update
     //user
-    // public function test_update_user_cannot_update_product()
-    // {
+    public function test_update_user_cannot_update_product()
+    {
+        $user = User::factory()->create();
+        $this->actingAs($user);
+        $this->assertAuthenticated();
 
-    // }
+        $product = Product::factory()->create();
+
+        $updatedProduct = $product->toArray();
+        $updatedProduct['name'] = 'Product 1';
+        $updatedProduct['price'] = 2;
+
+        $response = $this->put('/products/' . $product->id, $updatedProduct);
+
+        $response->assertStatus(403);
+        $response->assertSessionMissing('success');
+
+        $this->assertDatabaseMissing('products', Arr::except($updatedProduct, [
+            'created_at',
+            'updated_at'
+        ]));
+    }
 
     //destroy
     //admin
@@ -262,7 +327,7 @@ class ProductControllerTest extends TestCase
         ]);
         $this->actingAs($user);
         $this->assertAuthenticated();
-        
+
         $product = Product::factory()->create();
         $productId = $product->id;
 

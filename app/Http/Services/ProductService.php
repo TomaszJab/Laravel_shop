@@ -28,6 +28,12 @@ class ProductService extends Controller
         return Product::orderBy('favorite', $sortOption)->firstOrFail();
     }
 
+    public function getProductById(int $id)
+    {
+        $product = Product::findOrFail($id);
+        return $product;
+    }
+
     /**
      * Store a newly created resource in storage.
      */
@@ -35,12 +41,6 @@ class ProductService extends Controller
     public function store(ProductRequest $request)
     {
         //walidacja
-        // $request->validate([
-        //     'name' => 'required',
-        //     'price' => 'required',
-        //     'detail' => 'required',
-        //     'category_products_id' => 'required'
-        // ]);
         $request->validated();
 
         $product = Product::create($request->except('_token'));
@@ -71,7 +71,7 @@ class ProductService extends Controller
      * Remove the specified resource from storage.
      */
     // test
-    public function destroy(Product $product) //
+    public function destroy(Product $product)
     {
         $product->delete();
     }
