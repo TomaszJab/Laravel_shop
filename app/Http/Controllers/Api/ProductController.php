@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\ApiControllers;
+namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -10,11 +10,14 @@ use App\Http\Services\ProductService;
 use App\Http\Services\CategoryProductService;
 use App\Http\Services\CommentService;
 use App\Http\Services\SubscriberService;
+use App\Http\Resources\ProductResource;
+use App\Http\Resources\CommentResource;
+use App\Http\Resources\SubscriberResource;
 use App\Http\Requests\ProductRequest;
 use App\Http\Requests\CommentRequest;
 use App\Http\Requests\SubscriberRequest;
 
-class ProductApiController extends Controller
+class ProductController extends Controller
 {
     protected $productService;
     protected $categoryProductService;
@@ -27,9 +30,6 @@ class ProductApiController extends Controller
         CommentService $commentService,
         SubscriberService $subscriberService
     ) {
-        // $this->orderService = $orderService;
-        //$this->orderProductService = $orderProductService;
-        //$this->personalDetailsService = $personalDetailsService;
         $this->productService = $productService;
         $this->categoryProductService = $categoryProductService;
         $this->commentService = $commentService;
@@ -44,7 +44,6 @@ class ProductApiController extends Controller
     //     return $products;
     // }
 
-    //przyklad, mogą też być inne http://127.0.0.1:8000/api/products?category_products=a
     public function index(Request $request)
     {
         $sortOption = $request->query('sortOption');
@@ -61,12 +60,12 @@ class ProductApiController extends Controller
         // }
 
         //return view('products.index',compact('products', 'sortOption', 'favoriteProduct'));
-        return response()->json(compact('products', 'sortOption', 'favoriteProduct'));
-        // return response()->json([
-        //     'products' => $products,
-        //     'sortOption' => $sortOption,
-        //     'favoriteProduct' => $favoriteProduct
-        // ]);
+        //return response()->json(compact('products', 'sortOption', 'favoriteProduct'));
+        return [
+            'products' => ProductResource::collection($products),
+            'sortOption' => $sortOption,
+            'favoriteProduct' => ProductResource::make($favoriteProduct),
+        ];
     }
 
     /**
@@ -78,13 +77,6 @@ class ProductApiController extends Controller
     //     return response() -> json($product, 201);
     // }
 
-    // post http://127.0.0.1:8000/api/products
-    // {
-    //     "name": "Nowy Produkt",
-    //     "price": 99.99,
-    //     "detail": "Opis produktu",
-    //     "category_products_id": "1"
-    //   }
     public function store(ProductRequest $request)
     {
         $product = $this->productService->store($request);
@@ -100,10 +92,6 @@ class ProductApiController extends Controller
     // }
     public function storeComment(CommentRequest $request, $productId)
     {
-        // $request->validate([
-        //     'content' => 'required|string|max:255'
-        // ]);
-
         $comment = $this->commentService->store($request, $productId);
         //$product = Product::findOrFail($productId);
         // $nameUser = auth()->user()->name;
@@ -126,7 +114,7 @@ class ProductApiController extends Controller
     public function addToCart($id, Request $request) ///////////////////
     {
         $product = Product::findOrFail($id);
-        $category_products = CategoryProduct::where('id', $product->category_products_id)->first();
+        $category_products = CategoryProduct::where('id', $product->category_products_id)->first(); //$categoryProducts
         //$cart = session()->get('cart', []);
 
         //$size = $request->input('size');
@@ -167,10 +155,13 @@ class ProductApiController extends Controller
     public function show(Product $product)
     {
         //getCommenstOrderByCreatedAt
-        $comments = $this->commentService->getCommenstOrderByCreatedAt($product, 'desc');
+        $comments = $this->commentService->getCommenstsOrderByCreatedAt($product, 'desc');
         //$comments = $product->comments()->orderBy('created_at', 'desc')->get();
         //return view('products.show',compact('product', 'comments'));
-        return response()->json(compact('product', 'comments'));
+        return [
+            'product' => ProductResource::make($product),
+            'comments' => CommentResource::collection($comments)
+        ];
     }
 
     /**
@@ -181,20 +172,16 @@ class ProductApiController extends Controller
     //     $this -> productService -> update($request, $product);
     //     return response() -> json($product, 200);
     // }
-    public function update(Request $request, Product $product) ///?
+    public function update(ProductRequest $request, Product $product) ///?
     {
-        $request->validate([
-            'name' => 'required',
-            'price' => 'required',
-            'detail' => 'required',
-        ]);
-
-        $product->update($request->all());
-
         // return redirect()->route('products.index')
         //                 ->with('success','Product updated successfully');
-        //dd($product);
-        return response()->json($product, 200);
+        $product = $this->productService->update($request, $product);
+        //return response()->json($product, 200);
+
+        return [
+            'product' => ProductResource::make($product)
+        ];
     }
 
     /**
@@ -217,17 +204,13 @@ class ProductApiController extends Controller
 
     public function subscribe(SubscriberRequest $request)
     {
-        $email_address = $request->input('email_address');
-        $data = $request->validate(['email_address' => 'required|email']);
-
-        $email_subscriber = [
-            'email_subscriber' => $email_address
-        ];
-
         $subscriber = $this->subscriberService->store($request);
         //Subscriber::create($email_subscriber);
 
-        return response()->json($subscriber, 201);
+        //return response()->json($subscriber, 201);
+        return response()->json([
+            'subscriber' => new SubscriberResource($subscriber),
+        ], 201);
         //return redirect()->route('products.index',
         // ['category_products' => 'a'])->with('success', 'You are a subscriber!');
     }

@@ -5,6 +5,13 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use App\Models\CategoryProduct;
 use App\Models\Subscriber;
+use App\Http\Services\ProductService;
+use App\Http\Services\CategoryProductService;
+use App\Http\Services\CommentService;
+use App\Http\Services\SubscriberService;
+use App\Http\Requests\ProductRequest;
+use App\Http\Requests\CommentRequest;
+use App\Http\Requests\SubscriberRequest;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Response;
@@ -12,22 +19,32 @@ use Illuminate\View\View;
 
 class ProductController extends Controller
 {
+    protected $productService;
+    protected $categoryProductService;
+    protected $commentService;
+    protected $subscriberService;
+
+    public function __construct(
+        ProductService $productService,
+        CategoryProductService $categoryProductService,
+        CommentService $commentService,
+        SubscriberService $subscriberService
+    ) {
+        $this->productService = $productService;
+        $this->categoryProductService = $categoryProductService;
+        $this->commentService = $commentService;
+        $this->subscriberService = $subscriberService;
+    }
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request)
     {
-        //$sortOption = $request->query('sortOption', 'asc');
         $sortOption = $request->query('sortOption');
         $categoryName = $request->query('category_products', 'a');
-        $favoriteProduct = Product::orderBy('favorite', 'desc')->firstOrFail();
 
-        $category_products = CategoryProduct::where('name_category_product', $categoryName)->firstOrFail();
-        if ($sortOption) {
-            $products = $category_products->products()->orderBy('name', $sortOption)->paginate(6);
-        } else {
-            $products = $category_products->products()->orderBy('favorite', 'desc')->paginate(6);
-        }
+        $favoriteProduct = $this->productService->getProductOrderByFavorite('desc');
+        $products = $this->categoryProductService->getProductsByCategoryName($categoryName, $sortOption);
 
         return view('products.index', compact('products', 'sortOption', 'favoriteProduct'));
     }
@@ -55,34 +72,16 @@ class ProductController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(ProductRequest $request)
     {
-        $request->validate([
-            'name' => 'required',
-            'price' => 'required',
-            'detail' => 'required',
-            'category_products_id' => 'required'
-        ]);
-
-        Product::create($request->except('_token'));
+        $this->productService->store($request);
 
         return redirect()->route('products.index')->with('success', 'Product created successfully.');
     }
 
-    public function storeComment(Request $request, $productId)
+    public function storeComment(CommentRequest $request, $productId)
     {
-        $request->validate([
-            'content' => 'required|string|max:255'
-        ]);
-
-        $product = Product::findOrFail($productId);
-        $nameUser = auth()->user()->name;
-
-        $product->comments()->create([
-            'content' => $request->input('content'),
-            'author' => $nameUser,
-            'product_id' => $productId
-        ]);
+        $this->commentService->store($request, $productId);
 
         return redirect()->back()->with('success', 'Comment added successfully!');
     }
@@ -96,7 +95,7 @@ class ProductController extends Controller
     public function addToCart($id, Request $request)
     {
         $product = Product::findOrFail($id);
-        $category_products = CategoryProduct::where('id', $product->category_products_id)->first();
+        $categoryProducts = CategoryProduct::where('id', $product->category_products_id)->first();
         $cart = session()->get('cart', []);
 
         $size = $request->input('size');
@@ -110,7 +109,7 @@ class ProductController extends Controller
                 'name' => $product->name,
                 'quantity' => 1,
                 'price' => $product->price,
-                'name_category_product' => $category_products->name_category_product,
+                'name_category_product' => $categoryProducts->name_category_product,
                 'category_products_id' => $product->category_products_id
             ];
         }
@@ -151,15 +150,16 @@ class ProductController extends Controller
         return view('products.edit', compact('product'));
     }
 
-    public function update(Request $request, Product $product)
+    public function update(ProductRequest $request, Product $product)
     {
-        $request->validate([
-            'name' => 'required',
-            'price' => 'required',
-            'detail' => 'required',
-        ]);
+        // $request->validate([
+        //     'name' => 'required',
+        //     'price' => 'required',
+        //     'detail' => 'required',
+        // ]);
 
-        $product->update($request->all());
+        // $product->update($request->all());
+        $this->productService->update($request, $product);
 
         return redirect()->route('products.index')
             ->with('success', 'Product updated successfully');
@@ -167,22 +167,16 @@ class ProductController extends Controller
 
     public function destroy(Product $product)
     {
-        $product->delete();
+        //$product->delete();
+        $this->productService->destroy($product);
 
         return redirect()->route('products.index')
             ->with('success', 'Product deleted successfully');
     }
 
-    public function subscribe(Request $request)
+    public function subscribe(SubscriberRequest $request)
     {
-        $email_address = $request->input('email_address');
-        $data = $request->validate(['email_address' => 'required|email']);
-
-        $email_subscriber = [
-            'email_subscriber' => $email_address
-        ];
-
-        Subscriber::create($email_subscriber);
+        $this->subscriberService->store($request);
 
         return redirect()
             ->route('products.index', ['category_products' => 'a'])
