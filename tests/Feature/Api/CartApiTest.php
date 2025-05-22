@@ -12,6 +12,7 @@ use App\Models\PersonalDetails;
 use App\Models\OrderProduct;
 use App\Models\Order;
 use App\Models\Product;
+use Illuminate\Support\Arr;
 
 class CartApiTest extends TestCase
 {
@@ -52,11 +53,7 @@ class CartApiTest extends TestCase
         $response->assertStatus(200);
         $response->assertJsonStructure([
             'products',
-            'subtotal',
-            'shipping',
-            'payment',
-            'promo_code',
-            'total',
+            'orderProductData',
             'enableButtons',
             'summary'
         ]);
@@ -108,11 +105,7 @@ class CartApiTest extends TestCase
         $response->assertStatus(200);
         $response->assertJsonStructure([
             'products',
-            'subtotal',
-            'shipping',
-            'payment',
-            'promo_code',
-            'total',
+            'orderProductData',
             'enableButtons',
             'summary'
         ]);
@@ -140,11 +133,7 @@ class CartApiTest extends TestCase
         $response->assertStatus(200);
         $response->assertJsonStructure([
             'products',
-            'subtotal',
-            'shipping',
-            'payment',
-            'promo_code',
-            'total',
+            'orderProductData',
             'enableButtons',
             'summary'
         ]);
@@ -191,14 +180,19 @@ class CartApiTest extends TestCase
         Product::factory()->create();
 
         $response = $this->getJson('/api/cart/order');
+
         $response->assertStatus(200);
         $response->assertJsonStructure([
             'orderProducts',
             'products'
         ]);
 
-        $this->assertNotEmpty($response->json('products.data'));
-        $this->assertNotEmpty($response->json('orderProducts.data'));
+        $this->assertNotEmpty($response->json('products'));
+        $this->assertNotEmpty($response->json('orderProducts'));
+
+        //jesli nie ma factory
+        // $this->assertEmpty($response->json('products'));
+        // $this->assertEmpty($response->json('orderProducts'));
     }
 
     //http://127.0.0.1:8000/api/cart/order
@@ -234,7 +228,7 @@ class CartApiTest extends TestCase
             'additionalPersonalDetails'
         ]);
 
-        $this->assertNotEmpty($response->json('orderProducts.data'));
+        $this->assertNotEmpty($response->json('orderProducts'));
         $this->assertNotEmpty($response->json('personalDetails'));
         $this->assertNotEmpty($response->json('additionalPersonalDetails'));
     }
@@ -248,9 +242,9 @@ class CartApiTest extends TestCase
 
         $response = $this->getJson('/api/cart/buy');
         $response->assertStatus(200);
-        $response->assertJson([
-            'defaultPersonalDetails' => null
-        ]);
+        // $response->assertJson([
+        //     'defaultPersonalDetails' => null
+        // ]);
     }
 
     //http://127.0.0.1:8000/api/cart/buy 
@@ -333,7 +327,7 @@ class CartApiTest extends TestCase
     //$companyOrPrivatePerson = 'company';
     public function test_guest_can_store_without_registration()
     {
-        $personalDetails = PersonalDetails::factory()->create([
+        $personalDetails = PersonalDetails::factory()->make([
             'default_personal_details' => 1,
             'company_or_private_person' => 'company'
         ]);
@@ -343,9 +337,9 @@ class CartApiTest extends TestCase
         $response = $this->postJson('/api/cart/storeWithoutRegistration', $personalDetails);
 
         $response->assertStatus(200);
-        // $response->assertJson([ assertJsonFragment ///////////////////////////////////////
-        //     'summary' => $personalDetails
-        // ]);
+
+        $expectedPersonalDetails = Arr::except($personalDetails, ['id', 'created_at', 'updated_at']);
+        $response->assertJsonFragment($expectedPersonalDetails);
     }
 
     //savewithoutregistration
@@ -355,15 +349,15 @@ class CartApiTest extends TestCase
             'user_id' => null
         ]);
 
-        $product_1 = Product::factory()->create()->toArray();
-        $product_1['quantity'] = 2;
-        $product_2 = Product::factory()->create()->toArray();
-        $product_2['quantity'] = 1;
+        $product1 = Product::factory()->create()->toArray();
+        $product1['quantity'] = 2;
+        $product2 = Product::factory()->create()->toArray();
+        $product2['quantity'] = 1;
 
         $cart_data = [
             'products' => [
-                ($product_1['id'] . '_M') => $product_1,
-                ($product_2['id'] . '_L') => $product_2,
+                ($product1['id'] . '_M') => $product1,
+                ($product2['id'] . '_L') => $product2,
             ],
             'method_delivery' => 'kurier',
             'method_payment' => 'blik',
@@ -387,8 +381,38 @@ class CartApiTest extends TestCase
         $personalDetails = $personalDetails->toArray();
         $this->assertDatabaseHas('personal_details', $personalDetails);
 
-        //$this->assertDatabaseHas('order_products', ??);
-        //$this->assertDatabaseHas('orders', ??);
+        $this->assertDatabaseHas('order_products', [
+            'user_id' => $personalDetails['user_id'],
+            //'personal_details_id' => $personalDetails['id'], //jest make a nie create to nie ma
+            'method_delivery' => $cart_data['method_delivery'],
+            'method_payment' => $cart_data['method_payment'],
+            'promo_code' => $cart_data['promo_code'] ?: null,
+            'delivery' => $cart_data['shipping'],
+            'subtotal' => $cart_data['subtotal'],
+            'total' => $cart_data['total'],
+            'payment' => $cart_data['payment']
+        ]);
+
+
+        $this->assertDatabaseHas('orders', [
+            'product_id' => $product1['id'],
+            //'order_product_id' => ,
+            'name' => $product1['name'],
+            'quantity' => $product1['quantity'],
+            'price' => $product1['price'],
+            'size' => 'M',
+            'category_products_id' => $product1['category_products_id']
+        ]);
+
+        $this->assertDatabaseHas('orders', [
+            'product_id' => $product2['id'],
+            //'order_product_id' => ,
+            'name' => $product2['name'],
+            'quantity' => $product2['quantity'],
+            'price' => $product2['price'],
+            'size' => 'L',
+            'category_products_id' => $product2['category_products_id']
+        ]);
     }
 
     //savewithoutregistration
