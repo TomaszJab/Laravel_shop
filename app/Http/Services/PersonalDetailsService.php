@@ -5,6 +5,7 @@ namespace App\Http\Services;
 use App\Http\Controllers\Controller;
 use App\Models\personalDetails;
 use Illuminate\Http\Request;
+use App\Http\Requests\PersonalDetailsRequest;
 
 class PersonalDetailsService extends Controller
 {
@@ -29,6 +30,13 @@ class PersonalDetailsService extends Controller
     public function getAdditionalPersonalDetailsByUserId(int $idUser)
     {
         return personalDetails::where('user_id', $idUser)->where('default_personal_details', '0')->latest()->first();
+    }
+
+    public function storeWithoutRegistration(PersonalDetailsRequest $request)
+    {
+        $request->validated();
+        $personalDetails = $request->except('_token');
+        return new PersonalDetails($personalDetails);
     }
 
     /**

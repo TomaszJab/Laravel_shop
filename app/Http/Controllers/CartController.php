@@ -10,10 +10,31 @@ use App\Models\personalDetails;
 use App\Models\OrderProduct;
 use App\Models\Order;
 use App\Models\Product;
+use App\Http\Services\OrderService;
+use App\Http\Services\OrderProductService;
+use App\Http\Services\PersonalDetailsService;
+use App\Http\Services\ProductService;
 use App\Http\Requests\PersonalDetailsRequest;
 
 class CartController extends Controller
 {
+    protected $orderService;
+    protected $orderProductService;
+    protected $personalDetailsService;
+    protected $productService;
+
+    public function __construct(
+        OrderService $orderService,
+        OrderProductService $orderProductService,
+        PersonalDetailsService $personalDetailsService,
+        ProductService $productService
+    ) {
+        $this->orderService = $orderService;
+        $this->orderProductService = $orderProductService;
+        $this->personalDetailsService = $personalDetailsService;
+        $this->productService = $productService;
+    }
+
     public function index()
     {
         $cartData = $this->dataCart();
@@ -233,12 +254,13 @@ class CartController extends Controller
 
     public function storeWithoutRegistration(PersonalDetailsRequest $request)
     {
-        $request->validated();
+        // $request->validated();
+        // $request->except('_token');
 
-        $summary = $request->except('_token');
+        $personalDetails = $this->personalDetailsService->storeWithoutRegistration($request);
 
         // Przekazanie danych do sesji
-        session(['cart_summary' => $summary]);
+        session(['cart_summary' => $personalDetails]);
         return redirect()->route('carts.summary');
         //->with('success','Product created successfully.');
     }

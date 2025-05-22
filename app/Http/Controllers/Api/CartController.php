@@ -6,14 +6,18 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
-use App\Models\OrderProduct;
-use App\Models\Order;
-use App\Models\Product;
+// use App\Models\OrderProduct;
+// use App\Models\Order;
+// use App\Models\Product;
 use App\Http\Services\OrderService;
 use App\Http\Services\OrderProductService;
 use App\Http\Services\PersonalDetailsService;
 use App\Http\Services\ProductService;
 use App\Http\Requests\PersonalDetailsRequest;
+use App\Http\Resources\OrderProductResource;
+use App\Http\Resources\OrderResource;
+use App\Http\Resources\PersonalDetailsResource;
+use App\Http\Resources\ProductResource;
 
 class CartController extends Controller
 {
@@ -46,25 +50,15 @@ class CartController extends Controller
         $orderData = $this->orderService->getOrdersByOrderProductId($orderProductId);
         $orderProductData = $orderData->first()->orderProduct;
 
-        $subtotal = $orderProductData->subtotal;
-        $shipping = $orderProductData->delivery;
-        $payment = $orderProductData->payment;
-        $promoCode = $orderProductData->promo_code;
-        $total = $orderProductData->total;
-
         $personalDetailsId = $orderProductData->personal_details_id;
         $personalDetails = $this->personalDetailsService->getPersonalDetailByPersonalDetailsId($personalDetailsId);
 
-        return response()->json([
-            'products' => $orderData,
-            'subtotal' => $subtotal,
-            'shipping' => $shipping,
-            'payment' => $payment,
-            'promo_code' => $promoCode,
-            'total' => $total,
+        return [
+            'products' => OrderResource::collection($orderData),
+            'orderProductData' => OrderProductResource::make($orderProductData),
             'enableButtons' => false,
-            'summary' => $personalDetails
-        ]);
+            'summary' => PersonalDetailsResource::make($personalDetails)
+        ];
     }
 
     public function order()
@@ -75,10 +69,10 @@ class CartController extends Controller
             $products = $this->productService->getAllProductPaginate(8);
             $orderProducts = $this->orderProductService->getAllOrderProductPaginate(8);
 
-            return response()->json([
-                'orderProducts' => $orderProducts,
-                'products' => $products
-            ]);
+            return [
+                'orderProducts' => OrderProductResource::collection($orderProducts),
+                'products' => ProductResource::collection($products)
+            ];
         } else {
             $user = Auth::guard('sanctum')->user();
             $idUser = $user->id;
@@ -86,11 +80,11 @@ class CartController extends Controller
             $defaultPersonalDetails = $this->personalDetailsService->getDefaultPersonalDetailsByUserId($idUser);
             $additionalPersonalDetails = $this->personalDetailsService->getAdditionalPersonalDetailsByUserId($idUser);
 
-            return response()->json([
-                'orderProducts' => $orderProducts,
-                'personalDetails' => $defaultPersonalDetails,
-                'additionalPersonalDetails' => $additionalPersonalDetails
-            ]);
+            return [
+                'orderProducts' => OrderProductResource::collection($orderProducts),
+                'personalDetails' => PersonalDetailsResource::make($defaultPersonalDetails),
+                'additionalPersonalDetails' => PersonalDetailsResource::make($additionalPersonalDetails)
+            ];
         }
     }
 
@@ -104,22 +98,18 @@ class CartController extends Controller
             $defaultPersonalDetails = null;
         }
 
-        return response()->json([
-            'defaultPersonalDetails' => $defaultPersonalDetails
-        ]);
+        return [
+            'defaultPersonalDetails' => $defaultPersonalDetails ? PersonalDetailsResource::make($defaultPersonalDetails) : null
+        ];
     }
 
     public function storeWithoutRegistration(PersonalDetailsRequest $request)
     {
-        $validatedSummary = $request->validated();
-       
-        return response()->json([
-            'summary' => $validatedSummary
-        ]);
+        $personalDetails = $this->personalDetailsService->storeWithoutRegistration($request);
 
-        // session(['cart_summary' => $summary]);
-        // return redirect()->route('carts.summary');
-        //->with('success','Product created successfully.');
+        return [
+            'summary' => PersonalDetailsResource::make($personalDetails)
+        ];
     }
 
     public function saveWithoutRegistration(Request $request) ////////////
@@ -142,48 +132,21 @@ class CartController extends Controller
         // if (!$cartData || !isset($cartData['products'])) {
         //     return response()->json(['error' => 'Invalid cart data'], 422);
         // }
-        $orderProduct = [
-            'user_id' => $idUser,
-            'personal_details_id' => $personalDetails->id,
-            'method_delivery' => $cartData['method_delivery'],
-            'method_payment' => $cartData['method_payment'],
-            'promo_code' => $cartData['promo_code'],
-            'delivery' => $cartData['shipping'],
-            'subtotal' => $cartData['subtotal'],
-            'total' => $cartData['total'],
-            'payment' => $cartData['payment']
-        ];
+        
+        $this->orderService->storeOrderBasedOnOrderProduct($idUser, $personalDetails, $cartData);
 
-        $orderProduct = OrderProduct::create($orderProduct);
-        $orderProductId = $orderProduct->id;
-
-        $order = array_map(function ($product, $productId) use ($orderProductId) {
-            list($productId, $size) = explode('_', $productId);
-
-            return [
-                'product_id' => $productId,
-                'order_product_id' => $orderProductId,
-                'name' => $product['name'],
-                'quantity' => $product['quantity'],
-                'price' => $product['price'],
-                'size' => $size,
-                'category_products_id' => $product['category_products_id'],
-                'created_at' => now(),
-                'updated_at' => now()
-            ];
-        }, $cartData['products'], array_keys($cartData['products']));
-
-        $productIds = array_keys($cartData['products']);
-        $productIds = array_map(fn($id) => (int) explode('_', $id)[0], $productIds);
-        Product::whereIn('id', $productIds)->increment('favorite');
-
-        $order = Order::insert($order);
         //session()->forget('cart');
 
-        //return redirect()->route('products.index',
-        // ['category_products' => 'a'])->with('success', 'Order created successfully');
         return response()->json(['message' => 'Order created successfully'], 201);
     }
+
+    // public function summary()//////////////
+    // {
+    //     $cartData = $this->dataCart();
+    //     $summary = session('cart_summary', []);
+
+    //     return view('cart.summary', array_merge($cartData, ['summary' => $summary]));
+    // }
 
     public function updateDefaultPersonalDetails(Request $request)
     {
