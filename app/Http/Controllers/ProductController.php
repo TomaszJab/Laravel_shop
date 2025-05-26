@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use App\Models\CategoryProduct;
-use App\Models\Subscriber;
 use App\Http\Services\ProductService;
 use App\Http\Services\CategoryProductService;
 use App\Http\Services\CommentService;
@@ -49,23 +48,12 @@ class ProductController extends Controller
         return view('products.index', compact('products', 'sortOption', 'favoriteProduct'));
     }
 
-    // public function category_products(Request $request)
-    // {
-    // Fetch products based on the category passed in the route
-    // $products = Product::where('category', $category_products)->get();
-
-    // Return the view with the products and the selected category
-    // return view('products.index', compact('products', 'category_products'));
-
-    //     $products = Product::paginate(3);
-    //     return view('products.index',compact('products'));
-    // }
     /**
      * Show the form for creating a new resource.
      */
     public function create()
     {
-        $categoryProduct = CategoryProduct::all();
+        $categoryProduct = $this->categoryProductService->getAllCategory();
         return view('products.create', compact('categoryProduct'));
     }
 
@@ -79,13 +67,6 @@ class ProductController extends Controller
         return redirect()->route('products.index')->with('success', 'Product created successfully.');
     }
 
-    public function storeComment(CommentRequest $request, $productId)
-    {
-        $this->commentService->store($request, $productId);
-
-        return redirect()->back()->with('success', 'Comment added successfully!');
-    }
-
     public function addToCart2($id, Request $request)
     {
         $this->addToCart($id, $request);
@@ -94,7 +75,7 @@ class ProductController extends Controller
 
     public function addToCart($id, Request $request)
     {
-        $product = Product::findOrFail($id);
+        $product = $this->productService->getProductById($id);
         $cart = session()->get('cart', []);
 
         $size = $request->input('size');
@@ -154,14 +135,5 @@ class ProductController extends Controller
 
         return redirect()->route('products.index')
             ->with('success', 'Product deleted successfully');
-    }
-
-    public function subscribe(SubscriberRequest $request)
-    {
-        $this->subscriberService->store($request);
-
-        return redirect()
-            ->route('products.index', ['category_products' => 'a'])
-            ->with('success', 'You are a subscriber!');
     }
 }

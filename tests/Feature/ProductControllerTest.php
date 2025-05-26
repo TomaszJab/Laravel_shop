@@ -3,13 +3,11 @@
 namespace Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
-//use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 use App\Models\Product;
 use App\Models\User;
 use App\Models\Comment;
 use App\Models\CategoryProduct;
-use App\Models\Subscriber;
 use Illuminate\Support\Arr;
 
 class ProductControllerTest extends TestCase
@@ -145,49 +143,6 @@ class ProductControllerTest extends TestCase
         $response->assertStatus(403);
 
         $this->assertDatabaseMissing('products', Arr::except($product, ['created_at', 'updated_at', 'id']));
-    }
-
-    //storeComment
-    //user
-    // POST http://127.0.0.1:8000/api/products/2/comments
-    // {
-    //     "content": "Nowy Produkt"
-    // }
-    public function test_storeComment_user_can_store_comment()
-    {
-        $user = User::factory()->create();
-        $this->actingAs($user);
-        $this->assertAuthenticated();
-
-        $comment = Comment::factory()->make()->toArray();
-        $product = Product::factory()->create();
-        $idProduct = $product->id;
-
-        $response = $this->post('products/' . $idProduct . '/comments', $comment);
-        $response->assertRedirect();
-        $response->assertSessionHas('success', 'Comment added successfully!');
-        $this->assertDatabaseHas('comments', [
-            'product_id' => $idProduct,
-            'author' => $user['name'],
-            'content' => $comment['content'],
-        ]);
-    }
-
-    //storeComment
-    //guest
-    public function test_storeComment_guset_cannot_store_comment()
-    {
-        $comment = Comment::factory()->make()->toArray();
-        $product = Product::factory()->create();
-        $idProduct = $product->id;
-
-        $response = $this->post('products/' . $idProduct . '/comments', $comment);
-        $response->assertRedirect(route('login'));
-        $response->assertSessionMissing('success');
-        $this->assertDatabaseMissing('comments', [
-            'product_id' => $idProduct,
-            'content' => $comment['content'],
-        ]);
     }
 
     //addToCart2
@@ -355,20 +310,5 @@ class ProductControllerTest extends TestCase
         $this->assertDatabaseHas('products', [
             'id' => $productId
         ]);
-    }
-
-    //subscribe
-    public function test_subscribe_add_subscriber()
-    {
-        $subscriber = Subscriber::factory()->make()->toArray();
-        $email['email_address'] = $subscriber['email_subscriber'];
-
-        $response = $this->post('/products/subscribe', $email);
-        $response->assertRedirect(route('products.index', ['category_products' => 'a']));
-        $response->assertSessionHas('success', 'You are a subscriber!');
-        $this->assertDatabaseHas(
-            'subscribers',
-            Arr::except($subscriber, ['created_at', 'updated_at', 'id'])
-        );
     }
 }
