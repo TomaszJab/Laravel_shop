@@ -276,7 +276,8 @@ class CartApiTest extends TestCase
         $companyOrPrivatePerson = 'private_person';
 
         $response = $this->postJson('/api/cart/storeWithoutRegistration', [
-            'company_or_private_person' => $companyOrPrivatePerson
+            'company_or_private_person' => $companyOrPrivatePerson,
+            'acceptance_of_the_regulations' => null //'sometimes|required|accepted' 'yes', 'on', 1, true
         ]);
 
         $response->assertStatus(422);
@@ -301,10 +302,12 @@ class CartApiTest extends TestCase
         $companyOrPrivatePerson = 'company';
 
         $response = $this->postJson('/api/cart/storeWithoutRegistration', [
-            'company_or_private_person' => $companyOrPrivatePerson
+            'company_or_private_person' => $companyOrPrivatePerson,
+            'acceptance_of_the_regulations' => 'o'//'sometimes|required|accepted' 'yes', 'on', 1, true
         ]);
 
         $response->assertStatus(422);
+       // $response->dump();
         $response->assertJsonValidationErrors([
             'email',
             'firstName',
@@ -449,35 +452,16 @@ class CartApiTest extends TestCase
         // Tworzymy dane osobowe użytkownika (personal details)
         $personalDetails = PersonalDetails::factory()->create([
             'user_id' => $user->id,  // Przypisujemy utworzonemu użytkownikowi
-        ]);
+        ])->toArray();
 
         // Zalogowanie użytkownika jako 'sanctum'
         $this->actingAs($user, 'sanctum');
         $this->assertAuthenticated('sanctum');
 
-        $personal_details = [
-            'user_id' => $user->id,
-            'email' => 'updateduser@example.com',
-            'firstName' => 'John',
-            'lastName' => 'Doe',
-            'phone' => '987654321',
-            'street' => 'New Test Street',
-            'house_number' => '999',
-            'zip_code' => '54321',
-            'city' => 'Updated City',
-            'acceptance_of_the_regulations' => '1',
-            'company_or_private_person' => 'private_person',
-            'default_personal_details' => '0',
-        ];
-
-        // 'company_name' => $this->faker->company(),
-        // 'nip' => (int) $this->faker->numerify('##########'),
-        // 'additional_information' => $this->faker->optional()->sentence(),
-        // 'acceptance_of_the_invoice' => $this->faker->boolean() ? '1' : '0',
-
         //metoda tak na prawde dodaje nowy rekord ale go nie aktualizuje
-        $response = $this->postjson('/api/cart/updateDefaultPersonalDetails', $personal_details);
+        $response = $this->postjson('/api/cart/updateDefaultPersonalDetails', $personalDetails);
         $response->assertStatus(201);
-        $this->assertDatabaseHas('personal_details', $personal_details);
+        $expectedPersonalDetails = Arr::except($personalDetails, ['id', 'created_at', 'updated_at']);
+        $this->assertDatabaseHas('personal_details', $expectedPersonalDetails);
     }
 }

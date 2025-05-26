@@ -3,27 +3,32 @@
 namespace App\Http\Controllers;
 
 use App\Mail\AboutUsLetsTalkMail;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Http\Request;
+use App\Http\Requests\LetsTalkMailRequest;
+use App\Http\Services\MailService;
 
 class ContactController extends Controller
 {
+    protected $letsTalsMailService;
+
+    public function __construct(MailService $letsTalsMailService)
+    {
+        $this->letsTalsMailService = $letsTalsMailService;
+    }
+
     public function index()
     {
         return view('contacts.index');
     }
 
-    public function sendMailLetsTalkMail(Request $request)
+    public function sendMailLetsTalkMail(LetsTalkMailRequest $request)
     {
-        $request->validate([
-            'name' => 'required',
-            'email' => 'required|email',
-            'message' => 'required',
-        ]);
-
         $dataMail = $request->except('_token');
+        $mailable = new AboutUsLetsTalkMail($dataMail);
+        $author = 'zbiorentomologiczny@gmail.com';
 
-        Mail::to('zbiorentomologiczny@gmail.com')->send(new AboutUsLetsTalkMail($dataMail));
+        $this->letsTalsMailService->send($request, $mailable, $author);
+
         return redirect()->route('contacts.index')->with('success', 'Email send successfully.');
     }
 }

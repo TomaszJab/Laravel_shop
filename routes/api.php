@@ -6,6 +6,9 @@ use App\Models\User;
 
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\CartController;
+use App\Http\Controllers\Api\CommentController;
+use App\Http\Controllers\Api\SubscriberController;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -30,7 +33,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/cart/order', [CartController::class, 'order'])->name('carts.order');
 });
 
-Route::middleware('auth:sanctum','ownerOrAdmin')->group(function () {
+Route::middleware('auth:sanctum', 'ownerOrAdmin')->group(function () {
     Route::get('/cart/order/details/{orderProductId}', [CartController::class, 'details'])->name('carts.order.details');
 });
 
@@ -42,18 +45,20 @@ Route::get('/cart/summary', [CartController::class, 'summary'])->name('carts.sum
 Route::post('/cart/saveWithoutRegistration', [CartController::class, 'saveWithoutRegistration'])->name('carts.savewithoutregistration');
 
 use App\Models\promoCode;
-Route::post('/carts/add-promo', function (Request $request) { 
+use App\Models\Subscriber;
+
+Route::post('/carts/add-promo', function (Request $request) {
     $promo_code = $request->input('promo_code');
     $promo = promoCode::where('promo_code', $promo_code)->first();
 
     // Odpowiedź JSON
-   // return response()->json(['success' => true]);
-    if($promo){
+    // return response()->json(['success' => true]);
+    if ($promo) {
         $cart = session()->get('cart', []);
         $cart['promo_code'] = '10';
         session()->put('cart', $cart);
         return response()->json(['success' => true, 'discount' => $cart['promo_code']]);
-    }else{
+    } else {
         return response()->json(['success' => false]);
     }
 });
@@ -73,19 +78,19 @@ Route::post('/cart/updateDefaultPersonalDetails', [CartController::class, 'updat
 // Route::resource('homepage', HomePageController::class);
 
 
-Route::apiresource('/products', ProductController::class)->only(['index','show']);
+Route::apiresource('/products', ProductController::class)->only(['index', 'show']);
 Route::middleware(['auth:sanctum', 'admin'])->group(function () {
-    Route::apiresource('products', ProductController::class)->only(['create','edit','store','destroy','update']);
+    Route::apiresource('products', ProductController::class)->only(['create', 'edit', 'store', 'destroy', 'update']);
 });
 
 Route::middleware('auth:sanctum')->group(function () {
-    Route::post('/products/{product}/comments', [ProductController::class, 'storeComment'])->name('products.comments.store');
+    Route::post('/products/{product}/comments', [CommentController::class, 'store'])->name('products.comments.store');
 });
 
 Route::post('/products/{product}/add_to_cart', [ProductController::class, 'addToCart'])->name('products.add_to_cart');
 //Route::post('/products/{product}/add_to_cart_2', [ProductController::class, 'addToCart2'])->name('products.add_to_cart_2');
 
-Route::post('/products/subscribe', [ProductController::class, 'subscribe'])->name('products.subscribe');
+Route::post('/products/subscribe', [SubscriberController::class, 'store'])->name('products.subscribe');
 
 // Route::resource('statutes', StatuteController::class);
 
@@ -110,7 +115,7 @@ Route::post('/products/subscribe', [ProductController::class, 'subscribe'])->nam
 
 //to na dole to test jak co dziala
 Route::get('/test', function () {
-    $user = Auth::guard('sanctum')->user(); 
+    $user = Auth::guard('sanctum')->user();
     return response()->json([
         'user_id' => $user ? $user->id : null,
         'user_isAdmin' => $user ? $user->isAdmin() : null,

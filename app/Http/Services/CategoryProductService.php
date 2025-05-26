@@ -26,6 +26,12 @@ class CategoryProductService extends Controller
         }
         return $products;
     }
+
+    public function getAllCategory()
+    {
+        return CategoryProduct::all();
+    }
+
     /**
      * Store a newly created resource in storage.
      */

@@ -42,9 +42,9 @@ class PersonalDetailsService extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(array $data)
+    public function store(PersonalDetailsRequest $request, array $data)
     {
-        //validacja
+        $request->validated();
         $product = personalDetails::create($data);
         return $product;
     }

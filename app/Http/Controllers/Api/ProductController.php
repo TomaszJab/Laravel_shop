@@ -11,11 +11,8 @@ use App\Http\Services\CommentService;
 use App\Http\Services\SubscriberService;
 use App\Http\Resources\ProductResource;
 use App\Http\Resources\CommentResource;
-use App\Http\Resources\SubscriberResource;
 use App\Http\Resources\CategoryProductsResource;
 use App\Http\Requests\ProductRequest;
-use App\Http\Requests\CommentRequest;
-use App\Http\Requests\SubscriberRequest;
 
 class ProductController extends Controller
 {
@@ -60,12 +57,6 @@ class ProductController extends Controller
     {
         $product = $this->productService->store($request);
         return response()->json($product, 201);
-    }
-
-    public function storeComment(CommentRequest $request, $productId)
-    {
-        $comment = $this->commentService->store($request, $productId);
-        return response()->json($comment, 201);
     }
 
     // to raczej sie tutaj nie przyda
@@ -153,14 +144,5 @@ class ProductController extends Controller
         $product = $this->productService->destroy($product);
 
         return response()->json(null, 204);
-    }
-
-    public function subscribe(SubscriberRequest $request)
-    {
-        $subscriber = $this->subscriberService->store($request);
-
-        return response()->json([
-            'subscriber' => new SubscriberResource($subscriber),
-        ], 201);
     }
 }

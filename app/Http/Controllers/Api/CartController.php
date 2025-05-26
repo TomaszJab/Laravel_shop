@@ -6,9 +6,6 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
-// use App\Models\OrderProduct;
-// use App\Models\Order;
-// use App\Models\Product;
 use App\Http\Services\OrderService;
 use App\Http\Services\OrderProductService;
 use App\Http\Services\PersonalDetailsService;
@@ -99,7 +96,8 @@ class CartController extends Controller
         }
 
         return [
-            'defaultPersonalDetails' => $defaultPersonalDetails ? PersonalDetailsResource::make($defaultPersonalDetails) : null
+            'defaultPersonalDetails' => $defaultPersonalDetails ?
+                PersonalDetailsResource::make($defaultPersonalDetails) : null
         ];
     }
 
@@ -112,7 +110,7 @@ class CartController extends Controller
         ];
     }
 
-    public function saveWithoutRegistration(Request $request) ////////////
+    public function saveWithoutRegistration(PersonalDetailsRequest $request)
     {
         $dataPersonalDetails = $request->input('personal_details');
         //session('cart_summary');
@@ -121,7 +119,8 @@ class CartController extends Controller
         //$idUser = auth()->user()->id ?? null;
         $dataPersonalDetails['user_id'] = $idUser;
         //if ($data) {
-        $personalDetails = $this->personalDetailsService->store($dataPersonalDetails);
+
+        $personalDetails = $this->personalDetailsService->store($request, $dataPersonalDetails);
         //personalDetails::create($data);
         //to nie bedzie
         // session()->forget('cart_summary');
@@ -132,7 +131,7 @@ class CartController extends Controller
         // if (!$cartData || !isset($cartData['products'])) {
         //     return response()->json(['error' => 'Invalid cart data'], 422);
         // }
-        
+
         $this->orderService->storeOrderBasedOnOrderProduct($idUser, $personalDetails, $cartData);
 
         //session()->forget('cart');
@@ -148,7 +147,7 @@ class CartController extends Controller
     //     return view('cart.summary', array_merge($cartData, ['summary' => $summary]));
     // }
 
-    public function updateDefaultPersonalDetails(Request $request)
+    public function updateDefaultPersonalDetails(PersonalDetailsRequest $request)
     {
         $userId = Auth::guard('sanctum')->user()->id ?? null;
         //$userId = auth()->user()->id;
@@ -161,42 +160,41 @@ class CartController extends Controller
             $data['company_or_private_person'] = 'private_person';
         }
 
-        $companyOrPrivatePerson = $data['company_or_private_person'];
+        //$companyOrPrivatePerson = $data['company_or_private_person'];
 
-        $rules = [
-            'email' => 'required',
-            'firstName' => 'required',
-            'lastName' => 'required',
-            'phone' => 'required',
+        // $rules = [
+        //     'email' => 'required',
+        //     'firstName' => 'required',
+        //     'lastName' => 'required',
+        //     'phone' => 'required',
 
-            'street' => 'required',
-            'house_number' => 'required',
-            'zip_code' => 'required',
-            'city' => 'required',
-        ];
+        //     'street' => 'required',
+        //     'house_number' => 'required',
+        //     'zip_code' => 'required',
+        //     'city' => 'required',
+        // ];
 
         if ($request->has('acceptance_of_the_regulations')) {
-            $rules['acceptance_of_the_regulations'] = 'required';
+            // $rules['acceptance_of_the_regulations'] = 'required';
         } else {
             $data['acceptance_of_the_regulations'] = '-';
         }
 
-        if ($companyOrPrivatePerson == 'private_person') {
-        } else {
-            $rules['company_name'] = 'required';
-            $rules['nip'] = 'required';
-        }
+        // if ($companyOrPrivatePerson == 'company') {
+        //     $rules['company_name'] = 'required';
+        //     $rules['nip'] = 'required';
+        // }
 
-        try {
-            $validatedData = $request->validate($rules);
-        } catch (ValidationException $e) {
-            return response()->json(['errors' => $e->validator->errors()], 422);
-        }
+        // try {
+        //     // $validatedData = $request->validate($rules);
+        // } catch (ValidationException $e) {
+        //     return response()->json(['errors' => $e->validator->errors()], 422);
+        // }
 
-        $personalDetails = $this->personalDetailsService->store($data);
+        $personalDetails = $this->personalDetailsService->store($request, $data);
         //PersonalDetails::create($data);
 
-        return response()->json($personalDetails, 201);
+        return response()->json(PersonalDetailsResource::make($personalDetails), 201);
         //return redirect()->back()->with('success', 'Personal details saved successfully.');
     }
 
