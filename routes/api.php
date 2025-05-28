@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\CartController;
 use App\Http\Controllers\Api\CommentController;
 use App\Http\Controllers\Api\SubscriberController;
+use App\Http\Controllers\Api\PersonalDetailsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -37,7 +38,7 @@ Route::middleware('auth:sanctum', 'ownerOrAdmin')->group(function () {
     Route::get('/cart/order/details/{orderProductId}', [CartController::class, 'details'])->name('carts.order.details');
 });
 
-Route::get('/cart/buy', [CartController::class, 'buyWithoutRegistration'])->name('carts.buyWithoutRegistration');
+Route::get('/cart/buy', [PersonalDetailsController::class, 'index'])->name('carts.buyWithoutRegistration');///poprawic
 Route::post('/cart/changePrice', [CartController::class, 'changePrice'])->name('carts.changePrice');
 
 Route::post('/cart/storeWithoutRegistration', [CartController::class, 'storeWithoutRegistration'])->name('carts.withoutregistration.store');

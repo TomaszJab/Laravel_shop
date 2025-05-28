@@ -32,7 +32,7 @@ class PersonalDetailsService extends Controller
         return personalDetails::where('user_id', $idUser)->where('default_personal_details', '0')->latest()->first();
     }
 
-    public function storeWithoutRegistration(PersonalDetailsRequest $request)
+    public function walidate(PersonalDetailsRequest $request)
     {
         $request->validated();
         $personalDetails = $request->except('_token');

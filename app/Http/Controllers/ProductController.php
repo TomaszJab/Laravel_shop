@@ -67,48 +67,6 @@ class ProductController extends Controller
         return redirect()->route('products.index')->with('success', 'Product created successfully.');
     }
 
-    public function addToCart2($id, Request $request)
-    {
-        $this->addToCart($id, $request);
-        return redirect()->route('carts.index');
-    }
-
-    public function addToCart($id, Request $request)
-    {
-        $product = $this->productService->getProductById($id);
-        $cart = session()->get('cart', []);
-
-        $size = $request->input('size');
-        $quantity = $request->input('quantity');
-        $key = $product->id . '_' . $size;
-
-        if (isset($cart[$key])) {
-            $cart[$key]['quantity'] = $cart[$key]['quantity'] + $quantity;
-        } else {
-            $categoryProducts = $product->categoryProducts()->first();
-
-            $cart[$key] = [
-                'name' => $product->name,
-                'quantity' => 1,
-                'price' => $product->price,
-                'name_category_product' => $categoryProducts->name_category_product,
-                'category_products_id' => $product->category_products_id
-            ];
-
-            if (!isset($cart['method_delivery'])) {
-                $cart['method_delivery'] = 'Kurier';
-                $cart['method_payment'] = 'AutoPay';
-                $cart['promo_code'] = null;
-                $cart['delivery'] = number_format(25, 2);
-                $cart['payment'] = number_format(0, 2);
-            }
-        }
-
-        session()->put('cart', $cart);
-
-        return back(); #->with('success', 'Produkt dodany do koszyka!');
-    }
-
     public function show(Product $product)
     {
         $comments = $product->comments()->orderBy('created_at', 'desc')->get();

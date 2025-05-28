@@ -34,6 +34,7 @@ class CartController extends Controller
         $this->personalDetailsService = $personalDetailsService;
         $this->productService = $productService;
     }
+
     /**
      * Display a listing of the resource.
      */
@@ -85,25 +86,9 @@ class CartController extends Controller
         }
     }
 
-    //http://127.0.0.1:8000/api/cart/buy
-    public function buyWithoutRegistration()
-    {
-        $idUser = Auth::guard('sanctum')->user()->id ?? null;
-        if ($idUser) {
-            $defaultPersonalDetails = $this->personalDetailsService->getDefaultPersonalDetailsByUserId($idUser);
-        } else {
-            $defaultPersonalDetails = null;
-        }
-
-        return [
-            'defaultPersonalDetails' => $defaultPersonalDetails ?
-                PersonalDetailsResource::make($defaultPersonalDetails) : null
-        ];
-    }
-
     public function storeWithoutRegistration(PersonalDetailsRequest $request)
     {
-        $personalDetails = $this->personalDetailsService->storeWithoutRegistration($request);
+        $personalDetails = $this->personalDetailsService->walidate($request);
 
         return [
             'summary' => PersonalDetailsResource::make($personalDetails)

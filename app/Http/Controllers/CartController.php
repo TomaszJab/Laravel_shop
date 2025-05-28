@@ -10,12 +10,10 @@ use App\Models\PersonalDetails;
 use App\Models\OrderProduct;
 use App\Models\Order;
 use App\Models\Product;
-use App\Models\PromoCode;
 use App\Http\Services\OrderService;
 use App\Http\Services\OrderProductService;
 use App\Http\Services\PersonalDetailsService;
 use App\Http\Services\ProductService;
-use App\Http\Requests\PersonalDetailsRequest;
 
 class CartController extends Controller
 {
@@ -35,13 +33,13 @@ class CartController extends Controller
         $this->personalDetailsService = $personalDetailsService;
         $this->productService = $productService;
     }
-
+    //widok karty
     public function index()
     {
         $cartData = $this->dataCart();
         return view('cart.index', $cartData);
     }
-
+    //szczegoly zamowienia//show
     public function details($orderProductId)
     {
         $orderData = Order::where('order_product_id', $orderProductId)->get();
@@ -55,7 +53,7 @@ class CartController extends Controller
         $total = $orderProductData->total;
 
         $personalDetailsId = $orderProductData->personal_details_id;
-        $personalDetails = personalDetails::where('id', $personalDetailsId)->first();
+        $personalDetails = PersonalDetails::where('id', $personalDetailsId)->first();
 
         return view('cart.summary', [
             'products' => $orderData,
@@ -68,28 +66,6 @@ class CartController extends Controller
             'summary' => $personalDetails
         ]);
     }
-
-    // public function destroy($id)
-    // {
-    //     if ($id) {
-    //          $cart = session()->get('cart');
-
-    //         if (isset($cart[$id])) {
-    //             unset($cart[$id]);
-    //             $products = array_filter($cart, 'is_array');
-
-    //             if($products){
-    //                 session()->put('cart', $cart);
-    //             }else{
-    //                 session()->forget('cart');
-    //             }
-    //         }
-    //         session()->flash('success', 'Product removed successfully');
-    //     }else{
-    //         //session()->flash('success', 'Product not removed successfully');
-    //     }
-    //     return redirect()->back();
-    // }
 
     public function destroy($id)
     {
@@ -142,13 +118,13 @@ class CartController extends Controller
         ]);
     }
 
-    public function clearCart() //ok
+    public function delete() //ok
     {
         session()->forget('cart');
         return redirect()->back();
     }
 
-    public function changequantity(Request $request) //ok
+    public function changeQuantity(Request $request) //ok
     {
         $action = $request->input("action");
         $product_id = $request->input("product_id");
@@ -183,7 +159,7 @@ class CartController extends Controller
         //return redirect()->back();
     }
 
-    public function changePrice(Request $request)
+    public function changePrice(Request $request) //
     {
         $price = str_replace('$', '', $request->input("price"));
         $method = $request->input("method");
@@ -209,27 +185,29 @@ class CartController extends Controller
         $cartData = $this->dataCart();
         return view('cart.delivery', $cartData);
     }
-
+    //widok po zalogowaniu
     public function order()
     {
         $userIsAdmin = auth()->user()->isAdmin();
 
         if ($userIsAdmin) {
             $products = Product::paginate(8);
-            $OrderProducts = OrderProduct::paginate(8);
-            return view('cart.order', ['OrderProducts' => $OrderProducts, 'products' => $products]);
+            $orderProducts = OrderProduct::paginate(8);
+
+            return view('cart.order', ['OrderProducts' => $orderProducts, 'products' => $products]);
         } else {
             $idUser = auth()->user()->id;
-            //dd($idUser);
-            $OrderProducts = OrderProduct::where('user_id', $idUser)->paginate(8);
-            $defaultPersonalDetails = personalDetails::where('user_id', $idUser)
+
+            $orderProducts = OrderProduct::where('user_id', $idUser)->paginate(8);
+            $defaultPersonalDetails = PersonalDetails::where('user_id', $idUser)
                 ->where('default_personal_details', '1')->latest()->first();
-            $additionalPersonalDetails = personalDetails::where('user_id', $idUser)
+            $additionalPersonalDetails = PersonalDetails::where('user_id', $idUser)
                 ->where('default_personal_details', '0')->latest()->first();
+
             return view(
                 'cart.order',
                 [
-                    'OrderProducts' => $OrderProducts,
+                    'OrderProducts' => $orderProducts,
                     'personalDetails' => $defaultPersonalDetails,
                     'additionalPersonalDetails' => $additionalPersonalDetails
                 ]
@@ -237,43 +215,56 @@ class CartController extends Controller
         }
     }
 
-    public function buyWithoutRegistration()
+    public function addToCart2($id, Request $request)
     {
-        $idUser = auth()->user()->id ?? null;
-        if ($idUser) {
-            $defaultPersonalDetails = personalDetails::where('user_id', $idUser)
-                ->where('default_personal_details', '1')->latest()->first();
-            //$additionalPersonalDetails = personalDetails::where('user_id', $idUser)
-            //->where('default_personal_details', '0')->latest()->first();
-            //return view('cart.buyWithoutRegistration',['defaultPersonalDetails' => $defaultPersonalDetails]);
-        } else {
-            $defaultPersonalDetails = null;
-            //return view('cart.buyWithoutRegistration', compact('defaultPersonalDetails'));
-        }
-        return view('cart.buyWithoutRegistration', compact('defaultPersonalDetails'));
+        $this->addToCart($id, $request);
+        return redirect()->route('carts.index');
     }
 
-    public function storeWithoutRegistration(PersonalDetailsRequest $request)
+    public function addToCart($id, Request $request)
     {
-        // $request->validated();
-        // $request->except('_token');
+        $product = $this->productService->getProductById($id);
+        $cart = session()->get('cart', []);
 
-        $personalDetails = $this->personalDetailsService->storeWithoutRegistration($request);
+        $size = $request->input('size');
+        $quantity = $request->input('quantity');
+        $key = $product->id . '_' . $size;
 
-        // Przekazanie danych do sesji
-        session(['cart_summary' => $personalDetails]);
-        return redirect()->route('carts.summary');
-        //->with('success','Product created successfully.');
+        if (isset($cart[$key])) {
+            $cart[$key]['quantity'] = $cart[$key]['quantity'] + $quantity;
+        } else {
+            $categoryProducts = $product->categoryProducts()->first();
+
+            $cart[$key] = [
+                'name' => $product->name,
+                'quantity' => 1,
+                'price' => $product->price,
+                'name_category_product' => $categoryProducts->name_category_product,
+                'category_products_id' => $product->category_products_id
+            ];
+
+            if (!isset($cart['method_delivery'])) {
+                $cart['method_delivery'] = 'Kurier';
+                $cart['method_payment'] = 'AutoPay';
+                $cart['promo_code'] = null;
+                $cart['delivery'] = number_format(25, 2);
+                $cart['payment'] = number_format(0, 2);
+            }
+        }
+
+        session()->put('cart', $cart);
+
+        return back(); #->with('success', 'Produkt dodany do koszyka!');
     }
 
     public function saveWithoutRegistration(Request $request)
     {
         $data = session('cart_summary');
-        //dd($data);
+
         $idUser = auth()->user()->id ?? null;
         $data['user_id'] = $idUser;
         //if ($data) {
-        $personalDetails = personalDetails::create($data);
+        $personalDetails = PersonalDetails::create($data);
         session()->forget('cart_summary');
         //}
 
@@ -292,14 +283,14 @@ class CartController extends Controller
         ];
 
         $orderProduct = OrderProduct::create($orderProduct);
-        $order_product_id = $orderProduct->id;
+        $orderProductId = $orderProduct->id;
 
-        $order = array_map(function ($product, $productId) use ($order_product_id) {
+        $order = array_map(function ($product, $productId) use ($orderProductId) {
             list($productId, $size) = explode('_', $productId);
 
             return [
                 'product_id' => $productId,
-                'order_product_id' => $order_product_id,
+                'order_product_id' => $orderProductId,
                 'name' => $product['name'],
                 'quantity' => $product['quantity'],
                 'price' => $product['price'],
@@ -329,67 +320,6 @@ class CartController extends Controller
         $summary = session('cart_summary', []);
 
         return view('cart.summary', array_merge($cartData, ['summary' => $summary]));
-    }
-
-    public function updateDefaultPersonalDetails(Request $request)
-    {
-        $userId = auth()->user()->id;
-
-        $data = $request->except('_token');
-        $data['user_id'] = $userId;
-
-        $default_personal_details = $request->input('default_personal_details');
-        if ($default_personal_details == "0") {
-            $data['company_or_private_person'] = 'private_person';
-        }
-
-        $company_or_private_person = $data['company_or_private_person'];
-
-        $rules = [
-            'email' => 'required',
-            'firstName' => 'required',
-            'lastName' => 'required',
-            'phone' => 'required',
-
-            'street' => 'required',
-            'house_number' => 'required',
-            'zip_code' => 'required',
-            'city' => 'required',
-        ];
-
-        if ($request->has('acceptance_of_the_regulations')) {
-            $rules['acceptance_of_the_regulations'] = 'required';
-        } else {
-            $data['acceptance_of_the_regulations'] = '-';
-        }
-
-        if ($company_or_private_person == 'private_person') {
-        } else {
-            $rules['company_name'] = 'required';
-            $rules['nip'] = 'required';
-        }
-
-        $request->validate($rules);
-        PersonalDetails::create($data);
-
-        return redirect()->back()->with('success', 'Personal details saved successfully.');
-    }
-
-    public function addPromo(Request $request)
-    {
-        $promo_code = $request->input('promo_code');
-        $promo = PromoCode::where('promo_code', $promo_code)->first();
-
-        // Odpowiedź JSON
-        // return response()->json(['success' => true]);
-        if ($promo) {
-            $cart = session()->get('cart', []);
-            $cart['promo_code'] = '10';
-            session()->put('cart', $cart);
-            return response()->json(['success' => true, 'discount' => $cart['promo_code']]);
-        } else {
-            return response()->json(['success' => false]);
-        }
     }
 
     private function dataCart()
