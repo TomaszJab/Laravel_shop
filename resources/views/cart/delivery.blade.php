@@ -90,7 +90,7 @@
             </div>
             <div class="col-6 col-md-6 text-end">
                 <!-- Continue Shopping Button -->
-                <a href="{{ route('carts.index') }}" class="btn btn-outline-primary">
+                <a href="{{ route('cart.create') }}" class="btn btn-outline-primary">
                     <i class="bi bi-arrow-left me-2"></i>Back to Cart
                 </a>
             </div>

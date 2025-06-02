@@ -63,7 +63,7 @@ if($cart){
                       <a class="nav-link" href="{{ url('/dashboard') }}">Dashboard</a>
                     </li>
                     <li class="nav-item">
-                      <a class="nav-link {{ request()->routeIs('carts.order') ? 'active' : '' }}" href="{{ route('carts.order') }}">Order</a>
+                      <a class="nav-link {{ request()->routeIs('carts.order') ? 'active' : '' }}" href="{{ route('carts.order') }}">Orders</a>
                     </li>
                     <li class="nav-item">
                       <form method="POST" action="{{ route('logout') }}" class="d-inline">
@@ -98,7 +98,7 @@ if($cart){
         <button class="btn btn-primary" type="button"><i class="fa fa-search"></i></button>
       </form> -->
             <!-- </form> -->
-            <a class="btn btn-success btn-sm ml-3" href="{{ route('carts.index') }}">
+            <a class="btn btn-success btn-sm ml-3" href="{{ route('cart.create') }}">
               <i class="fa fa-shopping-cart"></i> Cart
               <span class="badge badge-light">@if($countCartProducts>0) {{ $countCartProducts }} @else &nbsp @endif</span>
             </a>

@@ -23,7 +23,7 @@
             <div class="col-12 col-md-12 text-end">
                 <!-- Edit Cart Button -->
                 @if($enableButtons ?? true)
-                    <a href="{{ route('carts.index') }}" class="btn btn-outline-primary">Edit Cart</a>
+                    <a href="{{ route('cart.create') }}" class="btn btn-outline-primary">Edit Cart</a>
                 @endif
             </div>
         </div>

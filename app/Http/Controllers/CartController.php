@@ -6,15 +6,11 @@ use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Response;
 use Illuminate\View\View;
-use App\Models\PersonalDetails;
-use App\Models\OrderProduct;
-use App\Models\Order;
-use App\Models\Product;
 use App\Http\Services\OrderService;
 use App\Http\Services\OrderProductService;
 use App\Http\Services\PersonalDetailsService;
+use App\Http\Services\CartService;
 use App\Http\Services\ProductService;
-use App\Http\Requests\PersonalDetailsRequest;
 
 class CartController extends Controller
 {
@@ -22,50 +18,26 @@ class CartController extends Controller
     protected $orderProductService;
     protected $personalDetailsService;
     protected $productService;
+    protected $cartService;
 
     public function __construct(
         OrderService $orderService,
         OrderProductService $orderProductService,
         PersonalDetailsService $personalDetailsService,
-        ProductService $productService
+        ProductService $productService,
+        CartService $cartService
     ) {
         $this->orderService = $orderService;
         $this->orderProductService = $orderProductService;
         $this->personalDetailsService = $personalDetailsService;
         $this->productService = $productService;
+        $this->cartService = $cartService;
     }
-    //widok karty///create
-    public function index()
+
+    public function create()
     {
-        $cartData = $this->dataCart();
+        $cartData = $this->cartService->dataCart();
         return view('cart.index', $cartData);
-    }
-    //szczegoly zamowienia jednego zamowienia//show
-    public function details($orderProductId)
-    {
-        $orderData = $this->orderService->getOrdersByOrderProductId($orderProductId);
-
-        $orderProductData = $orderData->first()->orderProduct;
-
-        $subtotal = $orderProductData->subtotal;
-        $shipping = $orderProductData->delivery;
-        $payment = $orderProductData->payment;
-        $promoCode = $orderProductData->promo_code;
-        $total = $orderProductData->total;
-
-        $personalDetailsId = $orderProductData->personal_details_id;
-        $personalDetails = $this->personalDetailsService->getPersonalDetailByPersonalDetailsId($personalDetailsId);
-
-        return view('cart.summary', [
-            'products' => $orderData,
-            'subtotal' => $subtotal,
-            'shipping' => $shipping,
-            'payment' => $payment,
-            'promo_code' => $promoCode,
-            'total' => $total,
-            'enableButtons' => false,
-            'summary' => $personalDetails
-        ]);
     }
 
     public function destroy($id)
@@ -119,13 +91,13 @@ class CartController extends Controller
         ]);
     }
 
-    public function delete() //ok
+    public function destroyAll() //ok
     {
         session()->forget('cart');
         return redirect()->back();
     }
 
-    public function changeQuantity(Request $request) //ok
+    public function updateQuantity(Request $request) //ok
     {
         $action = $request->input("action");
         $product_id = $request->input("product_id");
@@ -160,7 +132,7 @@ class CartController extends Controller
         //return redirect()->back();
     }
 
-    public function changePrice(Request $request) //
+    public function updatePrice(Request $request) //
     {
         $price = str_replace('$', '', $request->input("price"));
         $method = $request->input("method");
@@ -181,46 +153,13 @@ class CartController extends Controller
         return response()->json(['success' => true]);
     }
 
-    public function delivery() //ok
+    public function storeAndRedirect($id, Request $request)
     {
-        $cartData = $this->dataCart();
-        return view('cart.delivery', $cartData);
-    }
-    //widok po zalogowaniu
-    public function order()
-    {
-        $userIsAdmin = auth()->user()->isAdmin();
-
-        if ($userIsAdmin) {
-            $products = $this->productService->getAllProductPaginate(8);
-            $orderProducts = $this->orderProductService->getAllOrderProductPaginate(8);
-
-            return view('cart.order', ['OrderProducts' => $orderProducts, 'products' => $products]);
-        } else {
-            $idUser = auth()->user()->id;
-
-            $orderProducts = $this->orderProductService->getAllOrderProductPaginateByIdUser($idUser, 8);
-            $defaultPersonalDetails = $this->personalDetailsService->getDefaultPersonalDetailsByUserId($idUser);
-            $additionalPersonalDetails = $this->personalDetailsService->getAdditionalPersonalDetailsByUserId($idUser);
-
-            return view(
-                'cart.order',
-                [
-                    'OrderProducts' => $orderProducts,
-                    'personalDetails' => $defaultPersonalDetails,
-                    'additionalPersonalDetails' => $additionalPersonalDetails
-                ]
-            );
-        }
+        $this->store($id, $request);
+        return redirect()->route('cart.create');
     }
 
-    public function addToCart2($id, Request $request)
-    {
-        $this->addToCart($id, $request);
-        return redirect()->route('carts.index');
-    }
-
-    public function addToCart($id, Request $request)
+    public function store($id, Request $request)
     {
         $product = $this->productService->getProductById($id);
         $cart = session()->get('cart', []);
@@ -256,107 +195,11 @@ class CartController extends Controller
         return back(); #->with('success', 'Produkt dodany do koszyka!');
     }
 
-    //store
-    public function saveWithoutRegistration(PersonalDetailsRequest $request)
+    public function show()//public function show(CartData) $cartData tutaj nie będzie :D
     {
-        $data = session('cart_summary');
-
-        $idUser = auth()->user()->id ?? null;
-        $data['user_id'] = $idUser;
-        //if ($data) {
-        $personalDetails = $this->personalDetailsService->store($request, $data);//PersonalDetails::create($data);;
-        session()->forget('cart_summary');
-        //}
-
-        $cartData = $this->dataCart();
-
-        $this->orderService->storeOrderBasedOnOrderProduct($idUser, $personalDetails, $cartData);
-        // $orderProduct = [
-        //     'user_id' => $idUser,
-        //     'personal_details_id' => $personalDetails->id,
-        //     'method_delivery' => $cartData['method_delivery'],
-        //     'method_payment' => $cartData['method_payment'],
-        //     'promo_code' => $cartData['promo_code'],
-        //     'delivery' => $cartData['shipping'],
-        //     'subtotal' => $cartData['subtotal'],
-        //     'total' => $cartData['total'],
-        //     'payment' => $cartData['payment']
-        // ];
-
-        // $orderProduct = OrderProduct::create($orderProduct);//$this->orderService->storeOrderBasedOnOrderProduct($idUser, $personalDetails, $cartData);
-        // $orderProductId = $orderProduct->id;
-
-        // $order = array_map(function ($product, $productId) use ($orderProductId) {
-        //     list($productId, $size) = explode('_', $productId);
-
-        //     return [
-        //         'product_id' => $productId,
-        //         'order_product_id' => $orderProductId,
-        //         'name' => $product['name'],
-        //         'quantity' => $product['quantity'],
-        //         'price' => $product['price'],
-        //         'size' => $size,
-        //         'category_products_id' => $product['category_products_id'],
-        //         'created_at' => now(),
-        //         'updated_at' => now()
-        //     ];
-        // }, $cartData['products'], array_keys($cartData['products']));
-
-        // $productIds = array_keys($cartData['products']);
-        // $productIds = array_map(fn($id) => (int) explode('_', $id)[0], $productIds);
-        // Product::whereIn('id', $productIds)->increment('favorite');////////////////////////
-
-        // Order::insert($order);/////////////////
-        // session()->forget('cart');
-
-        return redirect()->route(
-            'products.index',
-            ['category_products' => 'a']
-        )->with('success', 'Order created successfully');
-    }
-
-    public function summary()
-    {
-        $cartData = $this->dataCart();
+        $cartData = $this->cartService->dataCart();
         $summary = session('cart_summary', []);
 
         return view('cart.summary', array_merge($cartData, ['summary' => $summary]));
-    }
-
-    private function dataCart()
-    {
-        $cart = session('cart');
-
-        if ($cart) {
-            $products = array_filter($cart, 'is_array'); // Pobierz tylko produkty
-            $subtotal = number_format(collect($products)->sum(fn($item) => $item['price'] * $item['quantity']), 2);
-            $shipping = $cart['delivery'];
-            $payment = $cart['payment'];
-
-            $total = number_format($subtotal + $shipping + $payment, 2);
-            if ($cart['promo_code'] <> '') {
-                $total = number_format($total - ($total * $cart['promo_code']) / 100, 2);
-            }
-
-            $method_delivery = $cart['method_delivery'];
-            $method_payment = $cart['method_payment'];
-            $promo_code = $cart['promo_code'];
-
-            return compact(
-                'cart',
-                'products',
-                'subtotal',
-                'shipping',
-                'payment',
-                'total',
-                'promo_code',
-                'method_delivery',
-                'method_payment'
-            );
-        }
-
-        return compact(
-            'cart'
-        );
     }
 }

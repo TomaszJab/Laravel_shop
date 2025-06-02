@@ -67,7 +67,9 @@ class CartController extends Controller
 
     public function order()
     {
-        $userIsAdmin = Auth::guard('sanctum')->user()->isAdmin();
+        /** @var \App\Models\User $user */
+        $user = Auth::guard('sanctum')->user();
+        $userIsAdmin = $user->isAdmin();
 
         if ($userIsAdmin) {
             $products = $this->productService->getAllProductPaginate(8);

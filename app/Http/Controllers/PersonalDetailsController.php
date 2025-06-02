@@ -17,7 +17,7 @@ class PersonalDetailsController extends Controller
         $this->personalDetailsService = $personalDetailsService;
     }
 
-    public function index()
+    public function create()
     {
         $idUser = auth()->user()->id ?? null;
         if ($idUser) {

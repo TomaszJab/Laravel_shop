@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\CommentController;
 use App\Http\Controllers\Api\SubscriberController;
 use App\Http\Controllers\Api\PersonalDetailsController;
 use App\Http\Controllers\Api\PromoCodeController;
+use App\Http\Controllers\Api\Auth\AuthenticatedSessionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -39,7 +40,7 @@ Route::middleware('auth:sanctum', 'ownerOrAdmin')->group(function () {
     Route::get('/cart/order/details/{orderProductId}', [CartController::class, 'details'])->name('carts.order.details');
 });
 
-Route::get('/cart/buy', [PersonalDetailsController::class, 'index'])->name('carts.buyWithoutRegistration');///poprawic
+Route::get('/cart/buy', [PersonalDetailsController::class, 'index'])->name('carts.buyWithoutRegistration'); ///poprawic
 Route::post('/cart/changePrice', [CartController::class, 'changePrice'])->name('carts.changePrice');
 
 Route::post('/cart/storeWithoutRegistration', [PersonalDetailsController::class, 'walidate'])->name('carts.withoutregistration.store');
@@ -93,37 +94,44 @@ Route::post('/products/subscribe', [SubscriberController::class, 'store'])->name
 // Route::get('/auth/google/callback', [GoogleLoginController::class, 'handleGoogleCallback'])->name('google.callback');
 
 
-//to na dole to test jak co dziala
-Route::get('/test', function () {
-    $user = Auth::guard('sanctum')->user();
-    return response()->json([
-        'user_id' => $user ? $user->id : null,
-        'user_isAdmin' => $user ? $user->isAdmin() : null,
-        'auth(sanctum)->check()' => auth('sanctum')->check(),
-        'message' => 'To jest testowy endpoint API bez logowania!',
-        'status' => 'success'
-    ]);
+//to na dole to test jak coś dziala
+// use Illuminate\Support\Facades\Auth;
+// Route::get('/test', function () {
+//     $user = Auth::guard('sanctum')->user();
+//     return response()->json([
+//         'user_id' => $user ? $user->id : null,
+//         'user_isAdmin' => $user ? $user->isAdmin() : null,
+//         'auth(sanctum)->check()' => auth('sanctum')->check(),
+//         'message' => 'To jest testowy endpoint API bez logowania!',
+//         'status' => 'success'
+//     ]);
+// });
+
+Route::post('/login', [AuthenticatedSessionController::class, 'store']);
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/logout', [AuthenticatedSessionController::class, 'logout']);
 });
 
-Route::post('/login', function (Request $request) {
-    $request->validate([
-        'email' => 'required|email',
-        'password' => 'required'
-    ]);
+// Route::post('/login', function (Request $request) {
+//     $request->validate([
+//         'email' => 'required|email',
+//         'password' => 'required'
+//     ]);
 
-    $user = User::where('email', $request->email)->first();
+//     $user = User::where('email', $request->email)->first();
 
-    if (! $user || ! Hash::check($request->password, $user->password)) {
-        throw ValidationException::withMessages([
-            'email' => ['Podano błędne dane logowania.'],
-        ]);
-    }
+//     if (! $user || ! Hash::check($request->password, $user->password)) {
+//         throw ValidationException::withMessages([
+//             'email' => ['Podano błędne dane logowania.'],
+//         ]);
+//     }
 
-    // Tworzymy token dla użytkownika
-    $token = $user->createToken('api-token')->plainTextToken;
+//     // Tworzymy token dla użytkownika
+//     $token = $user->createToken('api-token')->plainTextToken;
 
-    return response()->json([
-        'token' => $token,
-        'user' => $user
-    ]);
-});
+//     return response()->json([
+//         'token' => $token,
+//         'user' => $user
+//     ]);
+// });
