@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\CartController;
 use App\Http\Controllers\Api\CommentController;
 use App\Http\Controllers\Api\SubscriberController;
 use App\Http\Controllers\Api\PersonalDetailsController;
+use App\Http\Controllers\Api\PromoCodeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -41,35 +42,13 @@ Route::middleware('auth:sanctum', 'ownerOrAdmin')->group(function () {
 Route::get('/cart/buy', [PersonalDetailsController::class, 'index'])->name('carts.buyWithoutRegistration');///poprawic
 Route::post('/cart/changePrice', [CartController::class, 'changePrice'])->name('carts.changePrice');
 
-Route::post('/cart/storeWithoutRegistration', [CartController::class, 'storeWithoutRegistration'])->name('carts.withoutregistration.store');
+Route::post('/cart/storeWithoutRegistration', [PersonalDetailsController::class, 'walidate'])->name('carts.withoutregistration.store');
 Route::get('/cart/summary', [CartController::class, 'summary'])->name('carts.summary');
 Route::post('/cart/saveWithoutRegistration', [CartController::class, 'saveWithoutRegistration'])->name('carts.savewithoutregistration');
 
-use App\Models\promoCode;
-use App\Models\Subscriber;
+Route::post('/carts/add-promo', [PromoCodeController::class, 'checkPromo'])->name('carts.addPromo');
 
-Route::post('/carts/add-promo', function (Request $request) {
-    $promo_code = $request->input('promo_code');
-    $promo = promoCode::where('promo_code', $promo_code)->first();
-
-    // Odpowiedź JSON
-    // return response()->json(['success' => true]);
-    if ($promo) {
-        $cart = session()->get('cart', []);
-        $cart['promo_code'] = '10';
-        session()->put('cart', $cart);
-        return response()->json(['success' => true, 'discount' => $cart['promo_code']]);
-    } else {
-        return response()->json(['success' => false]);
-    }
-});
-
-Route::post('/cart/add-promos', function (Request $request) {
-    $promo_code = $request->input('promo_code');
-    $promo = promoCode::where('promo_code', $promo_code)->first();
-    dd($promo);
-})->name('apply.promo.code');
-Route::post('/cart/updateDefaultPersonalDetails', [CartController::class, 'updateDefaultPersonalDetails'])->name('carts.updateDefaultPersonalDetails');
+Route::post('/cart/updateDefaultPersonalDetails', [PersonalDetailsController::class, 'createDefaultPersonalDetails'])->name('carts.updateDefaultPersonalDetails');
 
 // Route::resource('contacts', ContactController::class);
 // Route::post('/contacts/send-mail', [ContactController::class, 'sendMailLetsTalkMail'])->name('contacts.sendMailLetsTalkMail');
@@ -88,7 +67,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/products/{product}/comments', [CommentController::class, 'store'])->name('products.comments.store');
 });
 
-Route::post('/products/{product}/add_to_cart', [ProductController::class, 'addToCart'])->name('products.add_to_cart');
+Route::post('/products/{product}/addToCart', [CartController::class, 'addToCart'])->name('products.addToCart');
 //Route::post('/products/{product}/add_to_cart_2', [ProductController::class, 'addToCart2'])->name('products.add_to_cart_2');
 
 Route::post('/products/subscribe', [SubscriberController::class, 'store'])->name('products.subscribe');

@@ -14,6 +14,7 @@ use App\Http\Services\OrderService;
 use App\Http\Services\OrderProductService;
 use App\Http\Services\PersonalDetailsService;
 use App\Http\Services\ProductService;
+use App\Http\Requests\PersonalDetailsRequest;
 
 class CartController extends Controller
 {
@@ -33,34 +34,34 @@ class CartController extends Controller
         $this->personalDetailsService = $personalDetailsService;
         $this->productService = $productService;
     }
-    //widok karty
+    //widok karty///create
     public function index()
     {
         $cartData = $this->dataCart();
         return view('cart.index', $cartData);
     }
-    //szczegoly zamowienia//show
+    //szczegoly zamowienia jednego zamowienia//show
     public function details($orderProductId)
     {
-        $orderData = Order::where('order_product_id', $orderProductId)->get();
+        $orderData = $this->orderService->getOrdersByOrderProductId($orderProductId);
 
-        $orderProductData = OrderProduct::where('id', $orderProductId)->first();
+        $orderProductData = $orderData->first()->orderProduct;
 
         $subtotal = $orderProductData->subtotal;
         $shipping = $orderProductData->delivery;
         $payment = $orderProductData->payment;
-        $promo_code = $orderProductData->promo_code;
+        $promoCode = $orderProductData->promo_code;
         $total = $orderProductData->total;
 
         $personalDetailsId = $orderProductData->personal_details_id;
-        $personalDetails = PersonalDetails::where('id', $personalDetailsId)->first();
+        $personalDetails = $this->personalDetailsService->getPersonalDetailByPersonalDetailsId($personalDetailsId);
 
         return view('cart.summary', [
             'products' => $orderData,
             'subtotal' => $subtotal,
             'shipping' => $shipping,
             'payment' => $payment,
-            'promo_code' => $promo_code,
+            'promo_code' => $promoCode,
             'total' => $total,
             'enableButtons' => false,
             'summary' => $personalDetails
@@ -87,10 +88,10 @@ class CartController extends Controller
                     session()->put('cart', $cart);
                     $subtotal = collect($products)->sum(fn($item) => $item['price'] * $item['quantity']);
 
-                    if (count($products) >= 2) {
-                        $reload = false;
-                    } elseif (count($products) == 1) {
+                    if (count($products) == 1) {
                         $reload = true;
+                    } else {
+                        $reload = false;
                     }
 
                     return response()->json([
@@ -191,18 +192,16 @@ class CartController extends Controller
         $userIsAdmin = auth()->user()->isAdmin();
 
         if ($userIsAdmin) {
-            $products = Product::paginate(8);
-            $orderProducts = OrderProduct::paginate(8);
+            $products = $this->productService->getAllProductPaginate(8);
+            $orderProducts = $this->orderProductService->getAllOrderProductPaginate(8);
 
             return view('cart.order', ['OrderProducts' => $orderProducts, 'products' => $products]);
         } else {
             $idUser = auth()->user()->id;
 
-            $orderProducts = OrderProduct::where('user_id', $idUser)->paginate(8);
-            $defaultPersonalDetails = PersonalDetails::where('user_id', $idUser)
-                ->where('default_personal_details', '1')->latest()->first();
-            $additionalPersonalDetails = PersonalDetails::where('user_id', $idUser)
-                ->where('default_personal_details', '0')->latest()->first();
+            $orderProducts = $this->orderProductService->getAllOrderProductPaginateByIdUser($idUser, 8);
+            $defaultPersonalDetails = $this->personalDetailsService->getDefaultPersonalDetailsByUserId($idUser);
+            $additionalPersonalDetails = $this->personalDetailsService->getAdditionalPersonalDetailsByUserId($idUser);
 
             return view(
                 'cart.order',
@@ -257,56 +256,58 @@ class CartController extends Controller
         return back(); #->with('success', 'Produkt dodany do koszyka!');
     }
 
-    public function saveWithoutRegistration(Request $request)
+    //store
+    public function saveWithoutRegistration(PersonalDetailsRequest $request)
     {
         $data = session('cart_summary');
 
         $idUser = auth()->user()->id ?? null;
         $data['user_id'] = $idUser;
         //if ($data) {
-        $personalDetails = PersonalDetails::create($data);
+        $personalDetails = $this->personalDetailsService->store($request, $data);//PersonalDetails::create($data);;
         session()->forget('cart_summary');
         //}
 
         $cartData = $this->dataCart();
 
-        $orderProduct = [
-            'user_id' => $idUser,
-            'personal_details_id' => $personalDetails->id,
-            'method_delivery' => $cartData['method_delivery'],
-            'method_payment' => $cartData['method_payment'],
-            'promo_code' => $cartData['promo_code'],
-            'delivery' => $cartData['shipping'],
-            'subtotal' => $cartData['subtotal'],
-            'total' => $cartData['total'],
-            'payment' => $cartData['payment']
-        ];
+        $this->orderService->storeOrderBasedOnOrderProduct($idUser, $personalDetails, $cartData);
+        // $orderProduct = [
+        //     'user_id' => $idUser,
+        //     'personal_details_id' => $personalDetails->id,
+        //     'method_delivery' => $cartData['method_delivery'],
+        //     'method_payment' => $cartData['method_payment'],
+        //     'promo_code' => $cartData['promo_code'],
+        //     'delivery' => $cartData['shipping'],
+        //     'subtotal' => $cartData['subtotal'],
+        //     'total' => $cartData['total'],
+        //     'payment' => $cartData['payment']
+        // ];
 
-        $orderProduct = OrderProduct::create($orderProduct);
-        $orderProductId = $orderProduct->id;
+        // $orderProduct = OrderProduct::create($orderProduct);//$this->orderService->storeOrderBasedOnOrderProduct($idUser, $personalDetails, $cartData);
+        // $orderProductId = $orderProduct->id;
 
-        $order = array_map(function ($product, $productId) use ($orderProductId) {
-            list($productId, $size) = explode('_', $productId);
+        // $order = array_map(function ($product, $productId) use ($orderProductId) {
+        //     list($productId, $size) = explode('_', $productId);
 
-            return [
-                'product_id' => $productId,
-                'order_product_id' => $orderProductId,
-                'name' => $product['name'],
-                'quantity' => $product['quantity'],
-                'price' => $product['price'],
-                'size' => $size,
-                'category_products_id' => $product['category_products_id'],
-                'created_at' => now(),
-                'updated_at' => now()
-            ];
-        }, $cartData['products'], array_keys($cartData['products']));
+        //     return [
+        //         'product_id' => $productId,
+        //         'order_product_id' => $orderProductId,
+        //         'name' => $product['name'],
+        //         'quantity' => $product['quantity'],
+        //         'price' => $product['price'],
+        //         'size' => $size,
+        //         'category_products_id' => $product['category_products_id'],
+        //         'created_at' => now(),
+        //         'updated_at' => now()
+        //     ];
+        // }, $cartData['products'], array_keys($cartData['products']));
 
-        $productIds = array_keys($cartData['products']);
-        $productIds = array_map(fn($id) => (int) explode('_', $id)[0], $productIds);
-        Product::whereIn('id', $productIds)->increment('favorite');
+        // $productIds = array_keys($cartData['products']);
+        // $productIds = array_map(fn($id) => (int) explode('_', $id)[0], $productIds);
+        // Product::whereIn('id', $productIds)->increment('favorite');////////////////////////
 
-        $order = Order::insert($order);
-        session()->forget('cart');
+        // Order::insert($order);/////////////////
+        // session()->forget('cart');
 
         return redirect()->route(
             'products.index',

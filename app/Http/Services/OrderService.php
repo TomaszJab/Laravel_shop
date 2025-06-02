@@ -11,6 +11,17 @@ use Illuminate\Http\Request;
 
 class OrderService extends Controller
 {
+    protected $orderProductService;
+    protected $productService;
+
+    public function __construct(
+        OrderProductService $orderProductService,
+        ProductService $productService
+    ) {
+        $this->orderProductService = $orderProductService;
+        $this->productService = $productService;
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -38,7 +49,8 @@ class OrderService extends Controller
             'payment' => $cartData['payment']
         ];
 
-        $orderProduct = OrderProduct::create($orderProduct);
+        $orderProduct = $this->orderProductService->create($orderProduct);
+
         $orderProductId = $orderProduct->id;
 
         $order = array_map(function ($product, $productId) use ($orderProductId) {
@@ -59,9 +71,14 @@ class OrderService extends Controller
 
         $productIds = array_keys($cartData['products']);
         $productIds = array_map(fn($id) => (int) explode('_', $id)[0], $productIds);
-        Product::whereIn('id', $productIds)->increment('favorite');
+        $this->productService->increment($productIds, 'favorite');
 
-        $order = Order::insert($order);
+        $this->insert($order);
+    }
+
+    public function insert(array $order)
+    {
+        return Order::insert($order);
     }
 
     /**

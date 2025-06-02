@@ -15,6 +15,7 @@ use App\Http\Resources\OrderProductResource;
 use App\Http\Resources\OrderResource;
 use App\Http\Resources\PersonalDetailsResource;
 use App\Http\Resources\ProductResource;
+use App\Http\Resources\CategoryProductsResource;
 
 class CartController extends Controller
 {
@@ -59,6 +60,11 @@ class CartController extends Controller
         ];
     }
 
+    //public function destroy($id)
+    //public function delete()
+    //public function changeQuantity(Request $request)
+    //public function delivery()
+
     public function order()
     {
         $userIsAdmin = Auth::guard('sanctum')->user()->isAdmin();
@@ -86,12 +92,55 @@ class CartController extends Controller
         }
     }
 
-    public function storeWithoutRegistration(PersonalDetailsRequest $request)
-    {
-        $personalDetails = $this->personalDetailsService->walidate($request);
+    // to raczej sie tutaj nie przyda
+    // public function addToCart_2($id, Request $request){
+    //     $this -> addToCart($id, $request);
+    //     return redirect()->route('carts.index');
+    // }
 
+    public function addToCart($id, Request $request)
+    {
+        $product = $this->productService->getProductById($id);
+        $categoryProducts = $product->categoryProducts()->first();
+
+        $size = $request->input('size');
+        $quantity = $request->input('quantity');
+        $key = $product->id . '_' . $size;
+
+        /* //kod po stronie aplikacji telefonu
+        $cart = session()->get('cart', []);
+
+        if (isset($cart[$key])) {
+            $cart[$key]['quantity'] = $cart[$key]['quantity'] + $quantity;
+        } else {
+            $categoryProducts = $product->categoryProducts()->first();
+
+            $cart[$key] = [
+                'name' => $product->name,
+                'quantity' => 1,
+                'price' => $product->price,
+                'name_category_product' => $categoryProducts->name_category_product,
+                'category_products_id' => $product->category_products_id
+            ];
+
+            if (!isset($cart['method_delivery'])) {
+                $cart['method_delivery'] = 'Kurier';
+                $cart['method_payment'] = 'AutoPay';
+                $cart['promo_code'] = null;
+                $cart['delivery'] = number_format(25, 2);
+                $cart['payment'] = number_format(0, 2);
+            }
+        }
+
+        session()->put('cart', $cart);*/
+
+        // return back();
+        //return response()->json(compact('product', 'category_products'));
         return [
-            'summary' => PersonalDetailsResource::make($personalDetails)
+            'product' => ProductResource::make($product),
+            'categoryProducts' => CategoryProductsResource::make($categoryProducts),
+            'quantity' => $quantity,
+            'key' => $key
         ];
     }
 
@@ -131,57 +180,6 @@ class CartController extends Controller
 
     //     return view('cart.summary', array_merge($cartData, ['summary' => $summary]));
     // }
-
-    public function updateDefaultPersonalDetails(PersonalDetailsRequest $request)
-    {
-        $userId = Auth::guard('sanctum')->user()->id ?? null;
-        //$userId = auth()->user()->id;
-
-        $data = $request->except('_token');
-        $data['user_id'] = $userId;
-
-        $defaultPersonalDetails = $request->input('default_personal_details');
-        if ($defaultPersonalDetails == "0") {
-            $data['company_or_private_person'] = 'private_person';
-        }
-
-        //$companyOrPrivatePerson = $data['company_or_private_person'];
-
-        // $rules = [
-        //     'email' => 'required',
-        //     'firstName' => 'required',
-        //     'lastName' => 'required',
-        //     'phone' => 'required',
-
-        //     'street' => 'required',
-        //     'house_number' => 'required',
-        //     'zip_code' => 'required',
-        //     'city' => 'required',
-        // ];
-
-        if ($request->has('acceptance_of_the_regulations')) {
-            // $rules['acceptance_of_the_regulations'] = 'required';
-        } else {
-            $data['acceptance_of_the_regulations'] = '-';
-        }
-
-        // if ($companyOrPrivatePerson == 'company') {
-        //     $rules['company_name'] = 'required';
-        //     $rules['nip'] = 'required';
-        // }
-
-        // try {
-        //     // $validatedData = $request->validate($rules);
-        // } catch (ValidationException $e) {
-        //     return response()->json(['errors' => $e->validator->errors()], 422);
-        // }
-
-        $personalDetails = $this->personalDetailsService->store($request, $data);
-        //PersonalDetails::create($data);
-
-        return response()->json(PersonalDetailsResource::make($personalDetails), 201);
-        //return redirect()->back()->with('success', 'Personal details saved successfully.');
-    }
 
     /**
      * Store a newly created resource in storage.

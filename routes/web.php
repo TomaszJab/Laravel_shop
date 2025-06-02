@@ -66,8 +66,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/products/{product}/comments', [CommentController::class, 'store'])->name('products.comments.store');
 });
 
-Route::post('/products/{product}/add_to_cart', [CartController::class, 'addToCart'])->name('products.add_to_cart');
-Route::post('/products/{product}/add_to_cart_2', [CartController::class, 'addToCart2'])->name('products.add_to_cart_2');
+Route::post('/products/{product}/addToCart', [CartController::class, 'addToCart'])->name('products.addToCart');
+Route::post('/products/{product}/addToCart2', [CartController::class, 'addToCart2'])->name('products.addToCart2');
 
 Route::post('/products/subscribe', [SubscriberController::class, 'store'])->name('products.subscribe');
 

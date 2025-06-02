@@ -75,4 +75,12 @@ class ProductService extends Controller
     {
         $product->delete();
     }
+
+    /**
+     * @param int[] $productIds
+     */
+    public function increment(array $productIds, string $increment)
+    {
+        Product::whereIn('id', $productIds)->increment($increment);
+    }
 }

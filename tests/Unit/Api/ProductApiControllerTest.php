@@ -207,7 +207,7 @@ class ProductApiControllerTest extends TestCase
             'quantity' => 2
         ];
 
-        $response = $this->postJson('api/products/' . $idProduct . '/add_to_cart', $cartData);
+        $response = $this->postJson('api/products/' . $idProduct . '/addToCart', $cartData);
 
         $categoryProducts = $categoryProduct->toArray();
         $product = $product->toArray();

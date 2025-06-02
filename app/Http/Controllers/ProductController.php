@@ -3,14 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
-use App\Models\CategoryProduct;
 use App\Http\Services\ProductService;
 use App\Http\Services\CategoryProductService;
 use App\Http\Services\CommentService;
 use App\Http\Services\SubscriberService;
 use App\Http\Requests\ProductRequest;
-use App\Http\Requests\CommentRequest;
-use App\Http\Requests\SubscriberRequest;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Response;
@@ -69,7 +66,7 @@ class ProductController extends Controller
 
     public function show(Product $product)
     {
-        $comments = $product->comments()->orderBy('created_at', 'desc')->get();
+        $comments = $this->commentService->getCommenstsOrderByCreatedAt($product, 'desc');
 
         return view('products.show', compact('product', 'comments'));
     }

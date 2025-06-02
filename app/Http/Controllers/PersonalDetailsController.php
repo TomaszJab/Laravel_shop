@@ -21,15 +21,11 @@ class PersonalDetailsController extends Controller
     {
         $idUser = auth()->user()->id ?? null;
         if ($idUser) {
-            $defaultPersonalDetails = PersonalDetails::where('user_id', $idUser)
-                ->where('default_personal_details', '1')->latest()->first();
-            //$additionalPersonalDetails = personalDetails::where('user_id', $idUser)
-            //->where('default_personal_details', '0')->latest()->first();
-            //return view('cart.buyWithoutRegistration',['defaultPersonalDetails' => $defaultPersonalDetails]);
+            $defaultPersonalDetails = $this->personalDetailsService->getDefaultPersonalDetailsByUserId($idUser);
         } else {
             $defaultPersonalDetails = null;
-            //return view('cart.buyWithoutRegistration', compact('defaultPersonalDetails'));
         }
+
         return view('cart.buyWithoutRegistration', compact('defaultPersonalDetails'));
     }
 
@@ -53,34 +49,12 @@ class PersonalDetailsController extends Controller
             $data['company_or_private_person'] = 'private_person';
         }
 
-        $companyOrPrivatePerson = $data['company_or_private_person'];
-
-        $rules = [
-            'email' => 'required',
-            'firstName' => 'required',
-            'lastName' => 'required',
-            'phone' => 'required',
-
-            'street' => 'required',
-            'house_number' => 'required',
-            'zip_code' => 'required',
-            'city' => 'required',
-        ];
-
         if ($request->has('acceptance_of_the_regulations')) {
-            $rules['acceptance_of_the_regulations'] = 'required';
         } else {
             $data['acceptance_of_the_regulations'] = '-';
         }
 
-        if ($companyOrPrivatePerson == 'private_person') {
-        } else {
-            $rules['company_name'] = 'required';
-            $rules['nip'] = 'required';
-        }
-
-        $request->validate($rules);
-        PersonalDetails::create($data);
+        $this->personalDetailsService->store($request, $data);
 
         return redirect()->back()->with('success', 'Personal details saved successfully.');
     }
