@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Profile\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SubscriberController;
@@ -39,7 +39,7 @@ Route::middleware('auth','ownerOrAdmin')->group(function () {
     Route::get('/order/details/{orderProductId}', [OrdersController::class, 'show'])->name('carts.order.details');
 });
 
-Route::get('/cart/buy', [PersonalDetailsController::class, 'create'])->name('carts.buyWithoutRegistration');///poprawic
+Route::get('/cart/buy', [PersonalDetailsController::class, 'show'])->name('carts.buyWithoutRegistration');///poprawic
 Route::post('/cart/changePrice', [CartController::class, 'updatePrice'])->name('carts.changePrice');//
 
 Route::post('/cart/storeWithoutRegistration', [PersonalDetailsController::class, 'walidate'])->name('carts.withoutregistration.store');
@@ -48,10 +48,10 @@ Route::post('/cart/saveWithoutRegistration', [OrdersController::class, 'store'])
 
 Route::post('/carts/add-promo', [PromoCodeController::class, 'checkPromo'])->name('carts.addPromo');
 
-Route::post('/cart/updateDefaultPersonalDetails', [PersonalDetailsController::class, 'createDefaultPersonalDetails'])->name('carts.updateDefaultPersonalDetails');
+Route::post('/cart/updateDefaultPersonalDetails', [PersonalDetailsController::class, 'store'])->name('carts.updateDefaultPersonalDetails');
 
 Route::resource('contacts', ContactController::class);
-Route::post('/contacts/send-mail', [ContactController::class, 'sendMailLetsTalkMail'])->name('contacts.sendMailLetsTalkMail');
+Route::post('/contacts/send-mail', [ContactController::class, 'sendMail'])->name('contacts.sendMailLetsTalkMail');
 
 Route::resource('AboutUs', AboutUsController::class);
 

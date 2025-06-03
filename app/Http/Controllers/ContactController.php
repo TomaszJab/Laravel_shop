@@ -9,11 +9,11 @@ use App\Http\Services\MailService;
 
 class ContactController extends Controller
 {
-    protected $letsTalsMailService;
+    protected $mailService;
 
-    public function __construct(MailService $letsTalsMailService)
+    public function __construct(MailService $mailService)
     {
-        $this->letsTalsMailService = $letsTalsMailService;
+        $this->mailService = $mailService;
     }
 
     public function index()
@@ -21,13 +21,13 @@ class ContactController extends Controller
         return view('contacts.index');
     }
 
-    public function sendMailLetsTalkMail(LetsTalkMailRequest $request)
+    public function sendMail(LetsTalkMailRequest $request)
     {
         $dataMail = $request->except('_token');
         $mailable = new AboutUsLetsTalkMail($dataMail);
         $author = 'zbiorentomologiczny@gmail.com';
 
-        $this->letsTalsMailService->send($request, $mailable, $author);
+        $this->mailService->send($request, $mailable, $author);
 
         return redirect()->route('contacts.index')->with('success', 'Email send successfully.');
     }

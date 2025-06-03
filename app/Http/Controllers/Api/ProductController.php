@@ -51,6 +51,17 @@ class ProductController extends Controller
     }
 
     /**
+     * Show the form for creating a new resource.
+     */
+    public function create()
+    {
+        $categoryProducts = $this->categoryProductService->getAllCategory();
+        return [
+            'categoryProduct' => CategoryProductsResource::collection($categoryProducts)
+        ];
+    }
+
+    /**
      * Store a newly created resource in storage.
      */
     public function store(ProductRequest $request)
@@ -69,6 +80,15 @@ class ProductController extends Controller
         return [
             'product' => ProductResource::make($product),
             'comments' => CommentResource::collection($comments)
+        ];
+    }
+
+    public function edit(Product $product)
+    {
+        $categoryProducts = $this->categoryProductService->getAllCategory();
+        return [
+            'product' => ProductResource::make($product),
+            'categoryProduct' => CategoryProductsResource::collection($categoryProducts)
         ];
     }
 

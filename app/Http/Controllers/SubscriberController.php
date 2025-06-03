@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Services\SubscriberService;
 use App\Http\Requests\SubscriberRequest;
-use App\Http\Resources\SubscriberResource;
 
 class SubscriberController extends Controller
 {

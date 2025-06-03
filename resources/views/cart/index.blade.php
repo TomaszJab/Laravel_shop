@@ -41,7 +41,7 @@
         <div class="card cart-summary" style="background-color: #f8f9fa;">
             <div class="card-body">
 
-            @include('cart.components.orderSummary')
+                @include('cart.components.orderSummary')
 
                 <a href="{{ route('carts.delivery') }}" class="btn btn-primary w-100">Delivery and payment</a>
             </div>

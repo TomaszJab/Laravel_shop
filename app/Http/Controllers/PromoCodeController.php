@@ -3,14 +3,22 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\PromoCode;
+use App\Http\Services\PromoCodeService;
 
 class PromoCodeController extends Controller
 {
-    public function checkPromo(Request $request)//get
+    protected $promoCode;
+
+    public function __construct(
+        PromoCodeService $promoCode
+    ) {
+        $this->promoCode = $promoCode;
+    }
+
+    public function checkPromo(Request $request) //get
     {
         $promoCode = $request->input('promo_code');
-        $promo = PromoCode::where('promo_code', $promoCode)->first();
+        $promo = $this->promoCode->checkPromo($promoCode);
 
         // Odpowiedź JSON
         // return response()->json(['success' => true]);

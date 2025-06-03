@@ -73,7 +73,8 @@ class ProductController extends Controller
 
     public function edit(Product $product)
     {
-        return view('products.edit', compact('product'));
+        $categoryProducts = $this->categoryProductService->getAllCategory();
+        return view('products.edit', compact('product', 'categoryProducts'));
     }
 
     public function update(ProductRequest $request, Product $product)

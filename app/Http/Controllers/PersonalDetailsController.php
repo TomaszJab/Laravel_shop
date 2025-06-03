@@ -17,7 +17,7 @@ class PersonalDetailsController extends Controller
         $this->personalDetailsService = $personalDetailsService;
     }
 
-    public function create()
+    public function show()
     {
         $idUser = auth()->user()->id ?? null;
         if ($idUser) {
@@ -37,7 +37,7 @@ class PersonalDetailsController extends Controller
         return redirect()->route('carts.summary');
     }
 
-    public function createDefaultPersonalDetails(Request $request)
+    public function store(Request $request)
     {
         $userId = auth()->user()->id;
 

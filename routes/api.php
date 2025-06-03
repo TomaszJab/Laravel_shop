@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\CommentController;
 use App\Http\Controllers\Api\SubscriberController;
 use App\Http\Controllers\Api\PersonalDetailsController;
 use App\Http\Controllers\Api\PromoCodeController;
+use App\Http\Controllers\Api\OrdersController;
 use App\Http\Controllers\Api\Auth\AuthenticatedSessionController;
 
 /*
@@ -30,26 +31,27 @@ use App\Http\Controllers\Api\Auth\AuthenticatedSessionController;
 Route::apiresource('carts', CartController::class);
 Route::post('/cart/clear', [CartController::class, 'clearCart'])->name('carts.clear');
 Route::post('/cart/changequantity', [CartController::class, 'changequantity'])->name('carts.changequantity');
-Route::get('/cart/delivery', [CartController::class, 'delivery'])->name('carts.delivery');
+Route::get('/cart/delivery', [OrdersController::class, 'create'])->name('carts.delivery');
 
 Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/cart/order', [CartController::class, 'order'])->name('carts.order');
+    Route::get('/cart/order', [OrdersController::class, 'index'])->name('carts.order');
 });
+
 
 Route::middleware('auth:sanctum', 'ownerOrAdmin')->group(function () {
-    Route::get('/cart/order/details/{orderProductId}', [CartController::class, 'details'])->name('carts.order.details');
+    Route::get('/cart/order/details/{orderProductId}', [OrdersController::class, 'show'])->name('carts.order.details');
 });
 
-Route::get('/cart/buy', [PersonalDetailsController::class, 'index'])->name('carts.buyWithoutRegistration'); ///poprawic
+Route::get('/cart/buy', [PersonalDetailsController::class, 'show'])->name('carts.buyWithoutRegistration'); ///poprawic
 Route::post('/cart/changePrice', [CartController::class, 'changePrice'])->name('carts.changePrice');
 
 Route::post('/cart/storeWithoutRegistration', [PersonalDetailsController::class, 'walidate'])->name('carts.withoutregistration.store');
 Route::get('/cart/summary', [CartController::class, 'summary'])->name('carts.summary');
-Route::post('/cart/saveWithoutRegistration', [CartController::class, 'saveWithoutRegistration'])->name('carts.savewithoutregistration');
+Route::post('/cart/saveWithoutRegistration', [OrdersController::class, 'store'])->name('carts.savewithoutregistration');
 
 Route::post('/carts/add-promo', [PromoCodeController::class, 'checkPromo'])->name('carts.addPromo');
 
-Route::post('/cart/updateDefaultPersonalDetails', [PersonalDetailsController::class, 'createDefaultPersonalDetails'])->name('carts.updateDefaultPersonalDetails');
+Route::post('/cart/updateDefaultPersonalDetails', [PersonalDetailsController::class, 'store'])->name('carts.updateDefaultPersonalDetails');
 
 // Route::resource('contacts', ContactController::class);
 // Route::post('/contacts/send-mail', [ContactController::class, 'sendMailLetsTalkMail'])->name('contacts.sendMailLetsTalkMail');
@@ -68,7 +70,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/products/{product}/comments', [CommentController::class, 'store'])->name('products.comments.store');
 });
 
-Route::post('/products/{product}/addToCart', [CartController::class, 'addToCart'])->name('products.addToCart');
+Route::post('/products/{product}/addToCart', [CartController::class, 'store'])->name('products.addToCart');
 //Route::post('/products/{product}/add_to_cart_2', [ProductController::class, 'addToCart2'])->name('products.add_to_cart_2');
 
 Route::post('/products/subscribe', [SubscriberController::class, 'store'])->name('products.subscribe');

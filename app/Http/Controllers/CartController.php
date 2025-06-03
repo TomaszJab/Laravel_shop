@@ -82,6 +82,7 @@ class CartController extends Controller
         } else {
             //session()->flash('success', 'Product not removed successfully');
         }
+        
         return response()->json([
             'success' => true,
             'reload' => true,

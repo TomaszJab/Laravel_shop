@@ -20,7 +20,7 @@ class PersonalDetailsController extends Controller
     }
 
     //http://127.0.0.1:8000/api/cart/buy
-    public function index()
+    public function show()
     {
         $idUser = Auth::guard('sanctum')->user()->id ?? null;
         if ($idUser) {
@@ -44,7 +44,7 @@ class PersonalDetailsController extends Controller
         ];
     }
 
-    public function createDefaultPersonalDetails(PersonalDetailsRequest $request)
+    public function store(PersonalDetailsRequest $request)
     {
         $userId = Auth::guard('sanctum')->user()->id ?? null;
         //$userId = auth()->user()->id;
