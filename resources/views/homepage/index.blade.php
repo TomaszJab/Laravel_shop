@@ -27,7 +27,7 @@
           <div class="carousel-caption">
             <h1>Donec risus er, placerat.</h1>
             <p>Donec risus erat, placerat in purus vel, tincidunt pulvinar felis. ar felis.</p>
-            <p><a class="btn btn-lg btn-primary" href="{{ route('AboutUs.index') }}">Learn more</a></p>
+            <p><a class="btn btn-lg btn-primary" href="{{ route('aboutUs.index') }}">Learn more</a></p>
           </div>
         </div>
       </div>

@@ -108,14 +108,14 @@
                         </div>
                     </div>
                     <div class="row pt-5">
-                        <form class="w-50" action="{{ route('products.addToCart2', $product->id) }}" method="POST" onsubmit="updateHiddenSize('1')">
+                        <form class="w-50" action="{{ route('carts.addToCart2', $product->id) }}" method="POST" onsubmit="updateHiddenSize('1')">
                             @csrf
                             <input type="hidden" name="size" id="selectedSize1" value="L">
                             <input type="hidden" name="quantity" id="quantity-input1">
 
                             <button type="submit" class="btn btn-lg btn-primary w-100">Buy</button>
                         </form>
-                        <form class="w-50" action="{{ route('products.addToCart', $product->id) }}" method="POST" onsubmit="updateHiddenSize('2')">
+                        <form class="w-50" action="{{ route('carts.addToCart', $product->id) }}" method="POST" onsubmit="updateHiddenSize('2')">
                             @csrf
                             <input type="hidden" name="size" id="selectedSize2" value="L">
                             <input type="hidden" name="quantity" id="quantity-input2">

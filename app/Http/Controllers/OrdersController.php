@@ -42,7 +42,7 @@ class OrdersController extends Controller
             $products = $this->productService->getAllProductPaginate(8);
             $orderProducts = $this->orderProductService->getAllOrderProductPaginate(8);
 
-            return view('cart.order', ['OrderProducts' => $orderProducts, 'products' => $products]);
+            return view('order.index', ['OrderProducts' => $orderProducts, 'products' => $products]);
         } else {
             $idUser = auth()->user()->id;
 
@@ -51,7 +51,7 @@ class OrdersController extends Controller
             $additionalPersonalDetails = $this->personalDetailsService->getAdditionalPersonalDetailsByUserId($idUser);
 
             return view(
-                'cart.order',
+                'order.index',
                 [
                     'OrderProducts' => $orderProducts,
                     'personalDetails' => $defaultPersonalDetails,
@@ -64,7 +64,7 @@ class OrdersController extends Controller
     public function create()
     {
         $cartData = $this->cartService->dataCart();
-        return view('cart.delivery', $cartData);
+        return view('order.create', $cartData);
     }
 
     public function show($orderProductId)
@@ -82,7 +82,7 @@ class OrdersController extends Controller
         $personalDetailsId = $orderProductData->personal_details_id;
         $personalDetails = $this->personalDetailsService->getPersonalDetailByPersonalDetailsId($personalDetailsId);
 
-        return view('cart.summary', [
+        return view('order.show', [
             'products' => $orderData,
             'subtotal' => $subtotal,
             'shipping' => $shipping,
@@ -97,13 +97,13 @@ class OrdersController extends Controller
     //store saveWithoutRegistration
     public function store(PersonalDetailsRequest $request)
     {
-        $data = session('cart_summary');
+        $data = session('personalDetails');
 
         $idUser = auth()->user()->id ?? null;
         $data['user_id'] = $idUser;
         //if ($data) {
         $personalDetails = $this->personalDetailsService->store($request, $data);
-        session()->forget('cart_summary');
+        session()->forget('personalDetails');
         //}
 
         $cartData = $this->cartService->dataCart();

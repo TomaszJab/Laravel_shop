@@ -9,59 +9,165 @@ use App\Http\Services\OrderService;
 use App\Http\Services\OrderProductService;
 use App\Http\Services\PersonalDetailsService;
 use App\Http\Services\ProductService;
-use App\Http\Resources\ProductResource;
-use App\Http\Resources\CategoryProductsResource;
+use App\Http\Resources\PersonalDetailsResource;
+use App\Http\Resources\CartsResource;
 
 class CartController extends Controller
 {
-    protected $orderService;
-    protected $orderProductService;
-    protected $personalDetailsService;
+    // protected $orderService;
+    // protected $orderProductService;
+    // protected $personalDetailsService;
     protected $productService;
 
     public function __construct(
-        OrderService $orderService,
-        OrderProductService $orderProductService,
-        PersonalDetailsService $personalDetailsService,
+        //     OrderService $orderService,
+        //     OrderProductService $orderProductService,
+        //     PersonalDetailsService $personalDetailsService,
         ProductService $productService
     ) {
-        $this->orderService = $orderService;
-        $this->orderProductService = $orderProductService;
-        $this->personalDetailsService = $personalDetailsService;
+        //     $this->orderService = $orderService;
+        //     $this->orderProductService = $orderProductService;
+        //     $this->personalDetailsService = $personalDetailsService;
         $this->productService = $productService;
     }
 
-    /**
-     * Display a listing of the resource.
-     */
-    // public function index()
+    public function create(Request $request)
+    {
+        $cartData = $request->input("cart");
+        return [
+            '$cartData' => CartsResource::make($cartData)
+        ];
+    }
+
+    public function destroy($id, Request $request)
+    {
+        if ($id) {
+            $cart = $request->input("cart");
+
+            if (isset($cart[$id])) {
+                $products = array_filter($cart, 'is_array');
+                $keys = array_keys($products);
+                if (count($products) >= 2) {
+                    $secondProductId = $keys[1];
+                } else {
+                    $secondProductId = $keys[0];
+                }
+
+                unset($cart[$id]);
+
+                if (count($products) >= 2) {
+                    //session()->put('cart', $cart);
+                    $subtotal = collect($products)->sum(fn($item) => $item['price'] * $item['quantity']);
+
+                    if (count($products) == 1) {
+                        $reload = true;
+                    } else {
+                        $reload = false;
+                    }
+
+                    return response()->json([
+                        'success' => true,
+                        'reload' => $reload,
+                        'new_subtotal' => $subtotal,
+                        'secondProductId' => $secondProductId,
+                        'message' => 'Produkt został usunięty z koszyka.',
+                        'cart' => CartsResource::make($cart)
+                    ]);
+                } else {
+                    //session()->forget('cart');
+                    //return view('cart.index');
+                }
+            }
+            //session()->flash('success', 'Product removed successfully');
+        } else {
+            //session()->flash('success', 'Product not removed successfully');
+        }
+
+        return [
+            'success' => true,
+            'reload' => true,
+            'new_subtotal' => 0,
+            'secondProductId' => $secondProductId,
+            'message' => 'Produkt został usunięty z koszyka.',
+            'cart' => CartsResource::make($cart)
+        ];
+    }
+
+    public function destroyAll()
+    {
+        return [
+            'cart' => null
+        ];
+    }
+
+    public function updateQuantity(Request $request)
+    {
+        $action = $request->input("action");
+        $product_id = $request->input("product_id");
+        $cart = $request->input("cart");
+
+        if (!isset($cart[$product_id])) {
+            return response()->json(['success' => false, 'message' => 'Produkt nie znaleziony w koszyku.']);
+        }
+
+        if ($action == "decrease") {
+            if ($cart[$product_id]['quantity'] > 1) {
+                $cart[$product_id]['quantity'] -= 1;
+            }
+        } elseif ($action == "increase") {
+            $cart[$product_id]['quantity'] += 1;
+        }
+
+        $products = array_filter($cart, 'is_array');
+        $subtotal = number_format(collect($products)->sum(fn($item) => $item['price'] * $item['quantity']), 2);
+
+        $subtotalProduct = number_format($cart[$product_id]['price'] * $cart[$product_id]['quantity'], 2);
+
+        return response()->json([
+            'success' => true,
+            'new_quantity' => $cart[$product_id]['quantity'],
+            'new_subtotal' => $subtotal,
+            'new_subtotalProduct' => $subtotalProduct,
+            'cart' => CartsResource::make($cart)
+        ]);
+    }
+
+    public function updatePrice(Request $request) //
+    {
+        $price = str_replace('$', '', $request->input("price"));
+        $method = $request->input("method");
+        $change = $request->input("change");
+
+        $cart = $request->input("cart", []);
+
+        if ($change == "Price") {
+            $cart['delivery'] = $price;
+            $cart['method_delivery'] = $method;
+        } elseif ($change == "Payment") {
+            $cart['payment'] = $price;
+            $cart['method_payment'] = $method;
+        }
+
+        return [
+            'cart' => CartsResource::make($cart),
+            'success' => true
+        ];
+    }
+
+    // public function storeAndRedirect($id, Request $request)
     // {
-    //     //
-    // }
-
-    //public function create()//
-    //public function destroy($id)
-    //public function destroyAll()//
-    //public function updateQuantity(Request $request)
-    //public function updatePrice()
-
-    // to raczej sie tutaj nie przyda
-    // public function addToCart_2($id, Request $request){
-    //     $this -> addToCart($id, $request);
-    //     return redirect()->route('carts.index');
+    //     $this->store($id, $request);
+    //     return redirect()->route('cart.create');
     // }
 
     public function store($id, Request $request)
     {
         $product = $this->productService->getProductById($id);
-        $categoryProducts = $product->categoryProducts()->first();
+        $cart = $request->input("cart", []);
 
         $size = $request->input('size');
         $quantity = $request->input('quantity');
         $key = $product->id . '_' . $size;
-
-        /* //kod po stronie aplikacji telefonu
-        $cart = session()->get('cart', []);
 
         if (isset($cart[$key])) {
             $cart[$key]['quantity'] = $cart[$key]['quantity'] + $quantity;
@@ -85,55 +191,20 @@ class CartController extends Controller
             }
         }
 
-        session()->put('cart', $cart);*/
-
-        // return back();
-        //return response()->json(compact('product', 'category_products'));
         return [
-            'product' => ProductResource::make($product),
-            'categoryProducts' => CategoryProductsResource::make($categoryProducts),
-            'quantity' => $quantity,
-            'key' => $key
+            'cart' => CartsResource::make($cart),
         ];
     }
 
-    // public function show()//////////////
-    // {
-    //     $cartData = $this->dataCart();
-    //     $summary = session('cart_summary', []);
+    public function show(Request $request)
+    {
+        $cartData = $request->input("cart", []);
+        $personalDetails = $request->input("personalDetails", []);
 
-    //     return view('cart.summary', array_merge($cartData, ['summary' => $summary]));
-    // }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    // public function store(Request $request)
-    // {
-    //     //
-    // }
-
-    /**
-     * Display the specified resource.
-     */
-    // public function show(Product $product)
-    // {
-    //     //
-    // }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    // public function update(Request $request, Product $product)
-    // {
-    //     //
-    // }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    // public function destroy(Product $product)
-    // {
-    //     //
-    // }
+        //return view('order.show', array_merge($cartData, ['summary' => $summary]));
+        return [
+            'cart' => CartsResource::make($cartData),
+            'personalDetails' => PersonalDetailsResource::make($personalDetails),
+        ];
+    }
 }

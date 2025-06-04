@@ -19,8 +19,7 @@ class PersonalDetailsController extends Controller
         $this->personalDetailsService = $personalDetailsService;
     }
 
-    //http://127.0.0.1:8000/api/cart/buy
-    public function show()
+    public function create()
     {
         $idUser = Auth::guard('sanctum')->user()->id ?? null;
         if ($idUser) {

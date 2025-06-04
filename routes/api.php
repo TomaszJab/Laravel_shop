@@ -27,41 +27,41 @@ use App\Http\Controllers\Api\Auth\AuthenticatedSessionController;
 // Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 //     return $request->user();
 // });
+//
+Route::apiresource('cart', CartController::class)->only(['create','destroy']);
 
-Route::apiresource('carts', CartController::class);
-Route::post('/cart/clear', [CartController::class, 'clearCart'])->name('carts.clear');
-Route::post('/cart/changequantity', [CartController::class, 'changequantity'])->name('carts.changequantity');
-Route::get('/cart/delivery', [OrdersController::class, 'create'])->name('carts.delivery');
+Route::post('/cart/clear', [CartController::class, 'destroyAll'])->name('carts.clear');
+Route::post('/cart/updateQuantity', [CartController::class, 'updateQuantity'])->name('carts.updateQuantity');
+Route::get('/order/create', [OrdersController::class, 'create'])->name('orders.create');
 
-Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/cart/order', [OrdersController::class, 'index'])->name('carts.order');
+Route::middleware('auth:sanctum', 'verified')->group(function () {
+    Route::get('/order', [OrdersController::class, 'index'])->name('orders.index');
 });
-
 
 Route::middleware('auth:sanctum', 'ownerOrAdmin')->group(function () {
-    Route::get('/cart/order/details/{orderProductId}', [OrdersController::class, 'show'])->name('carts.order.details');
+    Route::get('/order/{orderProductId}', [OrdersController::class, 'show'])->name('orders.show');
 });
 
-Route::get('/cart/buy', [PersonalDetailsController::class, 'show'])->name('carts.buyWithoutRegistration'); ///poprawic
-Route::post('/cart/changePrice', [CartController::class, 'changePrice'])->name('carts.changePrice');
+Route::get('/personalDetails/create', [PersonalDetailsController::class, 'create'])->name('personalDetails.create');
+Route::post('/cart/updatePrice', [CartController::class, 'updatePrice'])->name('carts.updatePrice');
 
-Route::post('/cart/storeWithoutRegistration', [PersonalDetailsController::class, 'walidate'])->name('carts.withoutregistration.store');
-Route::get('/cart/summary', [CartController::class, 'summary'])->name('carts.summary');
-Route::post('/cart/saveWithoutRegistration', [OrdersController::class, 'store'])->name('carts.savewithoutregistration');
+Route::post('/personalDetail/walidation', [PersonalDetailsController::class, 'walidate'])->name('personalDetails.walidate');
+Route::get('/cart/show', [CartController::class, 'summary'])->name('carts.show');
+Route::post('/order/store', [OrdersController::class, 'store'])->name('orders.store');
 
-Route::post('/carts/add-promo', [PromoCodeController::class, 'checkPromo'])->name('carts.addPromo');
+Route::post('/promoCode/checkPromo', [PromoCodeController::class, 'checkPromo'])->name('promoCodes.checkPromo');
 
-Route::post('/cart/updateDefaultPersonalDetails', [PersonalDetailsController::class, 'store'])->name('carts.updateDefaultPersonalDetails');
+Route::post('/personalDetail/store', [PersonalDetailsController::class, 'store'])->name('personalDetails.store');
 
 // Route::resource('contacts', ContactController::class);
-// Route::post('/contacts/send-mail', [ContactController::class, 'sendMailLetsTalkMail'])->name('contacts.sendMailLetsTalkMail');
+// Route::post('/contacts/sendMail', [ContactController::class, 'sendMail'])->name('contacts.sendMail');
 
-// Route::resource('AboutUs', AboutUsController::class);
+// Route::resource('aboutUs', AboutUsController::class);
 
 // Route::resource('homepage', HomePageController::class);
 
 
-Route::apiresource('/products', ProductController::class)->only(['index', 'show']);
+Route::apiresource('/products', ProductController::class)->only(['index','show','create']);
 Route::middleware(['auth:sanctum', 'admin'])->group(function () {
     Route::apiresource('products', ProductController::class)->only(['create', 'edit', 'store', 'destroy', 'update']);
 });
@@ -70,10 +70,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/products/{product}/comments', [CommentController::class, 'store'])->name('products.comments.store');
 });
 
-Route::post('/products/{product}/addToCart', [CartController::class, 'store'])->name('products.addToCart');
-//Route::post('/products/{product}/add_to_cart_2', [ProductController::class, 'addToCart2'])->name('products.add_to_cart_2');
+Route::post('/products/{product}/addToCart', [CartController::class, 'storeAndRedirect'])->name('carts.addToCart');
+//Route::post('/products/{product}/addToCart2', [ProductController::class, 'store'])->name('carts.addToCart2');
 
-Route::post('/products/subscribe', [SubscriberController::class, 'store'])->name('products.subscribe');
+Route::post('/subscriber/store', [SubscriberController::class, 'store'])->name('subscribers.store');
 
 // Route::resource('statutes', StatuteController::class);
 
@@ -95,7 +95,7 @@ Route::post('/products/subscribe', [SubscriberController::class, 'store'])->name
 // Route::get('/google/redirect', [GoogleLoginController::class, 'redirectToGoogle'])->name('google.redirect');
 // Route::get('/auth/google/callback', [GoogleLoginController::class, 'handleGoogleCallback'])->name('google.callback');
 
-
+/////////////////////////////////////////////////////////////////////////////////////////////
 //to na dole to test jak coś dziala
 // use Illuminate\Support\Facades\Auth;
 // Route::get('/test', function () {

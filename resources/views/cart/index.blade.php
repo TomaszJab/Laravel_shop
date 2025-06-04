@@ -43,7 +43,7 @@
 
                 @include('cart.components.orderSummary')
 
-                <a href="{{ route('carts.delivery') }}" class="btn btn-primary w-100">Delivery and payment</a>
+                <a href="{{ route('orders.create') }}" class="btn btn-primary w-100">Delivery and payment</a>
             </div>
         </div>
         <!-- Promo Code -->
@@ -91,7 +91,7 @@
             let quantityInput = $(this).siblings(".quantity-input");
 
             $.ajax({
-                url: "{{ route('carts.changequantity') }}",
+                url: "{{ route('carts.updateQuantity') }}",
                 type: "POST",
                 data: {
                     _token: "{{ csrf_token() }}",
@@ -130,7 +130,7 @@
 
             // Send the form data via AJAX to the route
             $.ajax({
-                url: '/carts/add-promo', // Route for adding the promo code
+                url: '/promoCode/checkPromo', // Route for adding the promo code
                 type: 'POST',
                 data: {
                     _token: "{{ csrf_token() }}", // CSRF token for security
@@ -173,7 +173,7 @@ $(document).ready(function () {
 
         // Usuwanie AJAX
         $.ajax({
-            url: "{{ route('carts.destroy', '') }}/" + productId, // Tworzenie URL
+            url: "{{ route('cart.destroy', '') }}/" + productId, // Tworzenie URL
             type: "POST",
             data: {
                 _token: "{{ csrf_token() }}", // Token CSRF dla bezpieczeństwa

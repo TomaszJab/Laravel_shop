@@ -23,7 +23,7 @@
     @endif
 
     <div class="py-5">
-        <form action="{{ route('contacts.sendMailLetsTalkMail') }}" method="post">
+        <form action="{{ route('contacts.sendMail') }}" method="post">
             @csrf
             <div class="row mb-2">
                 <div class="col">

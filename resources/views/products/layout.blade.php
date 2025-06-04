@@ -52,7 +52,7 @@ if($cart){
                     <a class="nav-link {{ request()->routeIs('homepage.index') ? 'active' : '' }}"  href="{{ route('homepage.index') }}">Home Page <span class="sr-only">(current)</span></a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('AboutUs.index') ? 'active' : '' }}" href="{{ route('AboutUs.index') }}">About Us</a>
+                    <a class="nav-link {{ request()->routeIs('aboutUs.index') ? 'active' : '' }}" href="{{ route('aboutUs.index') }}">About Us</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link {{ request()->routeIs('contacts.index') ? 'active' : '' }}" href="{{ route('contacts.index') }}">Contact</a>
@@ -63,7 +63,7 @@ if($cart){
                       <a class="nav-link" href="{{ url('/dashboard') }}">Dashboard</a>
                     </li>
                     <li class="nav-item">
-                      <a class="nav-link {{ request()->routeIs('carts.order') ? 'active' : '' }}" href="{{ route('carts.order') }}">Orders</a>
+                      <a class="nav-link {{ request()->routeIs('orders.index') ? 'active' : '' }}" href="{{ route('orders.index') }}">Orders</a>
                     </li>
                     <li class="nav-item">
                       <form method="POST" action="{{ route('logout') }}" class="d-inline">
@@ -153,7 +153,7 @@ if($cart){
                 <div class="col-12 mb-3">
                     <div class="w-100 my-3 border-top border-light"></div>
                 </div>
-                <form action="{{ route('products.subscribe') }}" method="POST" class="col-auto ms-auto">
+                <form action="{{ route('subscribers.store') }}" method="POST" class="col-auto ms-auto">
                     <div class="input-group mb-3">
                         @csrf
                         <input type="text" class="form-control" name="email_address" placeholder="Email address">

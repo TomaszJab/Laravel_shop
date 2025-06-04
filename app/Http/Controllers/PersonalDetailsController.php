@@ -17,7 +17,7 @@ class PersonalDetailsController extends Controller
         $this->personalDetailsService = $personalDetailsService;
     }
 
-    public function show()
+    public function create()
     {
         $idUser = auth()->user()->id ?? null;
         if ($idUser) {
@@ -33,8 +33,8 @@ class PersonalDetailsController extends Controller
     {
         $personalDetails = $this->personalDetailsService->walidate($request);
 
-        session(['cart_summary' => $personalDetails]);
-        return redirect()->route('carts.summary');
+        session(['personalDetails' => $personalDetails]);
+        return redirect()->route('carts.show');
     }
 
     public function store(Request $request)

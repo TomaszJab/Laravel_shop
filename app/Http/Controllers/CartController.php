@@ -82,7 +82,7 @@ class CartController extends Controller
         } else {
             //session()->flash('success', 'Product not removed successfully');
         }
-        
+
         return response()->json([
             'success' => true,
             'reload' => true,
@@ -199,8 +199,8 @@ class CartController extends Controller
     public function show()//public function show(CartData) $cartData tutaj nie będzie :D
     {
         $cartData = $this->cartService->dataCart();
-        $summary = session('cart_summary', []);
+        $summary = session('personalDetails', []);
 
-        return view('cart.summary', array_merge($cartData, ['summary' => $summary]));
+        return view('order.show', array_merge($cartData, ['summary' => $summary]));
     }
 }

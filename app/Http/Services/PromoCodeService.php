@@ -8,7 +8,7 @@ use App\Models\PromoCode;
 
 class PromoCodeService extends Controller
 {
-    public function checkPromo(String $promoCode)
+    public function checkPromo(string $promoCode)
     {
         $promoCode =  PromoCode::where('promo_code', $promoCode)->first();
         return $promoCode;
@@ -24,7 +24,9 @@ class PromoCodeService extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request) {}
+    public function store(Request $request)
+    {
+    }
 
     /**
      * Display the specified resource.

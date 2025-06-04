@@ -34,7 +34,7 @@
             <div class="card-body">
                 @include('cart.components.orderSummary')
                 @if($enableButtons ?? true)
-                    <a href="{{ route('carts.delivery') }}" class="btn btn-outline-primary w-100">Edit delivery and payment</a>
+                    <a href="{{ route('orders.create') }}" class="btn btn-outline-primary w-100">Edit delivery and payment</a>
                 @endif
             </div>
         </div>
@@ -44,7 +44,7 @@
 <div class="row">
     <div class="col-lg-12 mb-4">
             <div class="card">
-                <form action="{{ route('carts.savewithoutregistration') }}" method="POST">
+                <form action="{{ route('orders.store') }}" method="POST">
                 @csrf
                     <div class="card-body">
                         <div class="row">

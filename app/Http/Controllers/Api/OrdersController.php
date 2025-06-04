@@ -92,7 +92,7 @@ class OrdersController extends Controller
     public function store(PersonalDetailsRequest $request)
     {
         $dataPersonalDetails = $request->input('personal_details');
-        //session('cart_summary');
+        //session('personalDetails');
 
         $idUser = Auth::guard('sanctum')->user()->id ?? null;
         //$idUser = auth()->user()->id ?? null;
@@ -102,7 +102,7 @@ class OrdersController extends Controller
         $personalDetails = $this->personalDetailsService->store($request, $dataPersonalDetails);
         //personalDetails::create($data);
         //to nie bedzie
-        // session()->forget('cart_summary');
+        // session()->forget('personalDetails');
         //}
 
         //$cartData = $this->dataCart();

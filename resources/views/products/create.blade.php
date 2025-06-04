@@ -18,7 +18,7 @@
                 <div class="card-body m-2">
                     <div class="col-xl-12 col-lg-12 col-md-12 d-flex justify-content-between">
                         <h6 class="mt-3 text-primary">Add New Product</h6>
-                        <a class="btn btn-primary mt-2" href="{{ route('carts.order') }}"> Back</a>
+                        <a class="btn btn-primary mt-2" href="{{ route('orders.index') }}"> Back</a>
                     </div>
                     <div class="col-xs-12 col-sm-12 col-md-12">
                         <div class="form-group">
