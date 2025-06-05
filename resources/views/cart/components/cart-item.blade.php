@@ -32,7 +32,7 @@
                     </div>
                     <div class="col-md-2 text-end">
                         <p class="fw-bold"  data-product-id="{{ $id }}">${{ number_format($details['price'] * $details['quantity'], 2) }}</p>
-                        <!-- <form action="{{ route('carts.destroy',$id) }}" method="POST">
+                        <!-- <form action="{{ route('cart.destroy',$id) }}" method="POST">
 
                             @csrf
                             @method('DELETE') -->

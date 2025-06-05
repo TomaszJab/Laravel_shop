@@ -207,7 +207,7 @@ class ProductApiControllerTest extends TestCase
             'quantity' => 2
         ];
 
-        $response = $this->postJson('api/products/' . $idProduct . '/add_to_cart', $cartData);
+        $response = $this->postJson('api/products/' . $idProduct . '/addToCart', $cartData);
 
         $categoryProducts = $categoryProduct->toArray();
         $product = $product->toArray();
@@ -341,7 +341,7 @@ class ProductApiControllerTest extends TestCase
         //$subscriber
         $subscriber = Subscriber::factory()->make()->toArray();
         $email['email_address'] = $subscriber['email_subscriber'];
-        $response = $this->postJson('api/products/subscribe', $email);
+        $response = $this->postJson('api/subscriber/store', $email);
 
         $response->assertStatus(201)->assertJson(['subscriber' => Arr::except($subscriber, ['created_at', 'updated_at'])]);
         $this->assertDatabaseHas('subscribers', Arr::except($subscriber, ['created_at', 'updated_at', 'id']));

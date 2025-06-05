@@ -79,9 +79,9 @@ if($cart){
                 <strong>You do not need to create an account in our store to place an order.</strong>
                 <p class="text-start mt-3 mb-3">Add the product to your cart, select a shipping method and click the "Create order" button.</p>
                 @if($countCartProducts > 0)
-                    <a href="/cart/buy" class="btn btn-md btn-lg btn-primary w-100">Create Order</a>
+                    <a href="/personalDetails/create" class="btn btn-md btn-lg btn-primary w-100">Create Order</a>
                 @else
-                    <a href="/cart/buy" class="btn btn-md btn-lg btn-primary w-100 disabled">Create Order</a>
+                    <a href="/personalDetails/create" class="btn btn-md btn-lg btn-primary w-100 disabled">Create Order</a>
                 @endif
             </div>
         </div>

@@ -12,12 +12,12 @@
     </div>
 @endif
 @php
-    $summary = session('cart_summary', []);
+    $summary = session('personalDetails', []);
 @endphp
 <div class="row">
     <div class="col-lg-12 mb-4 mt-4">
             <div class="card">
-                <form action="{{ route('carts.withoutregistration.store') }}" method="POST">
+                <form action="{{ route('personalDetails.walidate') }}" method="POST">
                 @csrf
                     <div class="card-body">
                         <div class="row">

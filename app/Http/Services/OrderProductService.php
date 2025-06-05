@@ -30,6 +30,12 @@ class OrderProductService extends Controller
     {
         return OrderProduct::where('id', $order_product_id)->first();
     }
+
+    public function create(array $orderProduct)
+    {
+        $orderProduct = OrderProduct::create($orderProduct);
+        return $orderProduct;
+    }
     /**
      * Store a newly created resource in storage.
      */

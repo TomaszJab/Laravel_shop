@@ -4,229 +4,207 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 use App\Http\Services\OrderService;
 use App\Http\Services\OrderProductService;
 use App\Http\Services\PersonalDetailsService;
 use App\Http\Services\ProductService;
-use App\Http\Requests\PersonalDetailsRequest;
-use App\Http\Resources\OrderProductResource;
-use App\Http\Resources\OrderResource;
 use App\Http\Resources\PersonalDetailsResource;
-use App\Http\Resources\ProductResource;
+use App\Http\Resources\CartsResource;
 
 class CartController extends Controller
 {
-    protected $orderService;
-    protected $orderProductService;
-    protected $personalDetailsService;
+    // protected $orderService;
+    // protected $orderProductService;
+    // protected $personalDetailsService;
     protected $productService;
 
     public function __construct(
-        OrderService $orderService,
-        OrderProductService $orderProductService,
-        PersonalDetailsService $personalDetailsService,
+        //     OrderService $orderService,
+        //     OrderProductService $orderProductService,
+        //     PersonalDetailsService $personalDetailsService,
         ProductService $productService
     ) {
-        $this->orderService = $orderService;
-        $this->orderProductService = $orderProductService;
-        $this->personalDetailsService = $personalDetailsService;
+        //     $this->orderService = $orderService;
+        //     $this->orderProductService = $orderProductService;
+        //     $this->personalDetailsService = $personalDetailsService;
         $this->productService = $productService;
     }
-    /**
-     * Display a listing of the resource.
-     */
-    // public function index()
-    // {
-    //     //
-    // }
 
-    public function details($orderProductId)
+    public function create(Request $request)
     {
-        $orderData = $this->orderService->getOrdersByOrderProductId($orderProductId);
-        $orderProductData = $orderData->first()->orderProduct;
-
-        $personalDetailsId = $orderProductData->personal_details_id;
-        $personalDetails = $this->personalDetailsService->getPersonalDetailByPersonalDetailsId($personalDetailsId);
-
+        $cartData = $request->input("cart");
         return [
-            'products' => OrderResource::collection($orderData),
-            'orderProductData' => OrderProductResource::make($orderProductData),
-            'enableButtons' => false,
-            'summary' => PersonalDetailsResource::make($personalDetails)
+            '$cartData' => CartsResource::make($cartData)
         ];
     }
 
-    public function order()
+    public function destroy($id, Request $request)
     {
-        $userIsAdmin = Auth::guard('sanctum')->user()->isAdmin();
+        if ($id) {
+            $cart = $request->input("cart");
 
-        if ($userIsAdmin) {
-            $products = $this->productService->getAllProductPaginate(8);
-            $orderProducts = $this->orderProductService->getAllOrderProductPaginate(8);
+            if (isset($cart[$id])) {
+                $products = array_filter($cart, 'is_array');
+                $keys = array_keys($products);
+                if (count($products) >= 2) {
+                    $secondProductId = $keys[1];
+                } else {
+                    $secondProductId = $keys[0];
+                }
 
-            return [
-                'orderProducts' => OrderProductResource::collection($orderProducts),
-                'products' => ProductResource::collection($products)
+                unset($cart[$id]);
+
+                if (count($products) >= 2) {
+                    //session()->put('cart', $cart);
+                    $subtotal = collect($products)->sum(fn($item) => $item['price'] * $item['quantity']);
+
+                    if (count($products) == 1) {
+                        $reload = true;
+                    } else {
+                        $reload = false;
+                    }
+
+                    return response()->json([
+                        'success' => true,
+                        'reload' => $reload,
+                        'new_subtotal' => $subtotal,
+                        'secondProductId' => $secondProductId,
+                        'message' => 'Produkt został usunięty z koszyka.',
+                        'cart' => CartsResource::make($cart)
+                    ]);
+                } else {
+                    //session()->forget('cart');
+                    //return view('cart.index');
+                }
+            }
+            //session()->flash('success', 'Product removed successfully');
+        } else {
+            //session()->flash('success', 'Product not removed successfully');
+        }
+
+        return [
+            'success' => true,
+            'reload' => true,
+            'new_subtotal' => 0,
+            'secondProductId' => $secondProductId,
+            'message' => 'Produkt został usunięty z koszyka.',
+            'cart' => CartsResource::make($cart)
+        ];
+    }
+
+    public function destroyAll()
+    {
+        return [
+            'cart' => null
+        ];
+    }
+
+    public function updateQuantity(Request $request)
+    {
+        $action = $request->input("action");
+        $product_id = $request->input("product_id");
+        $cart = $request->input("cart");
+
+        if (!isset($cart[$product_id])) {
+            return response()->json(['success' => false, 'message' => 'Produkt nie znaleziony w koszyku.']);
+        }
+
+        if ($action == "decrease") {
+            if ($cart[$product_id]['quantity'] > 1) {
+                $cart[$product_id]['quantity'] -= 1;
+            }
+        } elseif ($action == "increase") {
+            $cart[$product_id]['quantity'] += 1;
+        }
+
+        $products = array_filter($cart, 'is_array');
+        $subtotal = number_format(collect($products)->sum(fn($item) => $item['price'] * $item['quantity']), 2);
+
+        $subtotalProduct = number_format($cart[$product_id]['price'] * $cart[$product_id]['quantity'], 2);
+
+        return response()->json([
+            'success' => true,
+            'new_quantity' => $cart[$product_id]['quantity'],
+            'new_subtotal' => $subtotal,
+            'new_subtotalProduct' => $subtotalProduct,
+            'cart' => CartsResource::make($cart)
+        ]);
+    }
+
+    public function updatePrice(Request $request) //
+    {
+        $price = str_replace('$', '', $request->input("price"));
+        $method = $request->input("method");
+        $change = $request->input("change");
+
+        $cart = $request->input("cart", []);
+
+        if ($change == "Price") {
+            $cart['delivery'] = $price;
+            $cart['method_delivery'] = $method;
+        } elseif ($change == "Payment") {
+            $cart['payment'] = $price;
+            $cart['method_payment'] = $method;
+        }
+
+        return [
+            'cart' => CartsResource::make($cart),
+            'success' => true
+        ];
+    }
+
+    // public function storeAndRedirect($id, Request $request)
+    // {
+    //     $this->store($id, $request);
+    //     return redirect()->route('cart.create');
+    // }
+
+    public function store($id, Request $request)
+    {
+        $product = $this->productService->getProductById($id);
+        $cart = $request->input("cart", []);
+
+        $size = $request->input('size');
+        $quantity = $request->input('quantity');
+        $key = $product->id . '_' . $size;
+
+        if (isset($cart[$key])) {
+            $cart[$key]['quantity'] = $cart[$key]['quantity'] + $quantity;
+        } else {
+            $categoryProducts = $product->categoryProducts()->first();
+
+            $cart[$key] = [
+                'name' => $product->name,
+                'quantity' => 1,
+                'price' => $product->price,
+                'name_category_product' => $categoryProducts->name_category_product,
+                'category_products_id' => $product->category_products_id
             ];
-        } else {
-            $user = Auth::guard('sanctum')->user();
-            $idUser = $user->id;
-            $orderProducts = $this->orderProductService->getAllOrderProductPaginateByIdUser($idUser, 8);
-            $defaultPersonalDetails = $this->personalDetailsService->getDefaultPersonalDetailsByUserId($idUser);
-            $additionalPersonalDetails = $this->personalDetailsService->getAdditionalPersonalDetailsByUserId($idUser);
 
-            return [
-                'orderProducts' => OrderProductResource::collection($orderProducts),
-                'personalDetails' => PersonalDetailsResource::make($defaultPersonalDetails),
-                'additionalPersonalDetails' => PersonalDetailsResource::make($additionalPersonalDetails)
-            ];
-        }
-    }
-
-    //http://127.0.0.1:8000/api/cart/buy
-    public function buyWithoutRegistration()
-    {
-        $idUser = Auth::guard('sanctum')->user()->id ?? null;
-        if ($idUser) {
-            $defaultPersonalDetails = $this->personalDetailsService->getDefaultPersonalDetailsByUserId($idUser);
-        } else {
-            $defaultPersonalDetails = null;
+            if (!isset($cart['method_delivery'])) {
+                $cart['method_delivery'] = 'Kurier';
+                $cart['method_payment'] = 'AutoPay';
+                $cart['promo_code'] = null;
+                $cart['delivery'] = number_format(25, 2);
+                $cart['payment'] = number_format(0, 2);
+            }
         }
 
         return [
-            'defaultPersonalDetails' => $defaultPersonalDetails ?
-                PersonalDetailsResource::make($defaultPersonalDetails) : null
+            'cart' => CartsResource::make($cart),
         ];
     }
 
-    public function storeWithoutRegistration(PersonalDetailsRequest $request)
+    public function show(Request $request)
     {
-        $personalDetails = $this->personalDetailsService->storeWithoutRegistration($request);
+        $cartData = $request->input("cart", []);
+        $personalDetails = $request->input("personalDetails", []);
 
+        //return view('order.show', array_merge($cartData, ['summary' => $summary]));
         return [
-            'summary' => PersonalDetailsResource::make($personalDetails)
+            'cart' => CartsResource::make($cartData),
+            'personalDetails' => PersonalDetailsResource::make($personalDetails),
         ];
     }
-
-    public function saveWithoutRegistration(PersonalDetailsRequest $request)
-    {
-        $dataPersonalDetails = $request->input('personal_details');
-        //session('cart_summary');
-
-        $idUser = Auth::guard('sanctum')->user()->id ?? null;
-        //$idUser = auth()->user()->id ?? null;
-        $dataPersonalDetails['user_id'] = $idUser;
-        //if ($data) {
-
-        $personalDetails = $this->personalDetailsService->store($request, $dataPersonalDetails);
-        //personalDetails::create($data);
-        //to nie bedzie
-        // session()->forget('cart_summary');
-        //}
-
-        //$cartData = $this->dataCart();
-        $cartData = $request->input('cart_data');
-        // if (!$cartData || !isset($cartData['products'])) {
-        //     return response()->json(['error' => 'Invalid cart data'], 422);
-        // }
-
-        $this->orderService->storeOrderBasedOnOrderProduct($idUser, $personalDetails, $cartData);
-
-        //session()->forget('cart');
-
-        return response()->json(['message' => 'Order created successfully'], 201);
-    }
-
-    // public function summary()//////////////
-    // {
-    //     $cartData = $this->dataCart();
-    //     $summary = session('cart_summary', []);
-
-    //     return view('cart.summary', array_merge($cartData, ['summary' => $summary]));
-    // }
-
-    public function updateDefaultPersonalDetails(PersonalDetailsRequest $request)
-    {
-        $userId = Auth::guard('sanctum')->user()->id ?? null;
-        //$userId = auth()->user()->id;
-
-        $data = $request->except('_token');
-        $data['user_id'] = $userId;
-
-        $defaultPersonalDetails = $request->input('default_personal_details');
-        if ($defaultPersonalDetails == "0") {
-            $data['company_or_private_person'] = 'private_person';
-        }
-
-        //$companyOrPrivatePerson = $data['company_or_private_person'];
-
-        // $rules = [
-        //     'email' => 'required',
-        //     'firstName' => 'required',
-        //     'lastName' => 'required',
-        //     'phone' => 'required',
-
-        //     'street' => 'required',
-        //     'house_number' => 'required',
-        //     'zip_code' => 'required',
-        //     'city' => 'required',
-        // ];
-
-        if ($request->has('acceptance_of_the_regulations')) {
-            // $rules['acceptance_of_the_regulations'] = 'required';
-        } else {
-            $data['acceptance_of_the_regulations'] = '-';
-        }
-
-        // if ($companyOrPrivatePerson == 'company') {
-        //     $rules['company_name'] = 'required';
-        //     $rules['nip'] = 'required';
-        // }
-
-        // try {
-        //     // $validatedData = $request->validate($rules);
-        // } catch (ValidationException $e) {
-        //     return response()->json(['errors' => $e->validator->errors()], 422);
-        // }
-
-        $personalDetails = $this->personalDetailsService->store($request, $data);
-        //PersonalDetails::create($data);
-
-        return response()->json(PersonalDetailsResource::make($personalDetails), 201);
-        //return redirect()->back()->with('success', 'Personal details saved successfully.');
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    // public function store(Request $request)
-    // {
-    //     //
-    // }
-
-    /**
-     * Display the specified resource.
-     */
-    // public function show(Product $product)
-    // {
-    //     //
-    // }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    // public function update(Request $request, Product $product)
-    // {
-    //     //
-    // }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    // public function destroy(Product $product)
-    // {
-    //     //
-    // }
 }

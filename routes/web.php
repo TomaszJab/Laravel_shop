@@ -1,7 +1,6 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
-use Illuminate\Support\Facades\Mail;
+use App\Http\Controllers\Profile\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SubscriberController;
@@ -10,12 +9,11 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\AboutUsController;
 use App\Http\Controllers\HomePageController;
+use App\Http\Controllers\PromoCodeController;
 use App\Http\Controllers\StatuteController;
-use App\Models\promoCode;
-use App\Mail\AboutUsLetsTalkMail;
-
+use App\Http\Controllers\PersonalDetailsController;
 use App\Http\Controllers\GoogleLoginController;
-use App\Models\Subscriber;
+use App\Http\Controllers\OrdersController;
 
 /*
 |--------------------------------------------------------------------------
@@ -27,56 +25,35 @@ use App\Models\Subscriber;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-Route::resource('carts', CartController::class)->only(['index']);
+Route::resource('cart', CartController::class)->only(['create','destroy']);
 
-Route::post('/cart/clear', [CartController::class, 'clearCart'])->name('carts.clear');
-Route::post('/cart/changequantity', [CartController::class, 'changequantity'])->name('carts.changequantity');
-Route::get('/cart/delivery', [CartController::class, 'delivery'])->name('carts.delivery');
+Route::post('/cart/clear', [CartController::class, 'destroyAll'])->name('carts.clear');//
+Route::post('/cart/updateQuantity', [CartController::class, 'updateQuantity'])->name('carts.updateQuantity');//
+Route::get('/order/create', [OrdersController::class, 'create'])->name('orders.create');//
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/cart/order', [CartController::class, 'order'])->name('carts.order');
+    Route::get('/order', [OrdersController::class, 'index'])->name('orders.index');
 });
 
 Route::middleware('auth','ownerOrAdmin')->group(function () {
-    Route::get('/cart/order/details/{orderProductId}', [CartController::class, 'details'])->name('carts.order.details');
+    Route::get('/order/{orderProductId}', [OrdersController::class, 'show'])->name('orders.show');
 });
 
-Route::get('/cart/buy', [CartController::class, 'buyWithoutRegistration'])->name('carts.buyWithoutRegistration');
-Route::post('/cart/changePrice', [CartController::class, 'changePrice'])->name('carts.changePrice');
+Route::get('/personalDetails/create', [PersonalDetailsController::class, 'create'])->name('personalDetails.create');
+Route::post('/cart/updatePrice', [CartController::class, 'updatePrice'])->name('carts.updatePrice');//
 
-Route::post('/cart/storeWithoutRegistration', [CartController::class, 'storeWithoutRegistration'])->name('carts.withoutregistration.store');
-Route::get('/cart/summary', [CartController::class, 'summary'])->name('carts.summary');
-Route::post('/cart/saveWithoutRegistration', [CartController::class, 'saveWithoutRegistration'])->name('carts.savewithoutregistration');
+Route::post('/personalDetail/walidation', [PersonalDetailsController::class, 'walidate'])->name('personalDetails.walidate');
+Route::get('/cart/show', [CartController::class, 'show'])->name('carts.show');
+Route::post('/order/store', [OrdersController::class, 'store'])->name('orders.store');
 
-use Illuminate\Http\Request;
-Route::post('/carts/add-promo', [CartController::class, 'addPromo'])->name('carts.addPromo');
-// Route::post('/carts/add-promo', function (Request $request) { 
-//     $promo_code = $request->input('promo_code');
-//     $promo = promoCode::where('promo_code', $promo_code)->first();
+Route::post('/promoCode/checkPromo', [PromoCodeController::class, 'checkPromo'])->name('promoCodes.checkPromo');
 
-//     // Odpowiedź JSON
-//    // return response()->json(['success' => true]);
-//     if($promo){
-//         $cart = session()->get('cart', []);
-//         $cart['promo_code'] = '10';
-//         session()->put('cart', $cart);
-//         return response()->json(['success' => true, 'discount' => $cart['promo_code']]);
-//     }else{
-//         return response()->json(['success' => false]);
-//     }
-// });
-
-// Route::post('/cart/add-promos', function (Request $request) {
-//     $promo_code = $request->input('promo_code');
-//     $promo = promoCode::where('promo_code', $promo_code)->first();
-//     dd($promo);
-// })->name('apply.promo.code');
-Route::post('/cart/updateDefaultPersonalDetails', [CartController::class, 'updateDefaultPersonalDetails'])->name('carts.updateDefaultPersonalDetails');
+Route::post('/personalDetail/store', [PersonalDetailsController::class, 'store'])->name('personalDetails.store');
 
 Route::resource('contacts', ContactController::class);
-Route::post('/contacts/send-mail', [ContactController::class, 'sendMailLetsTalkMail'])->name('contacts.sendMailLetsTalkMail');
+Route::post('/contacts/sendMail', [ContactController::class, 'sendMail'])->name('contacts.sendMail');
 
-Route::resource('AboutUs', AboutUsController::class);
+Route::resource('aboutUs', AboutUsController::class);//
 
 Route::resource('homepage', HomePageController::class);
 
@@ -86,14 +63,13 @@ Route::middleware(['auth', 'admin'])->group(function () {
 });
 
 Route::middleware('auth')->group(function () {
-    //Route::post('/products/{product}/comments', [ProductController::class, 'storeComment'])->name('products.comments.store');
     Route::post('/products/{product}/comments', [CommentController::class, 'store'])->name('products.comments.store');
 });
 
-Route::post('/products/{product}/add_to_cart', [ProductController::class, 'addToCart'])->name('products.add_to_cart');
-Route::post('/products/{product}/add_to_cart_2', [ProductController::class, 'addToCart2'])->name('products.add_to_cart_2');
+Route::post('/products/{product}/addToCart', [CartController::class, 'storeAndRedirect'])->name('carts.addToCart');
+Route::post('/products/{product}/addToCart2', [CartController::class, 'store'])->name('carts.addToCart2');
 
-Route::post('/products/subscribe', [SubscriberController::class, 'store'])->name('products.subscribe');
+Route::post('/subscriber/store', [SubscriberController::class, 'store'])->name('subscribers.store');
 
 Route::resource('statutes', StatuteController::class);
 

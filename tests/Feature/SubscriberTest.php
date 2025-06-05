@@ -28,7 +28,7 @@ class SubscriberTest extends TestCase
         $subscriber = Subscriber::factory()->make()->toArray();
         $email['email_address'] = $subscriber['email_subscriber'];
 
-        $response = $this->post('/products/subscribe', $email);
+        $response = $this->post('/subscriber/store', $email);
         $response->assertRedirect(route('products.index', ['category_products' => 'a']));
         $response->assertSessionHas('success', 'You are a subscriber!');
         $this->assertDatabaseHas(
