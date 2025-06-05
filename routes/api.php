@@ -46,7 +46,7 @@ Route::get('/personalDetails/create', [PersonalDetailsController::class, 'create
 Route::post('/cart/updatePrice', [CartController::class, 'updatePrice'])->name('carts.updatePrice');
 
 Route::post('/personalDetail/walidation', [PersonalDetailsController::class, 'walidate'])->name('personalDetails.walidate');
-Route::get('/cart/show', [CartController::class, 'summary'])->name('carts.show');
+Route::get('/cart/show', [CartController::class, 'show'])->name('carts.show');
 Route::post('/order/store', [OrdersController::class, 'store'])->name('orders.store');
 
 Route::post('/promoCode/checkPromo', [PromoCodeController::class, 'checkPromo'])->name('promoCodes.checkPromo');
