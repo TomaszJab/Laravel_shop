@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\PersonalDetails;
 use App\Http\Requests\PersonalDetailsRequest;
 use App\Http\Services\PersonalDetailsService;
 
@@ -26,7 +25,7 @@ class PersonalDetailsController extends Controller
             $defaultPersonalDetails = null;
         }
 
-        return view('cart.buyWithoutRegistration', compact('defaultPersonalDetails'));
+        return view('personalDetails.create', compact('defaultPersonalDetails'));
     }
 
     public function walidate(PersonalDetailsRequest $request)

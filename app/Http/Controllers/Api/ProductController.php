@@ -56,6 +56,7 @@ class ProductController extends Controller
     public function create()
     {
         $categoryProducts = $this->categoryProductService->getAllCategory();
+        
         return [
             'categoryProduct' => CategoryProductsResource::collection($categoryProducts)
         ];
@@ -66,8 +67,11 @@ class ProductController extends Controller
      */
     public function store(ProductRequest $request)
     {
-        $product = $this->productService->store($request);
-        return response()->json($product, 201);
+        $this->productService->store($request);
+
+        return response()->json([
+            'success' => 'Product created successfully.'
+        ], 201);
     }
 
     /**
@@ -86,6 +90,7 @@ class ProductController extends Controller
     public function edit(Product $product)
     {
         $categoryProducts = $this->categoryProductService->getAllCategory();
+
         return [
             'product' => ProductResource::make($product),
             'categoryProduct' => CategoryProductsResource::collection($categoryProducts)
@@ -97,10 +102,10 @@ class ProductController extends Controller
      */
     public function update(ProductRequest $request, Product $product)
     {
-        $product = $this->productService->update($request, $product);
+        $this->productService->update($request, $product);
 
         return [
-            'product' => ProductResource::make($product)
+            'success' => 'Product updated successfully'
         ];
     }
 
@@ -111,6 +116,8 @@ class ProductController extends Controller
     {
         $product = $this->productService->destroy($product);
 
-        return response()->json(null, 204);
+        return response()->json([
+            'success' => 'Product deleted successfully'
+        ], 204);
     }
 }

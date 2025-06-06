@@ -98,6 +98,7 @@ class OrdersController extends Controller
     public function store(PersonalDetailsRequest $request)
     {
         $data = session('personalDetails');
+        $data = $data->toArray();
 
         $idUser = auth()->user()->id ?? null;
         $data['user_id'] = $idUser;
@@ -109,7 +110,7 @@ class OrdersController extends Controller
         $cartData = $this->cartService->dataCart();
 
         $this->orderService->storeOrderBasedOnOrderProduct($idUser, $personalDetails, $cartData);
-
+        session()->forget('cart');
         return redirect()->route(
             'products.index',
             ['category_products' => 'a']

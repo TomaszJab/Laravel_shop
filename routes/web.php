@@ -25,22 +25,23 @@ use App\Http\Controllers\OrdersController;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-Route::resource('cart', CartController::class)->only(['create','destroy']);
 
-Route::post('/cart/clear', [CartController::class, 'destroyAll'])->name('carts.clear');//
-Route::post('/cart/updateQuantity', [CartController::class, 'updateQuantity'])->name('carts.updateQuantity');//
-Route::get('/order/create', [OrdersController::class, 'create'])->name('orders.create');//
+Route::resource('cart', CartController::class)->only(['create', 'destroy']);
+
+Route::post('/cart/clear', [CartController::class, 'destroyAll'])->name('carts.clear'); //
+Route::post('/cart/updateQuantity', [CartController::class, 'updateQuantity'])->name('carts.updateQuantity'); //
+Route::get('/order/create', [OrdersController::class, 'create'])->name('orders.create'); //
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/order', [OrdersController::class, 'index'])->name('orders.index');
 });
 
-Route::middleware('auth','ownerOrAdmin')->group(function () {
+Route::middleware('auth', 'ownerOrAdmin')->group(function () {
     Route::get('/order/{orderProductId}', [OrdersController::class, 'show'])->name('orders.show');
 });
 
 Route::get('/personalDetails/create', [PersonalDetailsController::class, 'create'])->name('personalDetails.create');
-Route::post('/cart/updatePrice', [CartController::class, 'updatePrice'])->name('carts.updatePrice');//
+Route::post('/cart/updatePrice', [CartController::class, 'updatePrice'])->name('carts.updatePrice'); //
 
 Route::post('/personalDetail/walidation', [PersonalDetailsController::class, 'walidate'])->name('personalDetails.walidate');
 Route::get('/cart/show', [CartController::class, 'show'])->name('carts.show');
@@ -53,13 +54,13 @@ Route::post('/personalDetail/store', [PersonalDetailsController::class, 'store']
 Route::resource('contacts', ContactController::class);
 Route::post('/contacts/sendMail', [ContactController::class, 'sendMail'])->name('contacts.sendMail');
 
-Route::resource('aboutUs', AboutUsController::class);//
+Route::resource('aboutUs', AboutUsController::class); //
 
 Route::resource('homepage', HomePageController::class);
 
-Route::resource('products', ProductController::class)->only(['index','show','create']);
+Route::resource('products', ProductController::class)->only(['index', 'show', 'create']);
 Route::middleware(['auth', 'admin'])->group(function () {
-    Route::resource('products', ProductController::class)->only(['create','edit','store','destroy','update']);
+    Route::resource('products', ProductController::class)->only(['create', 'edit', 'store', 'destroy', 'update']);
 });
 
 Route::middleware('auth')->group(function () {
@@ -91,4 +92,4 @@ Route::middleware('auth')->group(function () {
 Route::get('/google/redirect', [GoogleLoginController::class, 'redirectToGoogle'])->name('google.redirect');
 Route::get('/auth/google/callback', [GoogleLoginController::class, 'handleGoogleCallback'])->name('google.callback');
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

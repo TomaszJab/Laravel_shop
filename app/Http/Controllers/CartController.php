@@ -202,5 +202,5 @@ class CartController extends Controller
         $summary = session('personalDetails', []);
 
         return view('order.show', array_merge($cartData, ['summary' => $summary]));
-    }
+    }//
 }
