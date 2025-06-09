@@ -21,11 +21,13 @@ class PersonalDetailsController extends Controller
         $idUser = auth()->user()->id ?? null;
         if ($idUser) {
             $defaultPersonalDetails = $this->personalDetailsService->getDefaultPersonalDetailsByUserId($idUser);
+            $additionalPersonalDetails = $this->personalDetailsService->getAdditionalPersonalDetailsByUserId($idUser);
         } else {
             $defaultPersonalDetails = null;
+            $additionalPersonalDetails = null;
         }
 
-        return view('personalDetails.create', compact('defaultPersonalDetails'));
+        return view('personalDetails.create', compact('defaultPersonalDetails','additionalPersonalDetails'));
     }
 
     public function walidate(PersonalDetailsRequest $request)

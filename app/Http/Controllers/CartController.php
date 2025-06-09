@@ -6,30 +6,18 @@ use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Response;
 use Illuminate\View\View;
-use App\Http\Services\OrderService;
-use App\Http\Services\OrderProductService;
-use App\Http\Services\PersonalDetailsService;
 use App\Http\Services\CartService;
 use App\Http\Services\ProductService;
 
 class CartController extends Controller
 {
-    protected $orderService;
-    protected $orderProductService;
-    protected $personalDetailsService;
     protected $productService;
     protected $cartService;
 
     public function __construct(
-        OrderService $orderService,
-        OrderProductService $orderProductService,
-        PersonalDetailsService $personalDetailsService,
         ProductService $productService,
         CartService $cartService
     ) {
-        $this->orderService = $orderService;
-        $this->orderProductService = $orderProductService;
-        $this->personalDetailsService = $personalDetailsService;
         $this->productService = $productService;
         $this->cartService = $cartService;
     }
@@ -164,7 +152,7 @@ class CartController extends Controller
     {
         $product = $this->productService->getProductById($id);
         $cart = session()->get('cart', []);
-
+// dd($cart);
         $size = $request->input('size');
         $quantity = $request->input('quantity');
         $key = $product->id . '_' . $size;

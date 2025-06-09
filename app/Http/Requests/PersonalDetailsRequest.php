@@ -37,7 +37,6 @@ class PersonalDetailsRequest extends FormRequest
             'house_number' => 'required',
             'zip_code' => 'required',
             'city' => 'required',
-
         ];
 
         if ($companyOrPrivatePerson == 'company') { //'private_person'
@@ -46,6 +45,21 @@ class PersonalDetailsRequest extends FormRequest
         }
 
         $rules['acceptance_of_the_regulations'] = 'sometimes|required|accepted';
+
+        $other_shipping_adress = $this->input('other_shipping_adress');
+        if ($other_shipping_adress) {
+            $rules += [
+                'other_email' => 'required',
+                'other_firstName' => 'required',
+                'other_lastName' => 'required',
+                'other_phone' => 'required',
+
+                'other_street' => 'required',
+                'other_house_number' => 'required',
+                'other_zip_code' => 'required',
+                'other_city' => 'required',
+            ];
+        }
 
         return $rules;
     }

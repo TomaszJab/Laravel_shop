@@ -1,24 +1,24 @@
 @extends('products.layout')
 @section('content')
 <div class="container">
-@if ($errors->any())
+    @if ($errors->any())
     <div class="alert alert-danger">
         <strong>Whoops!</strong> There were some problems with your input.<br><br>
         <ul>
             @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
+            <li>{{ $error }}</li>
             @endforeach
         </ul>
     </div>
-@endif
-@php
+    @endif
+    @php
     $summary = session('personalDetails', []);
-@endphp
-<div class="row">
-    <div class="col-lg-12 mb-4 mt-4">
+    @endphp
+    <div class="row">
+        <div class="col-lg-12 mb-4 mt-4">
             <div class="card">
                 <form action="{{ route('personalDetails.walidate') }}" method="POST">
-                @csrf
+                    @csrf
                     <div class="card-body">
                         <div class="row">
                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
@@ -45,7 +45,7 @@
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                 <div class="form-group">
                                     <label for="phone" class="mb-1">Phone<span class="text-danger"> *</span></label>
-                                    <input type="phone" class="form-control"  value="{{ old('phone') ?? optional($defaultPersonalDetails)->phone }}" name="phone" id="phone" placeholder="Enter phone">
+                                    <input type="phone" class="form-control" value="{{ old('phone') ?? optional($defaultPersonalDetails)->phone }}" name="phone" id="phone" placeholder="Enter phone">
                                 </div>
                             </div>
                         </div>
@@ -60,7 +60,7 @@
                             <label class="btn btn-primary" style="width: 130px;" for="private_person" onclick="showContent('private person')">Private person</label>
 
                             <input type="radio" class="btn-check" name="company_or_private_person" value="company" id="company" autocomplete="off" {{ old('company_or_private_person') ?? optional($defaultPersonalDetails)->company_or_private_person == 'company' ? 'checked' : '' }}>
-                            <label class="btn btn-primary" style="width: 130px;" for="company" onclick="showContent('company_section')" >Company</label>
+                            <label class="btn btn-primary" style="width: 130px;" for="company" onclick="showContent('company_section')">Company</label>
                         </div>
 
                         <div id="company_section" class="content-section" style="display: none;">
@@ -77,36 +77,36 @@
                                         <input type="number" class="form-control mb-2" value="{{ old('nip') ?? optional($defaultPersonalDetails)->nip }}" name="nip" id="nip" placeholder="Enter Nip">
                                     </div>
                                 </div>
-                            </div>                           
+                            </div>
                         </div>
 
                         <!-- <div id="private person" class="content-section"> -->
-                            <div class="row">
-                                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
-                                    <div class="form-group">
-                                        <label for="street" class="mb-1 mt-1">Street<span class="text-danger"> *</span></label>
-                                        <input type="text" value="{{ old('street') ?? optional($defaultPersonalDetails)->street }}" name="street" class="form-control mb-2" id="street" placeholder="Enter Street">
-                                    </div>
-                                </div>
-                                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
-                                    <div class="form-group">
-                                        <label for="house_number" class="mb-1 mt-1">House number<span class="text-danger"> *</span></label>
-                                        <input type="text" value="{{ old('house_number') ?? optional($defaultPersonalDetails)->house_number }}" name='house_number' class="form-control" id="house_number" placeholder="Enter house number">
-                                    </div>
-                                </div>
-                                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
-                                    <div class="form-group">
-                                        <label for="zip_code" class="mb-1">Zip Code<span class="text-danger"> *</span></label>
-                                        <input type="text" value="{{ old('zip_code') ?? optional($defaultPersonalDetails)->zip_code }}" name="zip_code" class="form-control" id="zip_code" placeholder="Zip Code">
-                                    </div>
-                                </div>
-                                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
-                                    <div class="form-group">
-                                        <label for="city" class="mb-1">City<span class="text-danger"> *</span></label>
-                                        <input type="text" value="{{ old('city') ?? optional($defaultPersonalDetails)->city }}" name="city" class="form-control mb-2" id="city" placeholder="Enter City">
-                                    </div>
+                        <div class="row">
+                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                                <div class="form-group">
+                                    <label for="street" class="mb-1 mt-1">Street<span class="text-danger"> *</span></label>
+                                    <input type="text" value="{{ old('street') ?? optional($defaultPersonalDetails)->street }}" name="street" class="form-control mb-2" id="street" placeholder="Enter Street">
                                 </div>
                             </div>
+                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                                <div class="form-group">
+                                    <label for="house_number" class="mb-1 mt-1">House number<span class="text-danger"> *</span></label>
+                                    <input type="text" value="{{ old('house_number') ?? optional($defaultPersonalDetails)->house_number }}" name='house_number' class="form-control" id="house_number" placeholder="Enter house number">
+                                </div>
+                            </div>
+                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                                <div class="form-group">
+                                    <label for="zip_code" class="mb-1">Zip Code<span class="text-danger"> *</span></label>
+                                    <input type="text" value="{{ old('zip_code') ?? optional($defaultPersonalDetails)->zip_code }}" name="zip_code" class="form-control" id="zip_code" placeholder="Zip Code">
+                                </div>
+                            </div>
+                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                                <div class="form-group">
+                                    <label for="city" class="mb-1">City<span class="text-danger"> *</span></label>
+                                    <input type="text" value="{{ old('city') ?? optional($defaultPersonalDetails)->city }}" name="city" class="form-control mb-2" id="city" placeholder="Enter City">
+                                </div>
+                            </div>
+                        </div>
                         <!-- </div> -->
 
                         <div class="row">
@@ -136,9 +136,80 @@
                                 </div>
                             </div>
                         </div>
-                        <!-- <label for="zip">Zip Code</label>
-                        <input id="zip" type="number" name="zip" placeholder="Zip Code"> -->
-                        
+                        <div class="row">
+                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                <div class="form-check">
+                                    <input class="form-check-input" @if(old('other_shipping_adress')) checked @endif name="other_shipping_adress" type="checkbox" id="other_shipping_adress" onclick="checkboxDisplayIfChecked('other_shipping_adress', 'information_shipping_adress')">
+                                    <label class="form-check-label" for="other_shipping_adress">Other shipping adress</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="{{ old('other_shipping_adress') ? 'display:block' : 'display:none' }}" id="information_shipping_adress">
+                            <hr class="text-primary">
+                            <div class="row">
+                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                    <h6 class="mb-2 mt-1 text-primary">Additional Personal Details</h6>
+                                </div>
+                                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                                    <div class="form-group">
+                                        <label for="email" class="mb-1">Email<span class="text-danger"> *</span></label>
+                                        <input type="email" value="{{ old('additional_email') ?? optional($defaultPersonalDetails)->email }}" class="form-control mb-2" name="additional_email" id="additional_email" placeholder="Enter email">
+                                    </div>
+                                </div>
+                                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                                    <div class="form-group">
+                                        <label for="firstName" class="mb-1">First name<span class="text-danger"> *</span></label>
+                                        <input type="text" value="{{ old('additional_firstName') ?? optional($defaultPersonalDetails)->firstName }}" class="form-control mb-2" name="additional_firstName" id="additional_firstName" placeholder="Enter first name">
+                                    </div>
+                                </div>
+                                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                                    <div class="form-group">
+                                        <label for="lastName" class="mb-1">Last name<span class="text-danger"> *</span></label>
+                                        <input type="text" class="form-control" value="{{ old('additional_lastName') ?? optional($defaultPersonalDetails)->lastName }}" name="additional_lastName" id="additional_lastName" placeholder="Enter last name">
+                                    </div>
+                                </div>
+                                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                                    <div class="form-group">
+                                        <label for="phone" class="mb-1">Phone<span class="text-danger"> *</span></label>
+                                        <input type="phone" class="form-control" value="{{ old('additional_phone') ?? optional($defaultPersonalDetails)->phone }}" name="additional_phone" id="additional_phone" placeholder="Enter phone">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                    <h6 class="mt-3 mb-1 text-primary">Address</h6>
+                                </div>
+                            </div>
+
+                            <!-- <div id="private person" class="content-section"> -->
+                            <div class="row">
+                                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                                    <div class="form-group">
+                                        <label for="street" class="mb-1 mt-1">Street<span class="text-danger"> *</span></label>
+                                        <input type="text" value="{{ old('additional_street') ?? optional($defaultPersonalDetails)->street }}" name="additional_street" class="form-control mb-2" id="additional_street" placeholder="Enter Street">
+                                    </div>
+                                </div>
+                                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                                    <div class="form-group">
+                                        <label for="house_number" class="mb-1 mt-1">House number<span class="text-danger"> *</span></label>
+                                        <input type="text" value="{{ old('additional_house_number') ?? optional($defaultPersonalDetails)->house_number }}" name='additional_house_number' class="form-control" id="additional_house_number" placeholder="Enter house number">
+                                    </div>
+                                </div>
+                                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                                    <div class="form-group">
+                                        <label for="zip_code" class="mb-1">Zip Code<span class="text-danger"> *</span></label>
+                                        <input type="text" value="{{ old('additional_zip_code') ?? optional($defaultPersonalDetails)->zip_code }}" name="additional_zip_code" class="form-control" id="additional_zip_code" placeholder="Zip Code">
+                                    </div>
+                                </div>
+                                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                                    <div class="form-group">
+                                        <label for="city" class="mb-1">City<span class="text-danger"> *</span></label>
+                                        <input type="text" value="{{ old('additional_city') ?? optional($defaultPersonalDetails)->city }}" name="additional_city" class="form-control mb-2" id="additional_city" placeholder="Enter City">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="row">
                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                                 <div class="text-end">
@@ -149,14 +220,14 @@
                     </div>
                 </form>
             </div>
+        </div>
     </div>
-</div>
 </div>
 <script>
     // JavaScript to handle switching views
     function showContent(sectionId) {
         // Hide all sections
-        document.querySelectorAll('.content-section').forEach(function (section) {
+        document.querySelectorAll('.content-section').forEach(function(section) {
             section.style.display = 'none';
         });
 
@@ -164,8 +235,18 @@
         document.getElementById(sectionId).style.display = 'block';
     }
 
-    jQuery(function($){
-   $("input#zip").mask("00-000");
-});
+    jQuery(function($) {
+        $("input#zip").mask("00-000");
+    });
+
+    function checkboxDisplayIfChecked(idCheckBox, idSection) {
+        var checkBox = document.getElementById(idCheckBox);
+        var section = document.getElementById(idSection);
+        if (checkBox.checked == true) {
+            section.style.display = "block";
+        } else {
+            section.style.display = "none";
+        }
+    }
 </script>
 @endsection
