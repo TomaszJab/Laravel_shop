@@ -23,6 +23,7 @@
                     <li class="list-group-item active" onclick="showContent('orders', this)">Orders</li>
                     @if(auth()->user()->isAdmin())
                     <li class="list-group-item" onclick="showContent('products', this)">Products</li>
+                    <li class="list-group-item" onclick="showContent('statutes', this)">Statutes</li>
                     @endif
                     <li class="list-group-item" onclick="showContent('delivery', this)">Delivery</li>
                     <li class="list-group-item" onclick="showContent('account', this)">Account settings</li>
@@ -105,10 +106,10 @@
                                 <thead>
                                     <tr>
                                         <th scope="col">id</th>
-                                        <th scope="col">wartość</th>
-                                        <th scope="col">Status</th>
-                                        <th scope="col">Promo code</th>
-                                        <th scope="col">Delivery</th>
+                                        <th scope="col">Name</th>
+                                        <th scope="col">Price</th>
+                                        <th scope="col">Detail</th>
+                                        <th scope="col">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -138,6 +139,73 @@
                     </div>
                 </div>
             </div>
+
+            @if($statutes->isNotEmpty())
+            <div id="statutes" class="content-section" style="display: none;">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title text-primary">Statutes</h5>
+
+                        <div class="table-responsive-xl">
+                            <table class="table-responsive-xl table table-hover table-striped">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Id</th>
+                                        <th scope="col">Name</th>
+                                        <th scope="col">Content</th>
+                                        <th scope="col">Valid</th>
+                                        <th scope="col">Created at</th>
+                                        <th scope="col">Updated at</th>
+                                        <th scope="col">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($statutes as $statute)
+                                    <tr>
+                                        <th scope="row">{{ $statute-> id }}</th>
+                                        <td>{{ $statute -> name }}</td>
+                                        <td>{{ $statute -> content }}</td>
+                                        <td>{{ $statute -> valid }}</td>
+                                        <td>{{ $statute -> created_at }}</td>
+                                        <td>{{ $statute -> updated_at }}</td>
+                                        <td>
+                                            <form action="{{ route('statutes.destroy', $statute -> id) }}" method="POST">
+                                                <a class="btn btn-info btn-sm" href="{{ route('statutes.show', $statute -> id) }}">Show</a>
+                                                <a class="btn btn-primary btn-sm" href="{{ route('statutes.edit', $statute -> id) }}">Edit</a>
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                            <div class="col-md-2 ms-auto d-flex justify-content-end fs-4 mt-4 pagination">
+                                {!! $statutes->links() !!}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @else
+            <div id="statutes" class="content-section">
+                <div class="card">
+                    <div class="card-header mt-2">
+                        <h5>Statutes</h5>
+                    </div>
+                    <div class="card-body cart text-center">
+                        <i class="bi bi-box mb-4 mr-3" style="font-size:80px;color: orange;"></i>
+                        <h3 class="my-2"><strong>You don't have any statutes</strong></h3>
+                        <h4 class="my-2">Order something to make your day better</h4>
+                        <a href="{{ route('products.index') }}" class="btn btn-outline-primary m-3">
+                            <i class="bi bi-arrow-left me-2"></i>Continue Shopping
+                        </a>
+                    </div>
+                </div>
+            </div>
+            @endif
+
             @endif
             <div id="delivery" class="content-section" style="display: none;">
                 <div class="card">
@@ -233,7 +301,7 @@
                                     <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                                         <div class="form-check">
                                             <input class="form-check-input" @if($personalDetails->acceptance_of_the_regulations ?? '' =='on') checked @endif name="acceptance_of_the_regulations" type="checkbox" id="acceptance_of_the_regulations">
-                                            <label class="form-check-label" for="acceptance_of_the_regulations">I have read the <a href="/statutes" target="_blank">regulations</a> of the online store and accept their content.<span class="text-danger"> *</span></label>
+                                            <label class="form-check-label" for="acceptance_of_the_regulations">I have read the <a href="{{ route('statutes.show') }}" target="_blank">regulations</a> of the online store and accept their content.<span class="text-danger"> *</span></label>
                                         </div>
                                     </div>
                                 </div>

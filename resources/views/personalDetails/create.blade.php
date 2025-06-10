@@ -124,7 +124,7 @@
                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                                 <div class="form-check">
                                     <input class="form-check-input" @if(old('acceptance_of_the_regulations')) checked @endif name="acceptance_of_the_regulations" type="checkbox" id="acceptance_of_the_regulations">
-                                    <label class="form-check-label" for="acceptance_of_the_regulations">I have read the <a href="/statutes" target="_blank">regulations</a> of the online store and accept their content.<span class="text-danger"> *</span></label>
+                                    <label class="form-check-label" for="acceptance_of_the_regulations">I have read the <a href="{{ route('statutes.show') }}" target="_blank">regulations</a> of the online store and accept their content.<span class="text-danger"> *</span></label>
                                 </div>
                             </div>
                         </div>

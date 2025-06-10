@@ -27,7 +27,7 @@ class PersonalDetailsController extends Controller
             $additionalPersonalDetails = null;
         }
 
-        return view('personalDetails.create', compact('defaultPersonalDetails','additionalPersonalDetails'));
+        return view('personalDetails.create', compact('defaultPersonalDetails', 'additionalPersonalDetails'));
     }
 
     public function walidate(PersonalDetailsRequest $request)

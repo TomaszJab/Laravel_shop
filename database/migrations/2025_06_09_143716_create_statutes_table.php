@@ -13,6 +13,9 @@ return new class extends Migration
     {
         Schema::create('statutes', function (Blueprint $table) {
             $table->id();
+            $table->string('name');
+            $table->text('content');
+            $table->boolean('valid');
             $table->timestamps();
         });
     }
