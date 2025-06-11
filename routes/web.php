@@ -73,6 +73,8 @@ Route::post('/products/{product}/addToCart2', [CartController::class, 'store'])-
 Route::post('/subscriber/store', [SubscriberController::class, 'store'])->name('subscribers.store');
 
 Route::resource('statutes', StatuteController::class);
+Route::get('/statutes', [StatuteController::class, 'show'])->name('statutes.showValid');
+
 
 Route::get('/', function () {
     return view('welcome');

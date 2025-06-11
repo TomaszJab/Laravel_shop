@@ -5,29 +5,17 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
-use App\Http\Services\OrderService;
-use App\Http\Services\OrderProductService;
-use App\Http\Services\PersonalDetailsService;
 use App\Http\Services\ProductService;
 use App\Http\Resources\PersonalDetailsResource;
 use App\Http\Resources\CartsResource;
 
 class CartController extends Controller
 {
-    // protected $orderService;
-    // protected $orderProductService;
-    // protected $personalDetailsService;
     protected $productService;
 
     public function __construct(
-        //     OrderService $orderService,
-        //     OrderProductService $orderProductService,
-        //     PersonalDetailsService $personalDetailsService,
         ProductService $productService
     ) {
-        //     $this->orderService = $orderService;
-        //     $this->orderProductService = $orderProductService;
-        //     $this->personalDetailsService = $personalDetailsService;
         $this->productService = $productService;
     }
 
