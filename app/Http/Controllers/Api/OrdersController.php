@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Http\Services\OrderService;
+use App\Http\Services\StatuteService;
 use App\Http\Services\OrderProductService;
 use App\Http\Services\PersonalDetailsService;
 use App\Http\Services\ProductService;
@@ -14,6 +15,7 @@ use App\Http\Resources\OrderProductResource;
 use App\Http\Resources\OrderResource;
 use App\Http\Resources\ProductResource;
 use App\Http\Resources\PersonalDetailsResource;
+use App\Http\Resources\StatuteResource;
 use Illuminate\Support\Facades\Auth;
 
 class OrdersController extends Controller
@@ -23,19 +25,22 @@ class OrdersController extends Controller
     protected $personalDetailsService;
     protected $productService;
     protected $cartService;
+    protected $statuteService;
 
     public function __construct(
         OrderService $orderService,
         OrderProductService $orderProductService,
         PersonalDetailsService $personalDetailsService,
         ProductService $productService,
-        CartService $cartService
+        CartService $cartService,
+        StatuteService $statuteService
     ) {
         $this->orderService = $orderService;
         $this->orderProductService = $orderProductService;
         $this->personalDetailsService = $personalDetailsService;
         $this->productService = $productService;
         $this->cartService = $cartService;
+        $this->statuteService = $statuteService;
     }
 
     public function index()
@@ -47,10 +52,12 @@ class OrdersController extends Controller
         if ($userIsAdmin) {
             $products = $this->productService->getAllProductPaginate(8);
             $orderProducts = $this->orderProductService->getAllOrderProductPaginate(8);
+            $statutes = $this->statuteService->getAllStatuteTransformContentAndPaginate(8);
 
             return [
                 'orderProducts' => OrderProductResource::collection($orderProducts),
-                'products' => ProductResource::collection($products)
+                'products' => ProductResource::collection($products),
+                'statutes' => StatuteResource::collection($statutes)
             ];
         } else {
             $user = Auth::guard('sanctum')->user();
@@ -67,7 +74,7 @@ class OrdersController extends Controller
         }
     }
 
-    public function create() //do zrobienia///////////////////////////////////////////////
+    public function create() //todo ///////////////////////////////////////////////
     {
         $cartData = $this->cartService->dataCart();
         return view('cart.delivery', $cartData);

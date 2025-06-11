@@ -19,11 +19,10 @@ class StatuteController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
-        $statudes = $this->statudeService->getAllStatutes();
-        return view('statute.index', compact('statudes'));
-    }
+    // public function index()
+    // {
+        //
+    // }
 
     /**
      * Show the form for creating a new resource.
@@ -38,9 +37,8 @@ class StatuteController extends Controller
      */
     public function store(StatuteRequest $request)
     {
-        $request->validated();
-        $data = $request->all();
-        Statute::create($data);
+        $this->statudeService->store($request);
+
         return redirect()->route('orders.index')
             ->with('succes', 'Statute created successfully.');
     }
@@ -48,9 +46,14 @@ class StatuteController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show() //(Statute $statute)
+    public function show(Statute $statute)
     {
-        $statute = Statute::where('valid', '1')->first();
+        return view('statute.show', compact('statute'));
+    }
+
+    public function showValid()
+    {
+        $statute = $this->statudeService->getValidStatude();
 
         return view('statute.show', compact('statute'));
     }
@@ -60,7 +63,6 @@ class StatuteController extends Controller
      */
     public function edit(Statute $statute)
     {
-       // $statute = Statute::findOrFail(1);
         return view('statute.edit', compact('statute'));
     }
 
@@ -69,9 +71,8 @@ class StatuteController extends Controller
      */
     public function update(StatuteRequest $request, Statute $statute)
     {
-        $request->validated();
-        $data = $request->all();
-        $statute->update($data);
+        $statute = $this->statudeService->update($request, $statute);
+
         return redirect()->route('orders.index')
             ->with('success', 'Statute updated successfully.');
     }
@@ -81,7 +82,8 @@ class StatuteController extends Controller
      */
     public function destroy(Statute $statute)
     {
-        $statute->delete();
+        $this->statudeService->destroy($statute);
+
         return redirect()->route('orders.index')
             ->with('succes', 'Statute deleted successfully.');
     }

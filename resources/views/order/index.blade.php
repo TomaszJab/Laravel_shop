@@ -144,7 +144,10 @@
             <div id="statutes" class="content-section" style="display: none;">
                 <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title text-primary">Statutes</h5>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="card-title text-primary">Statutes</h5>
+                            <a class="btn btn-success btn-sm" href="{{ route('statutes.create') }}"> Create New Statute</a>
+                        </div>
 
                         <div class="table-responsive-xl">
                             <table class="table-responsive-xl table table-hover table-striped">
@@ -301,7 +304,7 @@
                                     <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                                         <div class="form-check">
                                             <input class="form-check-input" @if($personalDetails->acceptance_of_the_regulations ?? '' =='on') checked @endif name="acceptance_of_the_regulations" type="checkbox" id="acceptance_of_the_regulations">
-                                            <label class="form-check-label" for="acceptance_of_the_regulations">I have read the <a href="{{ route('statutes.show') }}" target="_blank">regulations</a> of the online store and accept their content.<span class="text-danger"> *</span></label>
+                                            <label class="form-check-label" for="acceptance_of_the_regulations">I have read the <a href="{{ route('statutes.showValid') }}" target="_blank">regulations</a> of the online store and accept their content.<span class="text-danger"> *</span></label>
                                         </div>
                                     </div>
                                 </div>

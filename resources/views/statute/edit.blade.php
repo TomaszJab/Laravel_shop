@@ -25,13 +25,13 @@
                     <div class="col-xs-12 col-sm-12 col-md-12">
                         <div class="form-group">
                             <label for="name" class="my-2">Name<span class="text-danger"> *</span></label>
-                            <input type="text" name="name" value="{{$statute->name}}" class="form-control" placeholder="Name">
+                            <input type="text" name="name" value="{{old('name',$statute->name)}}" class="form-control" placeholder="Name">
                         </div>
                     </div>
                     <div class="col-xs-12 col-sm-12 col-md-12">
                         <div class="form-group">
                             <label for="content" class="my-2">Content<span class="text-danger"> *</span></label>
-                            <textarea class="form-control" style="height:150px" name="content" placeholder="Content">{{$statute->content}}</textarea>
+                            <textarea class="form-control" style="height:150px" name="content" placeholder="Content">{{old('content',$statute->content)}}</textarea>
                         </div>
                     </div>
                     <div class="col-xs-12 col-sm-12 col-md-12">
@@ -39,13 +39,8 @@
                             <label for="valid" class="my-2">Valid<span class="text-danger"> *</span></label>
                             <select class="form-control" name="valid">
                                 <option value="">--- Select Valid ---</option>
-                                @if($statute->valid == '1')
-                                <option value="1" selected>Yes</option>
-                                <option value="0">No</option>
-                                @else
-                                <option value="1">Yes</option>
-                                <option value="0" selected>No</option>
-                                @endif
+                                <option value="1" @if (old('valid',$statute->valid) == "1") {{ 'selected' }} @endif>Yes</option>
+                                <option value="0" @if (old('valid',$statute->valid) == "0") {{ 'selected' }} @endif>No</option>
                             </select>
                         </div>
                     </div>
