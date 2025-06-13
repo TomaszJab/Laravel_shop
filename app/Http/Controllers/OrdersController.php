@@ -120,6 +120,7 @@ class OrdersController extends Controller
 
         $this->orderService->storeOrderBasedOnOrderProduct($idUser, $personalDetails, $cartData);
         session()->forget('cart');
+        
         return redirect()->route(
             'products.index',
             ['category_products' => 'a']

@@ -96,7 +96,7 @@ class OrdersController extends Controller
         ];
     }
 
-    public function store(PersonalDetailsRequest $request)
+    public function store(PersonalDetailsRequest $request)//todo
     {
         $dataPersonalDetails = $request->input('personal_details');
         //session('personalDetails');
