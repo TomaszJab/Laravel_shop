@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Services\OrderService;
+use App\Http\Services\StatuteService;
 use App\Http\Services\OrderProductService;
 use App\Http\Services\PersonalDetailsService;
 use App\Http\Services\ProductService;
@@ -17,19 +18,22 @@ class OrdersController extends Controller
     protected $personalDetailsService;
     protected $productService;
     protected $cartService;
+    protected $statuteService;
 
     public function __construct(
         OrderService $orderService,
         OrderProductService $orderProductService,
         PersonalDetailsService $personalDetailsService,
         ProductService $productService,
-        CartService $cartService
+        CartService $cartService,
+        StatuteService $statuteService
     ) {
         $this->orderService = $orderService;
         $this->orderProductService = $orderProductService;
         $this->personalDetailsService = $personalDetailsService;
         $this->productService = $productService;
         $this->cartService = $cartService;
+        $this->statuteService = $statuteService;
     }
 
     public function index()
@@ -41,8 +45,13 @@ class OrdersController extends Controller
         if ($userIsAdmin) {
             $products = $this->productService->getAllProductPaginate(8);
             $orderProducts = $this->orderProductService->getAllOrderProductPaginate(8);
+            $statutes = $this->statuteService->getAllStatuteTransformContentAndPaginate(8);
 
-            return view('order.index', ['OrderProducts' => $orderProducts, 'products' => $products]);
+            return view('order.index', [
+                'OrderProducts' => $orderProducts,
+                'products' => $products,
+                'statutes' => $statutes
+            ]);
         } else {
             $idUser = auth()->user()->id;
 
@@ -111,6 +120,7 @@ class OrdersController extends Controller
 
         $this->orderService->storeOrderBasedOnOrderProduct($idUser, $personalDetails, $cartData);
         session()->forget('cart');
+        
         return redirect()->route(
             'products.index',
             ['category_products' => 'a']
