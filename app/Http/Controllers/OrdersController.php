@@ -9,6 +9,7 @@ use App\Http\Services\OrderProductService;
 use App\Http\Services\PersonalDetailsService;
 use App\Http\Services\ProductService;
 use App\Http\Services\CartService;
+use App\Http\Services\PromoCodeService;
 use App\Http\Requests\PersonalDetailsRequest;
 
 class OrdersController extends Controller
@@ -19,6 +20,7 @@ class OrdersController extends Controller
     protected $productService;
     protected $cartService;
     protected $statuteService;
+    protected $promoCodeService;
 
     public function __construct(
         OrderService $orderService,
@@ -26,7 +28,8 @@ class OrdersController extends Controller
         PersonalDetailsService $personalDetailsService,
         ProductService $productService,
         CartService $cartService,
-        StatuteService $statuteService
+        StatuteService $statuteService,
+        PromoCodeService $promoCodeService
     ) {
         $this->orderService = $orderService;
         $this->orderProductService = $orderProductService;
@@ -34,6 +37,7 @@ class OrdersController extends Controller
         $this->productService = $productService;
         $this->cartService = $cartService;
         $this->statuteService = $statuteService;
+        $this->promoCodeService = $promoCodeService;
     }
 
     public function index()
@@ -46,11 +50,13 @@ class OrdersController extends Controller
             $products = $this->productService->getAllProductPaginate(8);
             $orderProducts = $this->orderProductService->getAllOrderProductPaginate(8);
             $statutes = $this->statuteService->getAllStatuteTransformContentAndPaginate(8);
+            $promoCodes = $this->promoCodeService->getAllPromoCodePaginate(8);
 
             return view('order.index', [
-                'OrderProducts' => $orderProducts,
+                'orderProducts' => $orderProducts,
                 'products' => $products,
-                'statutes' => $statutes
+                'statutes' => $statutes,
+                'promoCodes' => $promoCodes
             ]);
         } else {
             $idUser = auth()->user()->id;
@@ -62,7 +68,7 @@ class OrdersController extends Controller
             return view(
                 'order.index',
                 [
-                    'OrderProducts' => $orderProducts,
+                    'orderProducts' => $orderProducts,
                     'personalDetails' => $defaultPersonalDetails,
                     'additionalPersonalDetails' => $additionalPersonalDetails
                 ]
@@ -120,7 +126,7 @@ class OrdersController extends Controller
 
         $this->orderService->storeOrderBasedOnOrderProduct($idUser, $personalDetails, $cartData);
         session()->forget('cart');
-        
+
         return redirect()->route(
             'products.index',
             ['category_products' => 'a']

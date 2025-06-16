@@ -8,32 +8,32 @@ use App\Models\PromoCode;
 
 class PromoCodeService extends Controller
 {
+    public function getAllPromoCodePaginate($paginate)
+    {
+        return PromoCode::paginate($paginate);
+    }
+
     public function checkPromo(string $promoCode)
     {
-        $promoCode =  PromoCode::where('promo_code', $promoCode)->first();
+        $promoCode =  PromoCode::where('name', $promoCode)->first();
         return $promoCode;
     }
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
-        //
-    }
+    // public function index()
+    // {
+    //     //
+    // }
 
     /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
     {
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(PromoCode $promoCode)
-    {
-        //
+        //walidate
+        $data = $request->all();
+        PromoCode::create($data);
     }
 
     /**
@@ -41,7 +41,9 @@ class PromoCodeService extends Controller
      */
     public function update(Request $request, PromoCode $promoCode)
     {
-        //
+        //walidate
+        $data = $request->all();
+        $promoCode->update($data);
     }
 
     /**
@@ -49,6 +51,6 @@ class PromoCodeService extends Controller
      */
     public function destroy(PromoCode $promoCode)
     {
-        //
+        $promoCode->delete();
     }
 }

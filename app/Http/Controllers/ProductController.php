@@ -31,7 +31,7 @@ class ProductController extends Controller
      * Display a listing of the resource.
      */
     public function index(Request $request)
-    {//
+    {
         $sortOption = $request->query('sortOption');
         $categoryName = $request->query('category_products', 'a');//todo pobrac jakie sa kategorie
 

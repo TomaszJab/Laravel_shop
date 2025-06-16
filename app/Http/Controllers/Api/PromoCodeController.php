@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\PromoCode;
 use App\Http\Services\PromoCodeService;
 
-class PromoCodeController extends Controller
+class PromoCodeController extends Controller//todo
 {
     protected $promoCode;
 

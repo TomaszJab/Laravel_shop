@@ -47,6 +47,7 @@ Route::post('/personalDetail/walidation', [PersonalDetailsController::class, 'wa
 Route::get('/cart/show', [CartController::class, 'show'])->name('carts.show');
 Route::post('/order/store', [OrdersController::class, 'store'])->name('orders.store');
 
+Route::resource('promoCode',PromoCodeController::class)->except('index');
 Route::post('/promoCode/checkPromo', [PromoCodeController::class, 'checkPromo'])->name('promoCodes.checkPromo');
 
 Route::post('/personalDetail/store', [PersonalDetailsController::class, 'store'])->name('personalDetails.store');

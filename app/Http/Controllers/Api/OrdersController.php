@@ -10,12 +10,14 @@ use App\Http\Services\OrderProductService;
 use App\Http\Services\PersonalDetailsService;
 use App\Http\Services\ProductService;
 use App\Http\Services\CartService;
+use App\Http\Services\PromoCodeService;
 use App\Http\Requests\PersonalDetailsRequest;
 use App\Http\Resources\OrderProductResource;
 use App\Http\Resources\OrderResource;
 use App\Http\Resources\ProductResource;
 use App\Http\Resources\PersonalDetailsResource;
 use App\Http\Resources\StatuteResource;
+use App\Http\Resources\PromoCodeResource;
 use Illuminate\Support\Facades\Auth;
 
 class OrdersController extends Controller
@@ -26,6 +28,7 @@ class OrdersController extends Controller
     protected $productService;
     protected $cartService;
     protected $statuteService;
+    protected $promoCodeService;
 
     public function __construct(
         OrderService $orderService,
@@ -33,7 +36,8 @@ class OrdersController extends Controller
         PersonalDetailsService $personalDetailsService,
         ProductService $productService,
         CartService $cartService,
-        StatuteService $statuteService
+        StatuteService $statuteService,
+        PromoCodeService $promoCodeService
     ) {
         $this->orderService = $orderService;
         $this->orderProductService = $orderProductService;
@@ -41,9 +45,10 @@ class OrdersController extends Controller
         $this->productService = $productService;
         $this->cartService = $cartService;
         $this->statuteService = $statuteService;
+        $this->promoCodeService = $promoCodeService;
     }
 
-    public function index()
+    public function index()//todo
     {
         /** @var \App\Models\User $user */
         $user = Auth::guard('sanctum')->user();
@@ -53,11 +58,13 @@ class OrdersController extends Controller
             $products = $this->productService->getAllProductPaginate(8);
             $orderProducts = $this->orderProductService->getAllOrderProductPaginate(8);
             $statutes = $this->statuteService->getAllStatuteTransformContentAndPaginate(8);
+            $promoCodes = $this->promoCodeService->getAllPromoCodePaginate(8);
 
             return [
                 'orderProducts' => OrderProductResource::collection($orderProducts),
                 'products' => ProductResource::collection($products),
-                'statutes' => StatuteResource::collection($statutes)
+                'statutes' => StatuteResource::collection($statutes),
+                'promoCodes' => PromoCodeResource::collection($promoCodes)
             ];
         } else {
             $user = Auth::guard('sanctum')->user();
