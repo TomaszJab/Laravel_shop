@@ -30,9 +30,14 @@
                     <li class="list-group-item" onclick="showContent('products', this)">Products</li>
                     <li class="list-group-item" onclick="showContent('statutes', this)">Statutes</li>
                     <li class="list-group-item" onclick="showContent('promoCodes', this)">Promo Codes</li>
+                    <li class="list-group-item" onclick="showContent('promoCodes', this)">Carousel toDo</li>
+                    <li class="list-group-item" onclick="showContent('promoCodes', this)">Messages toDo</li>
+                    <li class="list-group-item" onclick="showContent('promoCodes', this)">Users toDo</li>
+                    <li class="list-group-item" onclick="showContent('promoCodes', this)">Subscribers toDo</li>
+                    <li class="list-group-item" onclick="showContent('categories', this)">Categories toDo</li>
                     @endif
                     <li class="list-group-item" onclick="showContent('delivery', this)">Delivery</li>
-                    <li class="list-group-item" onclick="showContent('account', this)">Account settings</li>
+                    <li class="list-group-item" onclick="showContent('account', this)">Account settings toDo</li>
                 </ul>
             </div>
         </div>
@@ -239,10 +244,10 @@
                                     <tr>
                                         <th scope="col">Id</th>
                                         <th scope="col">Name</th>
+                                        <th scope="col">Code</th>
+                                        <th scope="col">Content</th>
                                         <th scope="col">Start Date</th>
                                         <th scope="col">End Date</th>
-                                        <th scope="col">Created at</th>
-                                        <th scope="col">Updated at</th>
                                         <th scope="col">Action</th>
                                     </tr>
                                 </thead>
@@ -251,10 +256,10 @@
                                     <tr>
                                         <th scope="row">{{ $promoCode-> id }}</th>
                                         <td>{{ $promoCode -> name }}</td>
+                                        <td>{{ $promoCode -> code }}</td>
+                                        <td>{{ $promoCode -> content }}</td>
                                         <td>{{ $promoCode -> start_date }}</td>
                                         <td>{{ $promoCode -> end_date }}</td>
-                                        <td>{{ $promoCode -> created_at }}</td>
-                                        <td>{{ $promoCode -> updated_at }}</td>
                                         <td>
                                             <form action="{{ route('promoCode.destroy', $promoCode -> id) }}" method="POST">
                                                 <a class="btn btn-info btn-sm" href="{{ route('promoCode.show', $promoCode -> id) }}">Show</a>
@@ -284,6 +289,67 @@
                     <div class="card-body cart text-center">
                         <i class="bi bi-box mb-4 mr-3" style="font-size:80px;color: orange;"></i>
                         <h3 class="my-2"><strong>You don't have any promo codes</strong></h3>
+                        <h4 class="my-2">Order something to make your day better</h4>
+                        <a href="{{ route('products.index') }}" class="btn btn-outline-primary m-3">
+                            <i class="bi bi-arrow-left me-2"></i>Continue Shopping
+                        </a>
+                    </div>
+                </div>
+            </div>
+            @endif
+
+            @if($categories->isNotEmpty())
+            <div id="categories" class="content-section" style="display: none;">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="card-title text-primary">Categories</h5>
+                            <a class="btn btn-success btn-sm" href="{{ route('categoryProduct.create') }}"> Create New Categories</a>
+                        </div>
+
+                        <div class="table-responsive-xl">
+                            <table class="table-responsive-xl table table-hover table-striped">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Id</th>
+                                        <th scope="col">Name</th>
+                                        <th scope="col">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($categories as $category)
+                                    <tr>
+                                        <th scope="row">{{ $category-> id }}</th>
+                                        <td>{{ $category -> name_category_product }}</td>
+                                        <td>
+                                            <form action="{{ route('categoryProduct.destroy', $category -> id) }}" method="POST">
+                                                <a class="btn btn-info btn-sm" href="{{ route('categoryProduct.show', $category -> id) }}">Show</a>
+                                                <a class="btn btn-primary btn-sm" href="{{ route('categoryProduct.edit', $category -> id) }}">Edit</a>
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                            <div class="col-md-2 ms-auto d-flex justify-content-end fs-4 mt-4 pagination">
+                                {!! $categories->links() !!}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @else
+            <div id="categories" class="content-section">
+                <div class="card">
+                    <div class="card-header mt-2">
+                        <h5>Categories</h5>
+                    </div>
+                    <div class="card-body cart text-center">
+                        <i class="bi bi-box mb-4 mr-3" style="font-size:80px;color: orange;"></i>
+                        <h3 class="my-2"><strong>You don't have any categories</strong></h3>
                         <h4 class="my-2">Order something to make your day better</h4>
                         <a href="{{ route('products.index') }}" class="btn btn-outline-primary m-3">
                             <i class="bi bi-arrow-left me-2"></i>Continue Shopping

@@ -29,6 +29,18 @@
                     </div>
                     <div class="col-xs-12 col-sm-12 col-md-12">
                         <div class="form-group">
+                            <label for="code" class="my-2">Code<span class="text-danger"> *</span></label>
+                            <input type="text" name="code" value="{{old('code')}}" class="form-control" placeholder="Code">
+                        </div>
+                    </div>
+                    <div class="col-xs-12 col-sm-12 col-md-12">
+                        <div class="form-group">
+                            <label for="content" class="my-2">Content<span class="text-danger"> *</span></label>
+                            <textarea class="form-control" name="content" placeholder="Content" rows="3">{{old('content')}}</textarea>
+                        </div>
+                    </div>
+                    <div class="col-xs-12 col-sm-12 col-md-12">
+                        <div class="form-group">
                             <label for="start_date" class="my-2">Start Date<span class="text-danger"> *</span></label>
                             <input type="date" name="start_date" id="start_date" class="form-control" value="{{old('start_date')}}" placeholder="Start Date">
                         </div>

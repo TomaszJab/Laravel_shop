@@ -5,6 +5,7 @@ namespace App\Http\Services;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\PromoCode;
+use App\Http\Requests\PromoCodeRequest;
 
 class PromoCodeService extends Controller
 {
@@ -15,7 +16,7 @@ class PromoCodeService extends Controller
 
     public function checkPromo(string $promoCode)
     {
-        $promoCode =  PromoCode::where('name', $promoCode)->first();
+        $promoCode =  PromoCode::where('code', $promoCode)->first();
         return $promoCode;
     }
     /**
@@ -29,9 +30,9 @@ class PromoCodeService extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(PromoCodeRequest $request)
     {
-        //walidate
+        $request->validated();
         $data = $request->all();
         PromoCode::create($data);
     }
@@ -39,9 +40,9 @@ class PromoCodeService extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, PromoCode $promoCode)
+    public function update(PromoCodeRequest $request, PromoCode $promoCode)
     {
-        //walidate
+        $request->validated();
         $data = $request->all();
         $promoCode->update($data);
     }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Services\PromoCodeService;
 use App\Models\PromoCode;
+use App\Http\Requests\PromoCodeRequest;
 
 class PromoCodeController extends Controller
 {
@@ -35,7 +36,7 @@ class PromoCodeController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(PromoCodeRequest $request)
     {
         $this->promoCodeService->store($request);
 
@@ -61,7 +62,7 @@ class PromoCodeController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, PromoCode $promoCode)
+    public function update(PromoCodeRequest $request, PromoCode $promoCode)
     {
         $this->promoCodeService->update($request, $promoCode);
 

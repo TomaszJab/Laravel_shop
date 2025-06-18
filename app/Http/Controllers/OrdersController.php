@@ -10,6 +10,7 @@ use App\Http\Services\PersonalDetailsService;
 use App\Http\Services\ProductService;
 use App\Http\Services\CartService;
 use App\Http\Services\PromoCodeService;
+use App\Http\Services\CategoryProductService;
 use App\Http\Requests\PersonalDetailsRequest;
 
 class OrdersController extends Controller
@@ -21,6 +22,7 @@ class OrdersController extends Controller
     protected $cartService;
     protected $statuteService;
     protected $promoCodeService;
+    protected $categoryProductService;
 
     public function __construct(
         OrderService $orderService,
@@ -29,7 +31,8 @@ class OrdersController extends Controller
         ProductService $productService,
         CartService $cartService,
         StatuteService $statuteService,
-        PromoCodeService $promoCodeService
+        PromoCodeService $promoCodeService,
+        CategoryProductService $categoryProductService
     ) {
         $this->orderService = $orderService;
         $this->orderProductService = $orderProductService;
@@ -38,6 +41,7 @@ class OrdersController extends Controller
         $this->cartService = $cartService;
         $this->statuteService = $statuteService;
         $this->promoCodeService = $promoCodeService;
+        $this->categoryProductService = $categoryProductService;
     }
 
     public function index()
@@ -51,12 +55,14 @@ class OrdersController extends Controller
             $orderProducts = $this->orderProductService->getAllOrderProductPaginate(8);
             $statutes = $this->statuteService->getAllStatuteTransformContentAndPaginate(8);
             $promoCodes = $this->promoCodeService->getAllPromoCodePaginate(8);
+            $categories = $this->categoryProductService->getAllCategoryPaginate(8);
 
             return view('order.index', [
                 'orderProducts' => $orderProducts,
                 'products' => $products,
                 'statutes' => $statutes,
-                'promoCodes' => $promoCodes
+                'promoCodes' => $promoCodes,
+                'categories' => $categories
             ]);
         } else {
             $idUser = auth()->user()->id;
