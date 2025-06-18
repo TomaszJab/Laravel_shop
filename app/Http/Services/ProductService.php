@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Http\Requests\ProductRequest;
+use Illuminate\Support\Facades\File;
 
 class ProductService extends Controller
 {
@@ -43,7 +44,21 @@ class ProductService extends Controller
         //walidacja
         $request->validated();
 
-        $product = Product::create($request->except('_token'));
+        $data = $request->except('_token');
+        if ($image = $request->file('image')) {
+            $destinationPath = 'images/product/main';
+            $profileImage = date('YmdHis') . "." . $image->getClientOriginalExtension();
+
+            $path = public_path() . '/images/product/main';
+            if (!File::exists($path)) {
+                File::makeDirectory($path, 0755, true, true);
+            }
+
+            $image->move($destinationPath, $profileImage);
+            $data['image'] = "$profileImage";
+        }
+
+        $product = Product::create($data);
         return $product;
     }
 
@@ -63,7 +78,22 @@ class ProductService extends Controller
     public function update(ProductRequest $request, Product $product)
     {
         $request->validated();
-        $product->update($request->all());
+
+        $data = $request->all();
+        if ($image = $request->file('image')) {
+            $destinationPath = 'images/product/main';
+            $profileImage = date('YmdHis') . "." . $image->getClientOriginalExtension();
+
+            $path = public_path() . '/images/product/main';
+            if (!File::exists($path)) {
+                File::makeDirectory($path, 0755, true, true);
+            }
+
+            $image->move($destinationPath, $profileImage);
+            $data['image'] = "$profileImage";
+        }
+
+        $product->update($data);
         return $product->fresh();
     }
 

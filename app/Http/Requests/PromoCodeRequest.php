@@ -4,14 +4,17 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class ProductRequest extends FormRequest
+class PromoCodeRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return true;
+         /** @var \App\Models\User $user */
+        $user = auth()->user();
+        $userIsAdmin = $user->isAdmin();
+        return auth()->check() && $userIsAdmin;
     }
 
     /**
@@ -23,10 +26,10 @@ class ProductRequest extends FormRequest
     {
         return [
             'name' => 'required',
-            'price' => 'required',
-            'detail' => 'required',
-            'image' => 'required', //'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',\\todo pomyslec nad wymaganiami
-            'category_products_id' => 'required'
+            'code' => 'required',
+            'content' => 'required',
+            'start_date' => 'required',
+            'end_date' => 'required',
         ];
     }
 }

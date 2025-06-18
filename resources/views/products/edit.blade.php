@@ -19,26 +19,39 @@
                 <div class="card-body m-2">
                     <div class="col-xl-12 col-lg-12 col-md-12 d-flex justify-content-between">
                         <h6 class="mt-3 text-primary">Edit Product</h6>
-                        <a class="btn btn-primary mt-2" href="{{ route('orders.index') }}"> Back</a>
+                        <a class="btn btn-primary mt-2" href="{{ route('orders.index') }}">< Back</a>
                     </div>
                     <div class="col-xs-12 col-sm-12 col-md-12">
                         <div class="form-group">
                             <label for="name" class="my-2">Name<span class="text-danger"> *</span></label>
-                            <input type="text" name="name" value="{{ $product->name }}" class="form-control" placeholder="Name">
+                            <input type="text" name="name" value="{{ old('name',$product->name) }}" class="form-control" placeholder="Name">
                         </div>
                     </div>
 
                     <div class="col-xs-12 col-sm-12 col-md-12">
                         <div class="form-group">
                             <label for="price" class="my-2">Price<span class="text-danger"> *</span></label>
-                            <input type="number" step="0.1" name="price" value="{{ $product->price }}" class="form-control" placeholder="Price">
+                            <input type="number" step="0.1" name="price" value="{{ old('price',$product->price) }}" class="form-control" placeholder="Price">
                         </div>
                     </div>
 
                     <div class="col-xs-12 col-sm-12 col-md-12">
                         <div class="form-group">
                             <label for="detail" class="my-2">Detail<span class="text-danger"> *</span></label>
-                            <textarea class="form-control" style="height:150px" name="detail" placeholder="Detail">{{ $product->detail }}</textarea>
+                            <textarea class="form-control" style="height:150px" name="detail" placeholder="Detail">{{ old('detail',$product->detail) }}</textarea>
+                        </div>
+                    </div>
+
+                    @if($product->image)
+                    <div class="mt-3">
+                        <img src="/images/product/main/{{ $product->image }}" width="300px">
+                    </div>
+                    @endif
+
+                    <div class="col-xs-12 col-sm-12 col-md-12">
+                        <div class="form-group">
+                            <label for="image" class="my-2">Image<span class="text-danger"> *</span></label>
+                            <input type="file" name="image" value="{{ $product->image }}" class="form-control" placeholder="image">
                         </div>
                     </div>
 
@@ -47,11 +60,11 @@
                             <label for="category_products_id" class="my-2">Category Product<span class="text-danger"> *</span></label>
                             <select class="form-control" name="category_products_id">
                                 @foreach($categoryProducts as $categoryProduct)
-                                    @if($product->category_products_id == $categoryProduct->id)
-                                        <option selected>Category {{ $categoryProduct->name_category_product }}</option>
-                                    @else
-                                        <option value="{{ $categoryProduct->id }}">Category {{ $categoryProduct->name_category_product }}</option>
-                                    @endif
+                                @if($product->category_products_id == $categoryProduct->id)
+                                <option selected>Category {{ $categoryProduct->name_category_product }}</option>
+                                @else
+                                <option value="{{ $categoryProduct->id }}">Category {{ $categoryProduct->name_category_product }}</option>
+                                @endif
                                 @endforeach
                             </select>
                         </div>

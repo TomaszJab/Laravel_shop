@@ -1,10 +1,36 @@
-@extends('products.layout')
-@section('content')
-<div class="row">
-    <div class="col-sm-12 col-12 mt-4">
-        <div class="card">
-            <div class="card-body m-3" style="text-align: justify;">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla est purus, ultrices in porttitor
+<?php
+
+namespace Database\Seeders;
+
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
+use App\Models\Statute;
+
+class StatuteTableSeeder extends Seeder
+{
+    /**
+     * Run the database seeds.
+     *
+     * @return void
+     */
+    public function run()
+    {
+        // Insert your data here using the DB facade
+        // For example:
+        // DB::table('example_table')->insert([
+        //     'column1' => 'value1',
+        //     'column2' => 'value2',
+        // ]);
+
+        // \App\Models\User::factory(10)->create();
+
+        // \App\Models\User::factory()->create([
+        //     'name' => 'Test User',
+        //     'email' => 'test@example.com',
+        // ]);
+
+        Statute::factory()->create([
+            "content" => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla est purus, ultrices in porttitor
             in, accumsan non quam. Nam consectetur porttitor rhoncus. Curabitur eu est et leo feugiat
             auctor vel quis lorem. Ut et ligula dolor, sit amet consequat lorem. Aliquam porta eros sed
             velit imperdiet egestas. Maecenas tempus eros ut diam ullamcorper id dictum libero
@@ -26,9 +52,18 @@
             volutpat felis, quis tristique ligula luctus vel. Sed nec mi eros. Integer augue enim, sollicitudin
             ullamcorper mattis eget, aliquam in est. Morbi sollicitudin libero nec augue dignissim ut
             consectetur dui volutpat. Nulla facilisi. Mauris egestas vestibulum neque cursus tincidunt.
-            Donec sit amet pulvinar orci.  
-            </div>
-        </div>
-    </div>
-</div>
-@endsection
+            Donec sit amet pulvinar orci.',
+            'valid' => '1',
+        ]);
+
+        Statute::factory()->create([
+            "content" => 'ABC',
+            'valid' => '0',
+        ]);
+
+        Statute::factory()->create([
+            "content" => 'CBA',
+            'valid' => '0',
+        ]);
+    }
+}

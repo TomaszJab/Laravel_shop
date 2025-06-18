@@ -1,7 +1,7 @@
 <?php
 
-use App\Http\Controllers\Profile\ProfileController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Profile\ProfileController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SubscriberController;
 use App\Http\Controllers\CommentController;
@@ -14,6 +14,7 @@ use App\Http\Controllers\StatuteController;
 use App\Http\Controllers\PersonalDetailsController;
 use App\Http\Controllers\GoogleLoginController;
 use App\Http\Controllers\OrdersController;
+use App\Http\Controllers\CategoryProductController;
 
 /*
 |--------------------------------------------------------------------------
@@ -47,6 +48,10 @@ Route::post('/personalDetail/walidation', [PersonalDetailsController::class, 'wa
 Route::get('/cart/show', [CartController::class, 'show'])->name('carts.show');
 Route::post('/order/store', [OrdersController::class, 'store'])->name('orders.store');
 
+Route::middleware(['auth', 'admin'])->group(function () {
+    Route::resource('promoCode', PromoCodeController::class)->except('index');
+});
+
 Route::post('/promoCode/checkPromo', [PromoCodeController::class, 'checkPromo'])->name('promoCodes.checkPromo');
 
 Route::post('/personalDetail/store', [PersonalDetailsController::class, 'store'])->name('personalDetails.store');
@@ -73,6 +78,9 @@ Route::post('/products/{product}/addToCart2', [CartController::class, 'store'])-
 Route::post('/subscriber/store', [SubscriberController::class, 'store'])->name('subscribers.store');
 
 Route::resource('statutes', StatuteController::class);
+Route::get('/statutes', [StatuteController::class, 'show'])->name('statutes.showValid');
+
+Route::resource('/categoryProduct',CategoryProductController::class)->except('index');
 
 Route::get('/', function () {
     return view('welcome');

@@ -4,10 +4,13 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Services\OrderService;
+use App\Http\Services\StatuteService;
 use App\Http\Services\OrderProductService;
 use App\Http\Services\PersonalDetailsService;
 use App\Http\Services\ProductService;
 use App\Http\Services\CartService;
+use App\Http\Services\PromoCodeService;
+use App\Http\Services\CategoryProductService;
 use App\Http\Requests\PersonalDetailsRequest;
 
 class OrdersController extends Controller
@@ -17,19 +20,28 @@ class OrdersController extends Controller
     protected $personalDetailsService;
     protected $productService;
     protected $cartService;
+    protected $statuteService;
+    protected $promoCodeService;
+    protected $categoryProductService;
 
     public function __construct(
         OrderService $orderService,
         OrderProductService $orderProductService,
         PersonalDetailsService $personalDetailsService,
         ProductService $productService,
-        CartService $cartService
+        CartService $cartService,
+        StatuteService $statuteService,
+        PromoCodeService $promoCodeService,
+        CategoryProductService $categoryProductService
     ) {
         $this->orderService = $orderService;
         $this->orderProductService = $orderProductService;
         $this->personalDetailsService = $personalDetailsService;
         $this->productService = $productService;
         $this->cartService = $cartService;
+        $this->statuteService = $statuteService;
+        $this->promoCodeService = $promoCodeService;
+        $this->categoryProductService = $categoryProductService;
     }
 
     public function index()
@@ -41,8 +53,17 @@ class OrdersController extends Controller
         if ($userIsAdmin) {
             $products = $this->productService->getAllProductPaginate(8);
             $orderProducts = $this->orderProductService->getAllOrderProductPaginate(8);
+            $statutes = $this->statuteService->getAllStatuteTransformContentAndPaginate(8);
+            $promoCodes = $this->promoCodeService->getAllPromoCodePaginate(8);
+            $categories = $this->categoryProductService->getAllCategoryPaginate(8);
 
-            return view('order.index', ['OrderProducts' => $orderProducts, 'products' => $products]);
+            return view('order.index', [
+                'orderProducts' => $orderProducts,
+                'products' => $products,
+                'statutes' => $statutes,
+                'promoCodes' => $promoCodes,
+                'categories' => $categories
+            ]);
         } else {
             $idUser = auth()->user()->id;
 
@@ -53,7 +74,7 @@ class OrdersController extends Controller
             return view(
                 'order.index',
                 [
-                    'OrderProducts' => $orderProducts,
+                    'orderProducts' => $orderProducts,
                     'personalDetails' => $defaultPersonalDetails,
                     'additionalPersonalDetails' => $additionalPersonalDetails
                 ]
@@ -111,6 +132,7 @@ class OrdersController extends Controller
 
         $this->orderService->storeOrderBasedOnOrderProduct($idUser, $personalDetails, $cartData);
         session()->forget('cart');
+
         return redirect()->route(
             'products.index',
             ['category_products' => 'a']

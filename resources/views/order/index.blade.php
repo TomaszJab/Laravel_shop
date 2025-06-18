@@ -11,6 +11,11 @@
         </ul>
     </div>
     @endif
+    @if ($message = Session::get('success'))
+    <div class="alert alert-success mt-4">
+        {{ $message }}
+    </div>
+    @endif
     <div class="row">
         <div class="col-lg-3 my-5">
             <div class="card">
@@ -23,15 +28,22 @@
                     <li class="list-group-item active" onclick="showContent('orders', this)">Orders</li>
                     @if(auth()->user()->isAdmin())
                     <li class="list-group-item" onclick="showContent('products', this)">Products</li>
+                    <li class="list-group-item" onclick="showContent('statutes', this)">Statutes</li>
+                    <li class="list-group-item" onclick="showContent('promoCodes', this)">Promo Codes</li>
+                    <li class="list-group-item" onclick="showContent('promoCodes', this)">Carousel toDo</li>
+                    <li class="list-group-item" onclick="showContent('promoCodes', this)">Messages toDo</li>
+                    <li class="list-group-item" onclick="showContent('promoCodes', this)">Users toDo</li>
+                    <li class="list-group-item" onclick="showContent('promoCodes', this)">Subscribers toDo</li>
+                    <li class="list-group-item" onclick="showContent('categories', this)">Categories toDo</li>
                     @endif
                     <li class="list-group-item" onclick="showContent('delivery', this)">Delivery</li>
-                    <li class="list-group-item" onclick="showContent('account', this)">Account settings</li>
+                    <li class="list-group-item" onclick="showContent('account', this)">Account settings toDo</li>
                 </ul>
             </div>
         </div>
 
         <div class="col-lg-9 my-5">
-            @if($OrderProducts->isNotEmpty())
+            @if($orderProducts->isNotEmpty())
             <div id="orders" class="content-section">
                 <div class="card">
                     <div class="card-body">
@@ -41,35 +53,35 @@
                             <table class="table-responsive-xl table table-hover table-striped">
                                 <thead>
                                     <tr>
-                                        <th scope="col">id</th>
-                                        <th scope="col">wartość</th>
-                                        <th scope="col">Status</th>
+                                        <th scope="col">Id</th>
+                                        <th scope="col">Method Delivery</th>
+                                        <th scope="col">Method Payment</th>
                                         <th scope="col">Promo code</th>
                                         <th scope="col">Delivery</th>
                                         <th scope="col">Payment</th>
                                         <th scope="col">Created at</th>
-                                        <th scope="col">created at</th>
+                                        <th scope="col">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($OrderProducts as $OrderProduct)
+                                    @foreach ($orderProducts as $orderProduct)
                                     <tr>
-                                        <th scope="row">{{ $OrderProduct -> personal_details_id }}</th>
-                                        <td>{{ $OrderProduct -> method_delivery }}</td>
-                                        <td>{{ $OrderProduct -> method_payment }}</td>
-                                        <td>{{ $OrderProduct -> promo_code ?? 'brak' }}</td>
-                                        <td>{{ $OrderProduct -> delivery }}$</td>
-                                        <td>{{ $OrderProduct -> payment }}$</td>
-                                        <td>{{ $OrderProduct -> created_at }}</td>
+                                        <th scope="row">{{ $orderProduct -> personal_details_id }}</th>
+                                        <td>{{ $orderProduct -> method_delivery }}</td>
+                                        <td>{{ $orderProduct -> method_payment }}</td>
+                                        <td>{{ $orderProduct -> promo_code ?? 'none' }}</td>
+                                        <td>{{ $orderProduct -> delivery }}$</td>
+                                        <td>{{ $orderProduct -> payment }}$</td>
+                                        <td>{{ $orderProduct -> created_at }}</td>
                                         <td>
-                                            <a class="btn btn-primary" href="{{ route('orders.show', $OrderProduct -> id) }}">Show</a>
+                                            <a class="btn btn-primary" href="{{ route('orders.show', $orderProduct -> id) }}">Show</a>
                                         </td>
                                     </tr>
                                     @endforeach
                                 </tbody>
                             </table>
                             <div class="col-md-2 ms-auto d-flex justify-content-end fs-4 mt-4 pagination">
-                                {!! $OrderProducts->links() !!}
+                                {!! $orderProducts->links() !!}
                             </div>
                         </div>
                     </div>
@@ -92,6 +104,7 @@
                 </div>
             </div>
             @endif
+
             @if(auth()->user()->isAdmin())
             <div id="products" class="content-section" style="display: none;">
                 <div class="card">
@@ -105,19 +118,27 @@
                                 <thead>
                                     <tr>
                                         <th scope="col">id</th>
-                                        <th scope="col">wartość</th>
-                                        <th scope="col">Status</th>
-                                        <th scope="col">Promo code</th>
-                                        <th scope="col">Delivery</th>
+                                        <th scope="col">Name</th>
+                                        <th scope="col">Price</th>
+                                        <th scope="col">Detail</th>
+                                        <th scope="col">Favorite</th>
+                                        <th scope="col">Image</th>
+                                        <th scope="col">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @foreach ($products as $product)
                                     <tr>
-                                        <th scope="row"></th>
+                                        <th scope="row">{{ $product->id }}</th>
                                         <td>{{ $product->name }}</td>
                                         <td>{{ $product->price }}</td>
                                         <td>{{ $product->detail }}</td>
+                                        <td>{{ $product->favorite }}</td>
+                                        <td>
+                                            @if($product->image)
+                                            <img src="/images/product/main/{{ $product->image }}" width="300px">
+                                            @endif
+                                        </td>
                                         <td>
                                             <form action="{{ route('products.destroy', $product -> id) }}" method="POST">
                                                 <a class="btn btn-info btn-sm" href="{{ route('products.show', $product -> id) }}">Show</a>
@@ -138,7 +159,207 @@
                     </div>
                 </div>
             </div>
+
+            @if($statutes->isNotEmpty())
+            <div id="statutes" class="content-section" style="display: none;">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="card-title text-primary">Statutes</h5>
+                            <a class="btn btn-success btn-sm" href="{{ route('statutes.create') }}"> Create New Statute</a>
+                        </div>
+
+                        <div class="table-responsive-xl">
+                            <table class="table-responsive-xl table table-hover table-striped">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Id</th>
+                                        <th scope="col">Name</th>
+                                        <th scope="col">Content</th>
+                                        <th scope="col">Valid</th>
+                                        <th scope="col">Created at</th>
+                                        <th scope="col">Updated at</th>
+                                        <th scope="col">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($statutes as $statute)
+                                    <tr>
+                                        <th scope="row">{{ $statute-> id }}</th>
+                                        <td>{{ $statute -> name }}</td>
+                                        <td>{{ $statute -> content }}</td>
+                                        <td>{{ $statute -> valid }}</td>
+                                        <td>{{ $statute -> created_at }}</td>
+                                        <td>{{ $statute -> updated_at }}</td>
+                                        <td>
+                                            <form action="{{ route('statutes.destroy', $statute -> id) }}" method="POST">
+                                                <a class="btn btn-info btn-sm" href="{{ route('statutes.show', $statute -> id) }}">Show</a>
+                                                <a class="btn btn-primary btn-sm" href="{{ route('statutes.edit', $statute -> id) }}">Edit</a>
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                            <div class="col-md-2 ms-auto d-flex justify-content-end fs-4 mt-4 pagination">
+                                {!! $statutes->links() !!}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @else
+            <div id="statutes" class="content-section">
+                <div class="card">
+                    <div class="card-header mt-2">
+                        <h5>Statutes</h5>
+                    </div>
+                    <div class="card-body cart text-center">
+                        <i class="bi bi-box mb-4 mr-3" style="font-size:80px;color: orange;"></i>
+                        <h3 class="my-2"><strong>You don't have any statutes</strong></h3>
+                        <h4 class="my-2">Order something to make your day better</h4>
+                        <a href="{{ route('products.index') }}" class="btn btn-outline-primary m-3">
+                            <i class="bi bi-arrow-left me-2"></i>Continue Shopping
+                        </a>
+                    </div>
+                </div>
+            </div>
             @endif
+
+            @if($promoCodes->isNotEmpty())
+            <div id="promoCodes" class="content-section" style="display: none;">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="card-title text-primary">Promo codes</h5>
+                            <a class="btn btn-success btn-sm" href="{{ route('promoCode.create') }}"> Create New Promo Code</a>
+                        </div>
+
+                        <div class="table-responsive-xl">
+                            <table class="table-responsive-xl table table-hover table-striped">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Id</th>
+                                        <th scope="col">Name</th>
+                                        <th scope="col">Code</th>
+                                        <th scope="col">Content</th>
+                                        <th scope="col">Start Date</th>
+                                        <th scope="col">End Date</th>
+                                        <th scope="col">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($promoCodes as $promoCode)
+                                    <tr>
+                                        <th scope="row">{{ $promoCode-> id }}</th>
+                                        <td>{{ $promoCode -> name }}</td>
+                                        <td>{{ $promoCode -> code }}</td>
+                                        <td>{{ $promoCode -> content }}</td>
+                                        <td>{{ $promoCode -> start_date }}</td>
+                                        <td>{{ $promoCode -> end_date }}</td>
+                                        <td>
+                                            <form action="{{ route('promoCode.destroy', $promoCode -> id) }}" method="POST">
+                                                <a class="btn btn-info btn-sm" href="{{ route('promoCode.show', $promoCode -> id) }}">Show</a>
+                                                <a class="btn btn-primary btn-sm" href="{{ route('promoCode.edit', $promoCode -> id) }}">Edit</a>
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                            <div class="col-md-2 ms-auto d-flex justify-content-end fs-4 mt-4 pagination">
+                                {!! $promoCodes->links() !!}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @else
+            <div id="promoCodes" class="content-section">
+                <div class="card">
+                    <div class="card-header mt-2">
+                        <h5>Promo Codes</h5>
+                    </div>
+                    <div class="card-body cart text-center">
+                        <i class="bi bi-box mb-4 mr-3" style="font-size:80px;color: orange;"></i>
+                        <h3 class="my-2"><strong>You don't have any promo codes</strong></h3>
+                        <h4 class="my-2">Order something to make your day better</h4>
+                        <a href="{{ route('products.index') }}" class="btn btn-outline-primary m-3">
+                            <i class="bi bi-arrow-left me-2"></i>Continue Shopping
+                        </a>
+                    </div>
+                </div>
+            </div>
+            @endif
+
+            @if($categories->isNotEmpty())
+            <div id="categories" class="content-section" style="display: none;">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="card-title text-primary">Categories</h5>
+                            <a class="btn btn-success btn-sm" href="{{ route('categoryProduct.create') }}"> Create New Categories</a>
+                        </div>
+
+                        <div class="table-responsive-xl">
+                            <table class="table-responsive-xl table table-hover table-striped">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Id</th>
+                                        <th scope="col">Name</th>
+                                        <th scope="col">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($categories as $category)
+                                    <tr>
+                                        <th scope="row">{{ $category-> id }}</th>
+                                        <td>{{ $category -> name_category_product }}</td>
+                                        <td>
+                                            <form action="{{ route('categoryProduct.destroy', $category -> id) }}" method="POST">
+                                                <a class="btn btn-info btn-sm" href="{{ route('categoryProduct.show', $category -> id) }}">Show</a>
+                                                <a class="btn btn-primary btn-sm" href="{{ route('categoryProduct.edit', $category -> id) }}">Edit</a>
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                            <div class="col-md-2 ms-auto d-flex justify-content-end fs-4 mt-4 pagination">
+                                {!! $categories->links() !!}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @else
+            <div id="categories" class="content-section">
+                <div class="card">
+                    <div class="card-header mt-2">
+                        <h5>Categories</h5>
+                    </div>
+                    <div class="card-body cart text-center">
+                        <i class="bi bi-box mb-4 mr-3" style="font-size:80px;color: orange;"></i>
+                        <h3 class="my-2"><strong>You don't have any categories</strong></h3>
+                        <h4 class="my-2">Order something to make your day better</h4>
+                        <a href="{{ route('products.index') }}" class="btn btn-outline-primary m-3">
+                            <i class="bi bi-arrow-left me-2"></i>Continue Shopping
+                        </a>
+                    </div>
+                </div>
+            </div>
+            @endif
+            @endif
+
             <div id="delivery" class="content-section" style="display: none;">
                 <div class="card">
                     <div class="card-body">
@@ -233,7 +454,7 @@
                                     <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                                         <div class="form-check">
                                             <input class="form-check-input" @if($personalDetails->acceptance_of_the_regulations ?? '' =='on') checked @endif name="acceptance_of_the_regulations" type="checkbox" id="acceptance_of_the_regulations">
-                                            <label class="form-check-label" for="acceptance_of_the_regulations">I have read the <a href="/statutes" target="_blank">regulations</a> of the online store and accept their content.<span class="text-danger"> *</span></label>
+                                            <label class="form-check-label" for="acceptance_of_the_regulations">I have read the <a href="{{ route('statutes.showValid') }}" target="_blank">regulations</a> of the online store and accept their content.<span class="text-danger"> *</span></label>
                                         </div>
                                     </div>
                                 </div>

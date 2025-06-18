@@ -56,7 +56,7 @@ class ProductController extends Controller
     public function create()
     {
         $categoryProducts = $this->categoryProductService->getAllCategory();
-        
+
         return [
             'categoryProduct' => CategoryProductsResource::collection($categoryProducts)
         ];
